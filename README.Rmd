@@ -30,9 +30,9 @@ You can install the development version of ggoutline from [GitHub](https://githu
 devtools::install_github("rnabioco/ggoutline")
 ```
 
-## Why outline points?
+## Why use ggoutline?
 
-A scatter plot is a common way to compare two continuous variables. However, when there are thousands of data points, it can be difficult distinguish between groups based on color alone.
+A scatter plot is a common way to compare two continuous variables. However, when there are thousands of data points, it can be difficult distinguish between groups based on color alone. With ggoutline groups of points can be highlighted.
 
 ```{r setup}
 library(ggoutline)
@@ -56,6 +56,8 @@ p +
   geom_point()
 ```
 
+<br>
+
 geom_outline will add outlines around each group
 
 ```{r, fig.width = 8, fig.height = 6}
@@ -65,6 +67,8 @@ p +
     outline_position = "all"
   )
 ```
+
+<br>
 
 To outline all points together regardless of color or group, set outline_position to 'bottom'
 
@@ -76,6 +80,8 @@ p +
   )
 ```
 
+<br>
+
 By passing a group name (or vector of names) to outline_position, a sinlge cluster can be highlighted
 
 ```{r, fig.width = 8, fig.height = 6}
@@ -86,6 +92,8 @@ p +
   )
 ```
 
+<br>
+
 By specifying `group` within `aes()`, outlines can be added when coloring with a continuous variable
 
 ```{r, fig.width = 8, fig.height = 6}
@@ -95,20 +103,11 @@ p <- clusters %>%
   th
 
 p +
-  geom_outline(outline_size = 2.5)
-```
-
-Multiple groups can be highlighted by passed a vector to `outline_position`
-
-```{r, fig.width = 8, fig.height = 6}
-p +
   geom_outline(
     outline_size     = 2.5,
     outline_position = c("c1", "c2")
   )
 ```
-
-ggoutline 
 
 
 
