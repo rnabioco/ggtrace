@@ -9,10 +9,6 @@
 coverage](https://codecov.io/gh/rnabioco/ggoutline/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggoutline?branch=master)
 <!-- badges: end -->
 
-ggoutline allows users to outline groups of data points using ggplot2.
-
-<br>
-
 ## Installation
 
 You can install the development version of ggoutline from
@@ -23,12 +19,14 @@ You can install the development version of ggoutline from
 devtools::install_github("rnabioco/ggoutline")
 ```
 
+<br>
+
 ## Why use ggoutline?
 
 A scatter plot is a common way to compare two continuous variables.
 However, when there are thousands of data points, it can be difficult
-distinguish between groups based on color alone. With ggoutline groups
-of points can be highlighted.
+distinguish between groups based on color alone. ggoutline allows users
+to highlight groups of data points using ggplot2.
 
 ``` r
 library(ggoutline)
