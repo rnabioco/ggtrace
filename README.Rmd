@@ -70,18 +70,6 @@ p +
 
 <br>
 
-To outline all points together regardless of color or group, set outline_position to 'bottom'
-
-```{r, fig.width = 8, fig.height = 6}
-p +
-  geom_outline(
-    outline_size     = 2.5,
-    outline_position = "bottom"
-  )
-```
-
-<br>
-
 By passing a group name (or vector of names) to outline_position, a sinlge cluster can be highlighted
 
 ```{r, fig.width = 8, fig.height = 6}

@@ -76,21 +76,6 @@ p +
 
 <br>
 
-To outline all points together regardless of color or group, set
-outline\_position to ‘bottom’
-
-``` r
-p +
-  geom_outline(
-    outline_size     = 2.5,
-    outline_position = "bottom"
-  )
-```
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
-
-<br>
-
 By passing a group name (or vector of names) to outline\_position, a
 sinlge cluster can be highlighted
 
@@ -102,7 +87,7 @@ p +
   )
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 <br>
 
@@ -122,4 +107,4 @@ p +
   )
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
