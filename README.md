@@ -125,18 +125,19 @@ p +
 …and `bar`
 
 ``` r
-dat %>%
+p <- dat %>%
   filter(year(yr) == 2000) %>%
-  
   ggplot(aes(population)) +
+  scale_x_log10() +
+  th
+
+p +
   geom_outline(
     geom         = "bar",
     stat         = "bin",
     outline_size = 1.2,
     fill         = "#56B4E9"
-  ) +
-  scale_x_log10() +
-  th
+  )
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
