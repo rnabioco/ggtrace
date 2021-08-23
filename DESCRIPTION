@@ -1,11 +1,21 @@
 Package: ggoutline
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Outline Data Points
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Ryan",
+             family = "Sheridan",
+             role = c("aut", "cre"),
+             email = "ryan.sheridan@cuanschutz.edu",
+             comment = c(ORCID = "0000-0003-4012-3147")))
+Description: A geom to outline groups of data points 
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    ggplot2
+RoxygenNote: 7.1.1
+Depends: 
+    R (>= 4.0.0)
+Suggests: 
+    covr

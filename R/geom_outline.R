@@ -40,11 +40,10 @@
 #'    the default plot specification, e.g. [borders()].
 #' @param outline_size Outline size
 #' @param outline_color Outline color
-#' @param outline_position Outline position
-#'    * "all", a separate outline is drawn for each group plotted
-#'    * "bottom", a single outline is drawn around all groups
-#'    * A vector of group names can be passed to only draw outlines around
-#'      certain groups
+#' @param outline_position Outline position, this can include: "all", a
+#'   separate outline is drawn for each group plotted; "bottom", a single
+#'   outline is drawn around all groups. A vector of group names can also be
+#'   used to only draw outlines around certain groups.
 #' @export
 geom_outline <- function(mapping = NULL, data = NULL, geom = "point", stat = "identity", position = "identity",
                          ..., na.rm = FALSE, show.legend = NA, inherit.aes = TRUE, outline_size = 1,
@@ -99,10 +98,10 @@ ggplot_add.geom_outline <- function(object, plot, object_name) {
   # Modify plot groups based on outline_position
   out_pos <- object$outline_position
 
-  if (out_pos == "bottom" || is.na(grps)) {
+  if ((length(out_pos) == 1 && out_pos == "bottom") || is.na(grps)) {
     plt_dat <- dplyr::mutate(plt_dat, .GROUPS = "BOTTOM")
 
-  } else if (out_pos == "all") {
+  } else if (length(out_pos) == 1 && out_pos == "all") {
     plt_dat <- dplyr::mutate(plot$data, .GROUPS = !!sym(grps))
 
   } else {

@@ -1,0 +1,114 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# ggoutline
+
+<!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/rnabioco/ggoutline/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggoutline?branch=master)
+<!-- badges: end -->
+
+ggoutline allows users to outline groups of data points using ggplot2.
+
+## Installation
+
+You can install the development version of ggoutline from [GitHub](https://github.com/rnabioco/ggoutline) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("rnabioco/ggoutline")
+```
+
+## Why outline points?
+
+A scatter plot is a common way to compare two continuous variables. However, when there are thousands of data points, it can be difficult distinguish between groups based on color alone.
+
+```{r setup}
+library(ggoutline)
+library(cowplot)
+library(purrr)
+library(ggplot2)
+library(dplyr)
+
+th <- theme_cowplot() +
+  theme(
+    axis.line    = element_blank(),
+    panel.border = element_rect(fill = NA, color = "grey85"),
+    axis.ticks   = element_line(color = "grey85")
+  )
+
+p <- clusters %>%
+  ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
+  th
+
+p +
+  geom_point()
+```
+
+geom_outline will add outlines around each group
+
+```{r, fig.width = 8, fig.height = 6}
+p +
+  geom_outline(
+    outline_size     = 2.5,
+    outline_position = "all"
+  )
+```
+
+To outline all points together regardless of color or group, set outline_position to 'bottom'
+
+```{r, fig.width = 8, fig.height = 6}
+p +
+  geom_outline(
+    outline_size     = 2.5,
+    outline_position = "bottom"
+  )
+```
+
+By passing a group name (or vector of names) to outline_position, a sinlge cluster can be highlighted
+
+```{r, fig.width = 8, fig.height = 6}
+p +
+  geom_outline(
+    outline_size     = 2.5,
+    outline_position = "c1"
+  )
+```
+
+By specifying `group` within `aes()`, outlines can be added when coloring with a continuous variable
+
+```{r, fig.width = 8, fig.height = 6}
+p <- clusters %>%
+  ggplot(aes(UMAP_1, UMAP_2, color = signal, group = cluster)) +
+  scale_color_gradientn(colors = c("white", "red")) +
+  th
+
+p +
+  geom_outline(outline_size = 2.5)
+```
+
+Multiple groups can be highlighted by passed a vector to `outline_position`
+
+```{r, fig.width = 8, fig.height = 6}
+p +
+  geom_outline(
+    outline_size     = 2.5,
+    outline_position = c("c1", "c2")
+  )
+```
+
+ggoutline 
+
+
+
