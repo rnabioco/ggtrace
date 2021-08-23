@@ -21,7 +21,7 @@ devtools::install_github("rnabioco/ggoutline")
 
 <br>
 
-## Why?
+## Rationale
 
 A scatter plot is a common way to compare two continuous variables.
 However, when there are thousands of data points, it can be difficult to
@@ -29,6 +29,8 @@ distinguish between groups based on color alone. This is a first attempt
 at a package that allows groups of data points (or lines or bars) to be
 highlighted using ggplot2. This is under development and likely contains
 numerous bugs.
+
+geom\_outline will outline each group plotted
 
 ``` r
 library(ggoutline)
@@ -48,17 +50,6 @@ p <- clusters %>%
   th
 
 p +
-  geom_point()
-```
-
-<img src="man/figures/README-setup-1.png" width="100%" />
-
-<br>
-
-geom\_outline will add outlines around each group
-
-``` r
-p +
   geom_outline(
     outline_size     = 2.5,
     outline_position = "all"
@@ -70,7 +61,7 @@ p +
 <br>
 
 By passing a group name (or vector of names) to outline\_position, a
-sinlge cluster can be highlighted
+single cluster can be highlighted
 
 ``` r
 p +
@@ -104,7 +95,7 @@ p +
 
 <br>
 
-geom\_outline is also compatible with other geoms including line…
+geom\_outline is also compatible with other geoms including `line`…
 
 ``` r
 dat <- world_bank_pop %>%
@@ -132,7 +123,7 @@ p +
 
 <br>
 
-…and bar
+…and `bar`
 
 ``` r
 dat %>%
