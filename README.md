@@ -21,19 +21,20 @@ devtools::install_github("rnabioco/ggoutline")
 
 <br>
 
-## Why use ggoutline?
+## Why?
 
 A scatter plot is a common way to compare two continuous variables.
-However, when there are thousands of data points, it can be difficult
-distinguish between groups based on color alone. ggoutline allows users
-to highlight groups of data points using ggplot2.
+However, when there are thousands of data points, it can be difficult to
+distinguish between groups based on color alone. This is a first attempt
+at a package that allows groups of data points (or lines or bars) to be
+highlighted using ggplot2. This is under development and likely contains
+numerous bugs.
 
 ``` r
 library(ggoutline)
+library(tidyverse)
+library(lubridate)
 library(cowplot)
-library(purrr)
-library(ggplot2)
-library(dplyr, quietly = TRUE)
 
 th <- theme_cowplot() +
   theme(
@@ -100,3 +101,52 @@ p +
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+
+<br>
+
+geom\_outline is also compatible with other geoms including line…
+
+``` r
+dat <- world_bank_pop %>%
+  na.omit() %>%
+  filter(indicator == "SP.POP.TOTL") %>%
+  pivot_longer(matches("[0-9]+"), names_to = "yr", values_to = "population") %>%
+  mutate(yr = as_date(str_c(yr, "-1-1")))
+
+p <- dat %>%  
+  ggplot(aes(yr, population, group = country)) +
+  th +
+  theme(legend.position = "none")
+
+p +
+  geom_outline(
+    geom             = "line",
+    outline_size     = 2.5,
+    outline_color    = "red",
+    outline_position = c("LMY", "CHN"),
+    color            = "grey70"
+  )
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+<br>
+
+…and bar
+
+``` r
+dat %>%
+  filter(year(yr) == 2000) %>%
+  
+  ggplot(aes(population)) +
+  geom_outline(
+    geom         = "bar",
+    stat         = "bin",
+    outline_size = 2.5,
+    fill         = "#56B4E9"
+  ) +
+  scale_x_log10() +
+  th
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />

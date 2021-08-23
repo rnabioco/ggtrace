@@ -52,9 +52,9 @@ geom_outline <- function(mapping = NULL, data = NULL, geom = "point", stat = "id
   geoms          <- list(GeomPoint, GeomLine, "point", "line")
   geom_supported <- any(purrr::map_lgl(geoms, identical, geom))
 
-  if (!geom_supported) {
-    stop("geom_outline currently only supports point and line geoms")
-  }
+  # if (!geom_supported) {
+  #   stop("geom_outline currently only supports point and line geoms")
+  # }
 
   structure(
     list(
