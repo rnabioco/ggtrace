@@ -94,7 +94,7 @@ p +
 
 geom_outline is also compatible with other geoms including `line`...
 
-```{r, fig.width = 8, fig.height = 6}
+```{r, fig.width = 8, fig.height = 4}
 dat <- world_bank_pop %>%
   na.omit() %>%
   filter(indicator == "SP.POP.TOTL") %>%
@@ -103,13 +103,12 @@ dat <- world_bank_pop %>%
 
 p <- dat %>%  
   ggplot(aes(yr, population, group = country)) +
-  th +
-  theme(legend.position = "none")
+  th
 
 p +
   geom_outline(
     geom             = "line",
-    outline_size     = 2.5,
+    outline_size     = 3,
     outline_color    = "red",
     outline_position = c("LMY", "CHN"),
     color            = "grey70"
@@ -120,7 +119,7 @@ p +
 
 ...and `bar`
 
-```{r, fig.width = 8, fig.height = 6}
+```{r, fig.width = 8, fig.height = 4}
 dat %>%
   filter(year(yr) == 2000) %>%
   
@@ -128,7 +127,7 @@ dat %>%
   geom_outline(
     geom         = "bar",
     stat         = "bin",
-    outline_size = 2.5,
+    outline_size = 1.2,
     fill         = "#56B4E9"
   ) +
   scale_x_log10() +

@@ -106,13 +106,12 @@ dat <- world_bank_pop %>%
 
 p <- dat %>%  
   ggplot(aes(yr, population, group = country)) +
-  th +
-  theme(legend.position = "none")
+  th
 
 p +
   geom_outline(
     geom             = "line",
-    outline_size     = 2.5,
+    outline_size     = 3,
     outline_color    = "red",
     outline_position = c("LMY", "CHN"),
     color            = "grey70"
@@ -133,7 +132,7 @@ dat %>%
   geom_outline(
     geom         = "bar",
     stat         = "bin",
-    outline_size = 2.5,
+    outline_size = 1.2,
     fill         = "#56B4E9"
   ) +
   scale_x_log10() +
