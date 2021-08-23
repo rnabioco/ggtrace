@@ -11,6 +11,8 @@ coverage](https://codecov.io/gh/rnabioco/ggoutline/branch/master/graph/badge.svg
 
 ggoutline allows users to outline groups of data points using ggplot2.
 
+<br>
+
 ## Installation
 
 You can install the development version of ggoutline from
