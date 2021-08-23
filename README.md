@@ -34,14 +34,6 @@ library(cowplot)
 library(purrr)
 library(ggplot2)
 library(dplyr, quietly = TRUE)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 
 th <- theme_cowplot() +
   theme(
