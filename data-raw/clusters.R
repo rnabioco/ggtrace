@@ -23,4 +23,4 @@ clusters <- dat %>%
     )
   })
 
-use_data(clusters)
+usethis::use_data(clusters)
