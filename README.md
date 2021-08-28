@@ -35,7 +35,6 @@ geom\_point\_trace will trace each group plotted
 ``` r
 library(ggoutline)
 library(tidyverse)
-library(lubridate)
 library(cowplot)
 
 th <- theme_cowplot() +
