@@ -27,6 +27,9 @@
 #'     aesthetics, used to set an aesthetic to a fixed value, like
 #'     `colour = "red"` or `size = 3`. They may also be parameters to the
 #'     paired geom/stat.
+#' @param trace_position Specifies how groups of points should be traced.
+#'     If `all`, the default, every group plotted will be traced, if `bottom`,
+#'     only the bottom most layer of points will be traced.
 #' @param na.rm If `FALSE`, the default, missing values are removed with a
 #'     warning. If `TRUE`, missing values are silently removed.
 #' @param show.legend logical. Should this layer be included in the legends?
@@ -42,6 +45,10 @@
 # https://stackoverflow.com/questions/67573707/ggplot-extension-function-to-plot-a-superimposed-mean-in-a-scatterplot
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                              ..., trace_position = "all", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+
+  if (!trace_position %in% c("all", "bottom")) {
+    stop("trace_position must be either 'all' or 'bottom'")
+  }
 
   layer(
     data        = data,
@@ -63,102 +70,135 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomPointTrace <- ggproto(
-  "GeomPointTrace", Geom,
+GeomPointTrace <- ggplot2::ggproto(
+  "GeomPointTrace", ggplot2::Geom,
 
   required_aes = c("x", "y"),
 
   non_missing_aes = c("size", "shape", "colour", "trace_size", "trace_colour", "trace_linetype"),
 
-  default_aes = aes(
+  default_aes = ggplot2::aes(
     shape  = 19,
     colour = "black",
-    size   = 1.5,
     fill   = NA,
-    alpha  = NA,
+    alpha  = 1,
+    size   = 1.5,
     stroke = 0.5,
     trace_size     = 1,
     trace_color    = "black",
     trace_linetype = 1
   ),
 
+  setup_data = function(data, params) {
+    if (params$trace_position == "bottom") {
+      data$group <- -1
+    }
+
+    data
+  },
+
   draw_group = function(data, panel_params, coord, trace_position = "all", na.rm = FALSE) {
 
-    pch_table <- c(
-      "0" = 0,      # "square open"
-      "1" = 1,      # "circle open"
-      "2" = 2,      # "triangle open"
-      "3" = 3,      # "plus"
-      "4" = 4,      # "cross"
-      "5" = 5,      # "diamond open"
-      "6" = 6,      # "triangle down open"
-      "7" = 7,      # "square cross"
-      "8" = 8,      # "asterisk"
-      "9" = 9,      # "diamond plus"
-      "10" = 10,    # "circle plus"
-      "11" = 11,    # "star"
-      "12" = 12,    # "square plus"
-      "13" = 13,    # "circle cross"
-      "14" = 14,    # "square triangle"
-      "14" = 14,    # "triangle square"
-      "15" = 0,     # "square"
-      "16" = 1,     # "circle small"
-      "17" = 2,     # "triangle"
-      "18" = 5,     # "diamond"
-      "19" = 1,     # "circle"
-      "20" = 20,    # "bullet"
-      "21" = 21,    # "circle filled"
-      "22" = 22,    # "square filled"
-      "23" = 23,    # "diamond filled"
-      "24" = 24,    # "triangle filled"
-      "25" = 25     # "triangle down filled"
-    )
-
-    if (is.character(data$shape)) {
-      data$shape <- translate_shape_string(data$shape)
-    }
+    data$shape <- translate_trace_shape(data$shape)
 
     coords <- coord$transform(data, panel_params)
 
-    grid::grobTree(
-      grid::pointsGrob(
-        coords$x, coords$y,
-        pch  = pch_table[as.character(data$shape)],
+    g_trace <- grid::pointsGrob(
+      coords$x, coords$y,
 
-        gp = grid::gpar(
-          col      = alpha(coords$trace_colour, coords$alpha),
-          fontsize = coords$size * .pt + coords$stroke * .stroke / 2 + coords$trace_size * .stroke / 2,
-          lwd      = (coords$trace_size * .stroke / 2),
-          lty      = coords$trace_linetype
-        )
-      ),
+      pch = coords$shape,
 
-      grid::pointsGrob(
-        coords$x, coords$y,
-        pch  = coords$shape,
-
-        gp = grid::gpar(
-          col      = alpha(coords$colour, coords$alpha),
-          fill     = alpha(coords$fill, coords$alpha),
-          fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
-          lwd      = coords$stroke * .stroke / 2
-        )
+      gp = grid::gpar(
+        col      = alpha(coords$trace_colour, 1),
+        fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
+        lwd      = (coords$trace_size * .stroke / 2) * 2 + coords$stroke * .stroke / 2,
+        lty      = coords$trace_linetype
+        # fontsize = coords$size * .pt + coords$stroke * .stroke / 2 + coords$trace_size * .stroke / 2,
+        # lwd      = (coords$trace_size * .stroke / 2 + coords$stroke * .stroke / 2) * 2,
+        # col      = alpha(coords$trace_colour, coords$alpha)
+        # fontsize = coords$size * .pt + coords$trace_size * .stroke / 2,
       )
     )
+
+    g_points <- grid::pointsGrob(
+      coords$x, coords$y,
+
+      pch = coords$shape,
+
+      gp = grid::gpar(
+        col      = alpha(coords$colour, 1),
+        fill     = alpha(coords$fill, 1),
+        lwd      = coords$stroke * .stroke / 2,
+        fontsize = coords$size * .pt + coords$stroke * .stroke / 2
+        # fontsize = coords$size * .pt,
+        # lwd      = 0
+        # col      = alpha(coords$colour, coords$alpha)
+        # fill     = alpha(coords$fill, coords$alpha)
+      )
+    )
+
+    ggname("geom_point_trace", grid::grobTree(g_trace, g_points))
   },
 
-  draw_key = draw_key_point
+  draw_key = ggplot2::draw_key_point
 )
 
-clusters %>%
-  ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
-  geom_point(size = 2) +
-  geom_point_trace(
-    data = ~ filter(.x, cluster == "c1"),
-    size        = 2,
-    trace_size  = 1,
-    trace_color = "black"
+# Helper to adjust shape specification
+translate_trace_shape <- function(pch) {
+  pch_tbl <- c(
+    "0" = 0,       # "square open"
+    "1" = 1,       # "circle open"
+    "2" = 2,       # "triangle open"
+    "3" = 3,       # "plus"
+    "4" = 4,       # "cross"
+    "5" = 5,       # "diamond open"
+    "6" = 6,       # "triangle down open"
+    "7" = 7,       # "square cross"
+    "8" = 8,       # "asterisk"
+    "9" = 9,       # "diamond plus"
+    "10" = 10,     # "circle plus"
+    "11" = 11,     # "star"
+    "12" = 12,     # "square plus"
+    "13" = 13,     # "circle cross"
+    "14" = 14,     # "square triangle"
+    "14" = 14,     # "triangle square"
+    "15" = 0,      # "square"
+    "16" = 1,      # "circle small"
+    "17" = 2,      # "triangle"
+    "19" = 19,     # "circle"
+    "20" = 20      # "bullet"
+    # "18" = 18,     # "diamond"
+    # "21" = 21,     # "circle filled"
+    # "22" = 22,     # "square filled"
+    # "23" = 23,     # "diamond filled"
+    # "24" = 24,     # "triangle filled"
+    # "25" = 25      # "triangle down filled"
   )
 
+  if (is.character(pch)) {
+    pch <- translate_shape_string(pch)
+  }
 
+  pch_match <- charmatch(pch, names(pch_tbl))
 
+  bad_pch <- is.na(pch_match)
+
+  if (any(bad_pch)) {
+
+    bad_pch <- unique(pch[bad_pch])
+
+    stop("Unsupported shape ", paste0(bad_pch, collapse = ", "))
+  }
+
+  res <- unname(pch_tbl[pch_match])
+
+  res
+}
+
+# Name ggplot grid object
+# Helper to name grid objects
+# https://github.com/tidyverse/ggplot2/blob/master/R/utilities-grid.r
+ggname <- function(prefix, grob) {
+  grob$name <- grid::grobName(grob, prefix)
+  grob
+}

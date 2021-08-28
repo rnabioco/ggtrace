@@ -1,6 +1,6 @@
-Package: ggoutline
+Package: ggtrace
 Type: Package
-Title: Outline Data Points
+Title: Trace Data Points
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Ryan",
@@ -13,7 +13,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    ggplot2
+    ggplot2,
+    grid
 RoxygenNote: 7.1.1
 Depends: 
     R (>= 4.0.0)

@@ -26,11 +26,10 @@ devtools::install_github("rnabioco/ggoutline")
 A scatter plot is a common way to compare two continuous variables.
 However, when there are thousands of data points, it can be difficult to
 distinguish between groups based on color alone. This is a first attempt
-at a package that allows groups of data points (or lines or bars) to be
-highlighted using ggplot2. This is under development and likely contains
-numerous bugs.
+at a package that allows groups of data points to be highlighted using
+ggplot2. This is under development and likely contains numerous bugs.
 
-geom\_outline will outline each group plotted
+geom\_point\_trace will trace each group plotted
 
 ``` r
 library(ggoutline)
@@ -50,9 +49,9 @@ p <- clusters %>%
   th
 
 p +
-  geom_outline(
-    outline_size     = 2.5,
-    outline_position = "all"
+  geom_point_trace(
+    trace_color = "black",
+    trace_size  = 1
   )
 ```
 
@@ -60,18 +59,34 @@ p +
 
 <br>
 
-By passing a group name (or vector of names) to outline\_position, a
-single cluster can be highlighted
+To add a single outline around all points plotted, set `trace_position`
+to ‘bottom’.
 
 ``` r
 p +
-  geom_outline(
-    outline_size     = 2.5,
-    outline_position = "c1"
+  geom_point_trace(
+    trace_color    = "black",
+    trace_size     = 1,
+    trace_position = "bottom"
   )
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+<br>
+
+A single cluster can be highlighted using standard ggplot2 syntax.
+
+``` r
+p +
+  geom_point() +
+  geom_point_trace(
+    data = ~ filter(.x, cluster == "c1"),
+    trace_size = 1
+  )
+```
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 <br>
 
@@ -85,59 +100,10 @@ p <- clusters %>%
   th
 
 p +
-  geom_outline(
-    outline_size     = 2.5,
-    outline_position = c("c1", "c2")
-  )
-```
-
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
-
-<br>
-
-geom\_outline is also compatible with other geoms including `line`…
-
-``` r
-dat <- world_bank_pop %>%
-  na.omit() %>%
-  filter(indicator == "SP.POP.TOTL") %>%
-  pivot_longer(matches("[0-9]+"), names_to = "yr", values_to = "population") %>%
-  mutate(yr = as_date(str_c(yr, "-1-1")))
-
-p <- dat %>%  
-  ggplot(aes(yr, population, group = country)) +
-  th
-
-p +
-  geom_outline(
-    geom             = "line",
-    outline_size     = 3,
-    outline_color    = "red",
-    outline_position = c("LMY", "CHN"),
-    color            = "grey70"
+  geom_point_trace(
+    size       = 5,
+    trace_size = 1
   )
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
-
-<br>
-
-…and `bar`
-
-``` r
-p <- dat %>%
-  filter(year(yr) == 2000) %>%
-  ggplot(aes(population)) +
-  scale_x_log10() +
-  th
-
-p +
-  geom_outline(
-    geom         = "bar",
-    stat         = "bin",
-    outline_size = 1.2,
-    fill         = "#56B4E9"
-  )
-```
-
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
