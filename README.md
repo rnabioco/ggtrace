@@ -4,7 +4,8 @@
 # ggoutline
 
 <!-- badges: start -->
-
+[![R build
+status](https://github.com/rnabioco/ggoutline/workflows/R-CMD-check/badge.svg)](https://github.com/rnabioco/ggoutline/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/rnabioco/ggoutline/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggoutline?branch=master)
 <!-- badges: end -->
