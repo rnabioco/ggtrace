@@ -14,7 +14,7 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
     ggplot2,
-    grid
+    grid,
     rlang
 RoxygenNote: 7.1.1
 Depends: 
