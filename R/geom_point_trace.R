@@ -1,4 +1,4 @@
-#' Highlight points
+#' Trace points to improve clarity of plots with overplotted geoms.
 #'
 #' @param mapping Set of aesthetic mappings created by [aes()] or
 #'    [aes_()]. If specified and `inherit.aes = TRUE` (the
@@ -18,7 +18,6 @@
 #'    the plot data. The return value must be a `data.frame`, and
 #'    will be used as the layer data. A `function` can be created
 #'    from a `formula` (e.g. `~ head(.x, 10)`).
-#' @param geom The geometric object to use display the data
 #' @param stat The statistical transformation to use on the data for this
 #'    layer, as a string.
 #' @param position Position adjustment, either as a string, or the result of
@@ -41,6 +40,7 @@
 #'    rather than combining with them. This is most useful for helper functions
 #'    that define both data and aesthetics and shouldn't inherit behaviour from
 #'    the default plot specification, e.g. [borders()].
+#' @rdname geom_point_trace
 #' @export
 # https://stackoverflow.com/questions/67573707/ggplot-extension-function-to-plot-a-superimposed-mean-in-a-scatterplot
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
@@ -66,6 +66,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
   )
 }
 
+#' GeomPointTrace
 #' @rdname ggplot2-ggproto
 #' @format NULL
 #' @usage NULL
@@ -143,7 +144,8 @@ GeomPointTrace <- ggplot2::ggproto(
   draw_key = ggplot2::draw_key_point
 )
 
-# Helper to adjust shape specification
+#' Helper to adjust shape specification
+#' @noRd
 translate_trace_shape <- function(pch) {
   pch_tbl <- c(
     "0" = 0,       # "square open"
@@ -195,9 +197,10 @@ translate_trace_shape <- function(pch) {
   res
 }
 
-# Name ggplot grid object
-# Helper to name grid objects
-# https://github.com/tidyverse/ggplot2/blob/master/R/utilities-grid.r
+#' Name ggplot grid object
+#' Helper to name grid objects
+#' https://github.com/tidyverse/ggplot2/blob/master/R/utilities-grid.r
+#' @noRd
 ggname <- function(prefix, grob) {
   grob$name <- grid::grobName(grob, prefix)
   grob
