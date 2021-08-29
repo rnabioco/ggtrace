@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![Codecov test coverage](https://codecov.io/gh/rnabioco/ggoutline/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggoutline?branch=master)
+[![R-CMD-check](https://github.com/rnabioco/ggtrace/workflows/R-CMD-check/badge.svg)](https://github.com/rnabioco/ggtrace/actions)
 <!-- badges: end -->
 
 ## Installation
