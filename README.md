@@ -32,9 +32,8 @@ ggplot2. This is under development and likely contains numerous bugs.
 geom\_point\_trace will trace each group plotted
 
 ``` r
-library(ggoutline)
+library(ggtrace)
 library(tidyverse)
-library(lubridate)
 library(cowplot)
 
 th <- theme_cowplot() +

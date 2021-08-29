@@ -38,9 +38,8 @@ A scatter plot is a common way to compare two continuous variables. However, whe
 geom_point_trace will trace each group plotted
 
 ```{r, fig.width = 8, fig.height = 6}
-library(ggoutline)
+library(ggtrace)
 library(tidyverse)
-library(lubridate)
 library(cowplot)
 
 th <- theme_cowplot() +
