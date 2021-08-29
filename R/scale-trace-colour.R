@@ -1,15 +1,18 @@
 #' @inherit ggplot2::scale_colour_continuous
 #' @export
-scale_trace_colour_continuous <- function(...,
-                                    type = getOption("ggplot2.continuous.colour")) {
+scale_trace_colour_continuous <- function(..., type = getOption("ggplot2.continuous.colour")) {
+
   type <- type %||% "gradient"
 
   if (is.function(type)) {
     check_scale_type(type(...), "scale_trace_colour_continuous", "trace_colour")
+
   } else if (identical(type, "gradient")) {
     scale_colour_gradient(...)
+
   } else if (identical(type, "viridis")) {
     scale_colour_viridis_c(...)
+
   } else {
     rlang::abort("Unknown scale type")
   }
