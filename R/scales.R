@@ -34,9 +34,12 @@ scale_trace_colour_discrete <- function(..., type = getOption("ggplot2.discrete.
   }
 }
 
+#' @rdname scale_trace_colour_discrete
+#' @export
+#' @usage NULL
 scale_trace_color_discrete <- scale_trace_colour_discrete
 
-#' @rdname ggplot2::scale_manual
+#' @rdname scale_manual
 #' @export
 scale_trace_colour_manual <- function(..., values, aesthetics = "trace_colour", breaks = waiver(), na.value = "grey50") {
   manual_scale(aesthetics, values, breaks, ..., na.value = na.value)

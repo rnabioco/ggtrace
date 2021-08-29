@@ -2,6 +2,7 @@
 % Please edit documentation in R/scales.R
 \name{scale_trace_colour_discrete}
 \alias{scale_trace_colour_discrete}
+\alias{scale_trace_color_discrete}
 \title{Discrete trace color scales}
 \usage{
 scale_trace_colour_discrete(..., type = getOption("ggplot2.discrete.colour"))
