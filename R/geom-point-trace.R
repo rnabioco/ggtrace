@@ -137,10 +137,10 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$colour, 0.5),
-        fontsize = coords$size * .pt,
-        fill     = alpha(coords$fill, 1),
+        col      = alpha(coords$colour, coords$alpha),
+        fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
         lwd      = coords$stroke * .stroke / 2
+        # fill     = alpha(coords$fill, coords$alpha),
       )
     )
 
@@ -255,11 +255,9 @@ translate_trace_size <- function(data) {
   fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$trace_size * .stroke / 2
 
   # Calculate lwd for open shapes
-  lwd <- data$trace_size
+  lwd <- data$trace_size * .stroke / 2
 
-  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2
-
-  lwd <- lwd * .stroke / 2 + data$stroke * .stroke / 2
+  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (data$stroke * .stroke / 2)
 
   # Add results to data
   data$trace_fontsize <- fontsize
