@@ -40,6 +40,7 @@
 #'    rather than combining with them. This is most useful for helper functions
 #'    that define both data and aesthetics and shouldn't inherit behaviour from
 #'    the default plot specification, e.g. [borders()].
+#' @eval rd_aesthetics("geom", "point_trace")
 #' @rdname geom_point_trace
 #' @export
 # https://stackoverflow.com/questions/67573707/ggplot-extension-function-to-plot-a-superimposed-mean-in-a-scatterplot
@@ -85,8 +86,9 @@ GeomPointTrace <- ggplot2::ggproto(
     alpha  = 1,
     size   = 1.5,
     stroke = 0.5,
-    trace_size     = 1,
     trace_color    = "black",
+    trace_alpha    = 1,
+    trace_size     = 1,
     trace_linetype = 1
   ),
 
@@ -100,24 +102,25 @@ GeomPointTrace <- ggplot2::ggproto(
 
   draw_group = function(data, panel_params, coord, trace_position = "all", na.rm = FALSE) {
 
-    data$shape <- translate_trace_shape(data$shape)
+    if (is.character(data$shape)) {
+      data$shape <- translate_shape_string(data$shape)
+    }
+
+    data$trace_shape <- translate_trace_shape(data$shape)
+    data             <- calculate_trace_size(data)
 
     coords <- coord$transform(data, panel_params)
 
     g_trace <- grid::pointsGrob(
       coords$x, coords$y,
 
-      pch = coords$shape,
+      pch = coords$trace_shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$trace_colour, 1),
-        fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
-        lwd      = (coords$trace_size * .stroke / 2) * 2 + coords$stroke * .stroke / 2,
-        lty      = coords$trace_linetype
-        # fontsize = coords$size * .pt + coords$stroke * .stroke / 2 + coords$trace_size * .stroke / 2,
-        # lwd      = (coords$trace_size * .stroke / 2 + coords$stroke * .stroke / 2) * 2,
-        # col      = alpha(coords$trace_colour, coords$alpha)
-        # fontsize = coords$size * .pt + coords$trace_size * .stroke / 2,
+        col      = alpha(coords$trace_colour, coords$trace_alpha),
+        lty      = coords$trace_linetype,
+        fontsize = coords$trace_fontsize,
+        lwd      = coords$trace_lwd
       )
     )
 
@@ -127,14 +130,10 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$colour, 1),
-        fill     = alpha(coords$fill, 1),
-        lwd      = coords$stroke * .stroke / 2,
-        fontsize = coords$size * .pt + coords$stroke * .stroke / 2
-        # fontsize = coords$size * .pt,
-        # lwd      = 0
-        # col      = alpha(coords$colour, coords$alpha)
-        # fill     = alpha(coords$fill, coords$alpha)
+        col      = alpha(coords$colour, coords$alpha),
+        fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
+        lwd      = coords$stroke * .stroke / 2
+        # fill     = alpha(coords$fill, coords$alpha),
       )
     )
 
@@ -143,6 +142,122 @@ GeomPointTrace <- ggplot2::ggproto(
 
   draw_key = ggplot2::draw_key_point
 )
+
+
+#' Helper to translate shape strings
+#' https://github.com/tidyverse/ggplot2/raw/87e9b85dd9f2a294f339d88a353d0c11c851489d/R/geom-point.r
+#' @noRd
+translate_shape_string <- function(shape_string) {
+
+  # strings of length 0 or 1 are interpreted as symbols by grid
+  if (nchar(shape_string[1]) <= 1) {
+    return(shape_string)
+  }
+
+  pch_tbl <- c(
+    "square open"          = 0,
+    "circle open"          = 1,
+    "triangle open"        = 2,
+    "plus"                 = 3,
+    "cross"                = 4,
+    "diamond open"         = 5,
+    "triangle down open"   = 6,
+    "square cross"         = 7,
+    "asterisk"             = 8,
+    "diamond plus"         = 9,
+    "circle plus"          = 10,
+    "star"                 = 11,
+    "square plus"          = 12,
+    "circle cross"         = 13,
+    "square triangle"      = 14,
+    "triangle square"      = 14,
+    "square"               = 15,
+    "circle small"         = 16,
+    "triangle"             = 17,
+    "diamond"              = 18,
+    "circle"               = 19,
+    "bullet"               = 20,
+    "circle filled"        = 21,
+    "square filled"        = 22,
+    "diamond filled"       = 23,
+    "triangle filled"      = 24,
+    "triangle down filled" = 25
+  )
+
+  shape_match <- charmatch(shape_string, names(pch_tbl))
+
+  invalid_strings <- is.na(shape_match)
+  nonunique_strings <- shape_match == 0
+
+  if (any(invalid_strings)) {
+    bad_string <- unique(shape_string[invalid_strings])
+    n_bad <- length(bad_string)
+
+    collapsed_names <- sprintf("\n* '%s'", bad_string[1:min(5, n_bad)])
+
+    more_problems <- if (n_bad > 5) {
+      sprintf("\n* ... and %d more problem%s", n_bad - 5, ifelse(n_bad > 6, "s", ""))
+    } else {
+      ""
+    }
+
+    rlang::abort(glue::glue("Can't find shape name:", collapsed_names, more_problems))
+  }
+
+  if (any(nonunique_strings)) {
+    bad_string <- unique(shape_string[nonunique_strings])
+    n_bad <- length(bad_string)
+
+    n_matches <- vapply(
+      bad_string[1:min(5, n_bad)],
+      function(shape_string) sum(grepl(paste0("^", shape_string), names(pch_tbl))),
+      integer(1)
+    )
+
+    collapsed_names <- sprintf(
+      "\n* '%s' partially matches %d shape names",
+      bad_string[1:min(5, n_bad)], n_matches
+    )
+
+    more_problems <- if (n_bad > 5) {
+      sprintf("\n* ... and %d more problem%s", n_bad - 5, ifelse(n_bad > 6, "s", ""))
+    } else {
+      ""
+    }
+
+    rlang::abort(glue::glue("Shape names must be unambiguous:", collapsed_names, more_problems))
+  }
+
+  unname(pch_tbl[shape_match])
+}
+
+#' Helper to adjust trace size
+#'
+#' To outline both the inside and outside of open shapes, need to adjust
+#' fontsize and lwd.
+#'
+#' @noRd
+calculate_trace_size <- function(data) {
+  pch_open <- 0:14
+
+  pch <- data$shape
+
+  # Calculate fontsize for closed shapes
+  fontsize  <- data$size * .pt + data$stroke * .stroke / 2
+
+  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$trace_size * .stroke / 2
+
+  # Calculate lwd for open shapes
+  lwd <- data$trace_size * .stroke / 2
+
+  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (data$stroke * .stroke / 2)
+
+  # Add results to data
+  data$trace_fontsize <- fontsize
+  data$trace_lwd      <- lwd
+
+  data
+}
 
 #' Helper to adjust shape specification
 #' @noRd
@@ -167,9 +282,13 @@ translate_trace_shape <- function(pch) {
     "15" = 0,      # "square"
     "16" = 1,      # "circle small"
     "17" = 2,      # "triangle"
-    "19" = 19,     # "circle"
-    "20" = 20      # "bullet"
+    "19" = 1       # "circle"
+
+    # Exclude shapes that are filled
+    # Exclude diamond and bullet since they do not have an open shape of the
+    # same size
     # "18" = 18,     # "diamond"
+    # "20" = 20      # "bullet"
     # "21" = 21,     # "circle filled"
     # "22" = 22,     # "square filled"
     # "23" = 23,     # "diamond filled"
@@ -177,13 +296,8 @@ translate_trace_shape <- function(pch) {
     # "25" = 25      # "triangle down filled"
   )
 
-  if (is.character(pch)) {
-    pch <- translate_shape_string(pch)
-  }
-
   pch_match <- charmatch(pch, names(pch_tbl))
-
-  bad_pch <- is.na(pch_match)
+  bad_pch   <- is.na(pch_match)
 
   if (any(bad_pch)) {
 
@@ -197,11 +311,4 @@ translate_trace_shape <- function(pch) {
   res
 }
 
-#' Name ggplot grid object
-#' Helper to name grid objects
-#' https://github.com/tidyverse/ggplot2/blob/master/R/utilities-grid.r
-#' @noRd
-ggname <- function(prefix, grob) {
-  grob$name <- grid::grobName(grob, prefix)
-  grob
-}
+

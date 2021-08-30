@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/rnabioco/ggtrace/workflows/R-CMD-check/badge.svg)](https://github.com/rnabioco/ggtrace/actions)
+[![R-CMD-check](https://github.com/rnabioco/ggtrace/workflows/R-CMD-check/badge.svg)](https://github.com/rnabioco/ggtrace/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/rnabioco/ggtrace/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggtrace?branch=master)
 <!-- badges: end -->
@@ -28,7 +27,7 @@ devtools::install_github("rnabioco/ggtrace")
 A scatter plot is a common way to compare two continuous variables.
 However, when there are thousands of data points, it can be difficult to
 distinguish between groups based on color alone. ggtrace provides
-ggplot2 geoms that highlight groups of data points with and outline for
+ggplot2 geoms that highlight groups of data points with an outline for
 emphasis .
 
 ``` r
@@ -38,7 +37,7 @@ library(ggtrace)
 p <- ggplot(
   clusters,
   aes(UMAP_1, UMAP_2, color = cluster)
-  ) + 
+) + 
   theme_minimal()
 
 p +
@@ -77,6 +76,19 @@ p +
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
+The trace color can be scaled based on a discrete or continuous variable
+
+``` r
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, trace_color = cluster)
+) +
+  theme_minimal() +
+  geom_point_trace(trace_size = 2)
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
 By specifying `group` within `aes()`, outlines can be added when
 coloring with a continuous variable
 
@@ -84,15 +96,12 @@ coloring with a continuous variable
 ggplot(
   clusters,
   aes(UMAP_1, UMAP_2, color = signal, group = cluster)
-  ) +
+) +
   theme_minimal() +
   scale_color_gradientn(
     colors = c("white", "red")
-    ) +
-  geom_point_trace(
-    size       = 5,
-    trace_size = 1
-  )
+  ) +
+  geom_point_trace(trace_size = 1)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
