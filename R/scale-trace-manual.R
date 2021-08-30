@@ -1,4 +1,3 @@
-
 #' @rdname ggplot2::scale_manual
 #' @export
 scale_trace_colour_manual <- function(..., values, aesthetics = "trace_colour", breaks = waiver(), na.value = "grey50") {
@@ -9,19 +8,19 @@ scale_trace_colour_manual <- function(..., values, aesthetics = "trace_colour", 
 #' @export
 scale_trace_color_manual <- scale_trace_colour_manual
 
-#' @rdname ggplot2::scale_manual
+#' @rdname scale_trace_colour_manual
 #' @export
 scale_trace_size_manual <- function(..., values, breaks = waiver(), na.value = NA) {
   manual_scale("trace_size", values, breaks, ..., na.value = na.value)
 }
 
-#' @rdname ggplot2::scale_manual
+#' @rdname scale_trace_colour_manual
 #' @export
 scale_trace_linetype_manual <- function(..., values, breaks = waiver(), na.value = "blank") {
   manual_scale("trace_linetype", values, breaks, ..., na.value = na.value)
 }
 
-#' @rdname ggplot2::scale_manual
+#' @rdname scale_trace_colour_manual
 #' @export
 scale_trace_alpha_manual <- function(..., values, breaks = waiver(), na.value = NA) {
   manual_scale("trace_alpha", values, breaks, ..., na.value = na.value)

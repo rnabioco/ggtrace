@@ -69,3 +69,24 @@ the default plot specification, e.g. [borders()].}
 \description{
 Trace points to improve clarity of plots with overplotted geoms.
 }
+\section{Aesthetics}{
+
+\code{geom_point_trace()} understands the following aesthetics (required aesthetics are in bold):
+\itemize{
+  \item \strong{\code{x}}
+  \item \strong{\code{y}}
+  \item \code{alpha}
+  \item \code{colour}
+  \item \code{fill}
+  \item \code{group}
+  \item \code{shape}
+  \item \code{size}
+  \item \code{stroke}
+  \item \code{trace_alpha}
+  \item \code{trace_colour}
+  \item \code{trace_linetype}
+  \item \code{trace_size}
+}
+Learn more about setting these aesthetics in \code{vignette("ggplot2-specs")}.
+}
+

@@ -1,23 +1,34 @@
-
-#' @rdname ggplot2::scale_size
-#' @export
+#' @rdname scale_trace_size
 #' @usage NULL
+#' @export
 scale_trace_size_continuous <- function(name = waiver(), breaks = waiver(), labels = waiver(),
                                         limits = NULL, range = c(1, 6),
                                         trans = "identity", guide = "legend") {
 
-  continuous_scale("trace_size", "area", area_pal(range), name = name,
+  continuous_scale("trace_size", "area", scales::area_pal(range), name = name,
     breaks = breaks, labels = labels, limits = limits, trans = trans,
     guide = guide)
 }
 
-#' @rdname ggplot2::scale_size
+#' @inherit ggplot2::scale_size
+#' @order 1
 #' @export
 scale_trace_size <- scale_trace_size_continuous
 
-#' @rdname ggplot2::scale_size
+#' @rdname scale_trace_size
 #' @export
+scale_trace_size_binned <- function(name = waiver(), breaks = waiver(), labels = waiver(),
+                                    limits = NULL, range = c(1, 6), n.breaks = NULL,
+                                    nice.breaks = TRUE, trans = "identity", guide = "bins") {
+
+  binned_scale("trace_size", "area_b", scales::area_pal(range), name = name,
+               breaks = breaks, labels = labels, limits = limits, trans = trans,
+               n.breaks = n.breaks, nice.breaks = nice.breaks, guide = guide)
+}
+
+#' @rdname scale_trace_size
 #' @usage NULL
+#' @export
 scale_trace_size_discrete <- function(...) {
 
   rlang::warn("Using size for a discrete variable is not advised.")
@@ -25,10 +36,11 @@ scale_trace_size_discrete <- function(...) {
   scale_trace_size_ordinal(...)
 }
 
-#' @rdname ggplot2::scale_size
-#' @export
+#' @rdname scale_trace_size
 #' @usage NULL
+#' @export
 scale_trace_size_ordinal <- function(..., range = c(2, 6)) {
+
   force(range)
 
   discrete_scale(
@@ -41,3 +53,25 @@ scale_trace_size_ordinal <- function(..., range = c(2, 6)) {
     ...
   )
 }
+
+#' @inheritDotParams ggplot2::continuous_scale -aesthetics -scale_name -palette -rescaler
+#' @param max_size Size of largest points.
+#' @export
+#' @rdname scale_trace_size
+scale_trace_size_area <- function(..., max_size = 6) {
+
+  continuous_scale("trace_size", "area",
+                   palette  = scales::abs_area(max_size),
+                   rescaler = scales::rescale_max, ...)
+}
+
+#' @rdname scale_trace_size
+#' @export
+scale_trace_size_binned_area <- function(..., max_size = 6) {
+
+  binned_scale("trace_size", "area_b",
+               palette  = scales::abs_area(max_size),
+               rescaler = scales::rescale_max, ...)
+}
+
+

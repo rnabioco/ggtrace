@@ -2,6 +2,7 @@
 % Please edit documentation in R/scale-trace-hue.R
 \name{scale_trace_colour_hue}
 \alias{scale_trace_colour_hue}
+\alias{scale_trace_color_hue}
 \title{Evenly spaced colours for discrete data}
 \usage{
 scale_trace_colour_hue(

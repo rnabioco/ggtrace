@@ -2,7 +2,9 @@
 % Please edit documentation in R/scale-trace-colour.R
 \name{scale_trace_colour_continuous}
 \alias{scale_trace_colour_continuous}
+\alias{scale_trace_color_continuous}
 \alias{scale_trace_colour_binned}
+\alias{scale_trace_color_binned}
 \title{Continuous and binned colour scales}
 \usage{
 scale_trace_colour_continuous(

@@ -40,6 +40,7 @@
 #'    rather than combining with them. This is most useful for helper functions
 #'    that define both data and aesthetics and shouldn't inherit behaviour from
 #'    the default plot specification, e.g. [borders()].
+#' @eval rd_aesthetics("geom", "point_trace")
 #' @rdname geom_point_trace
 #' @export
 # https://stackoverflow.com/questions/67573707/ggplot-extension-function-to-plot-a-superimposed-mean-in-a-scatterplot
@@ -85,8 +86,9 @@ GeomPointTrace <- ggplot2::ggproto(
     alpha  = 1,
     size   = 1.5,
     stroke = 0.5,
-    trace_size     = 1,
     trace_color    = "black",
+    trace_alpha    = 1,
+    trace_size     = 1,
     trace_linetype = 1
   ),
 
@@ -105,8 +107,7 @@ GeomPointTrace <- ggplot2::ggproto(
     }
 
     data$trace_shape <- translate_trace_shape(data$shape)
-
-    data <- translate_trace_size(data)
+    data             <- calculate_trace_size(data)
 
     coords <- coord$transform(data, panel_params)
 
@@ -116,18 +117,10 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$trace_shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$trace_colour, 1),
+        col      = alpha(coords$trace_colour, coords$trace_alpha),
         lty      = coords$trace_linetype,
         fontsize = coords$trace_fontsize,
         lwd      = coords$trace_lwd
-
-        # Closed shape
-        # fontsize = coords$size * .pt + coords$stroke * .stroke / 2 + coords$trace_size * .stroke / 2,
-        # lwd      = coords$trace_size * .stroke / 2 + coords$stroke * .stroke / 2
-
-        # Open shape
-        # fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
-        # lwd      = (coords$trace_size * 2) * .stroke / 2 + coords$stroke * .stroke / 2
       )
     )
 
@@ -161,37 +154,37 @@ translate_shape_string <- function(shape_string) {
     return(shape_string)
   }
 
-  pch_table <- c(
-    "square open"           = 0,
-    "circle open"           = 1,
-    "triangle open"         = 2,
-    "plus"                  = 3,
-    "cross"                 = 4,
-    "diamond open"          = 5,
-    "triangle down open"    = 6,
-    "square cross"          = 7,
-    "asterisk"              = 8,
-    "diamond plus"          = 9,
-    "circle plus"           = 10,
-    "star"                  = 11,
-    "square plus"           = 12,
-    "circle cross"          = 13,
-    "square triangle"       = 14,
-    "triangle square"       = 14,
-    "square"                = 15,
-    "circle small"          = 16,
-    "triangle"              = 17,
-    "diamond"               = 18,
-    "circle"                = 19,
-    "bullet"                = 20,
-    "circle filled"         = 21,
-    "square filled"         = 22,
-    "diamond filled"        = 23,
-    "triangle filled"       = 24,
-    "triangle down filled"  = 25
+  pch_tbl <- c(
+    "square open"          = 0,
+    "circle open"          = 1,
+    "triangle open"        = 2,
+    "plus"                 = 3,
+    "cross"                = 4,
+    "diamond open"         = 5,
+    "triangle down open"   = 6,
+    "square cross"         = 7,
+    "asterisk"             = 8,
+    "diamond plus"         = 9,
+    "circle plus"          = 10,
+    "star"                 = 11,
+    "square plus"          = 12,
+    "circle cross"         = 13,
+    "square triangle"      = 14,
+    "triangle square"      = 14,
+    "square"               = 15,
+    "circle small"         = 16,
+    "triangle"             = 17,
+    "diamond"              = 18,
+    "circle"               = 19,
+    "bullet"               = 20,
+    "circle filled"        = 21,
+    "square filled"        = 22,
+    "diamond filled"       = 23,
+    "triangle filled"      = 24,
+    "triangle down filled" = 25
   )
 
-  shape_match <- charmatch(shape_string, names(pch_table))
+  shape_match <- charmatch(shape_string, names(pch_tbl))
 
   invalid_strings <- is.na(shape_match)
   nonunique_strings <- shape_match == 0
@@ -208,7 +201,7 @@ translate_shape_string <- function(shape_string) {
       ""
     }
 
-    abort(glue("Can't find shape name:", collapsed_names, more_problems))
+    rlang::abort(glue::glue("Can't find shape name:", collapsed_names, more_problems))
   }
 
   if (any(nonunique_strings)) {
@@ -217,7 +210,7 @@ translate_shape_string <- function(shape_string) {
 
     n_matches <- vapply(
       bad_string[1:min(5, n_bad)],
-      function(shape_string) sum(grepl(paste0("^", shape_string), names(pch_table))),
+      function(shape_string) sum(grepl(paste0("^", shape_string), names(pch_tbl))),
       integer(1)
     )
 
@@ -232,10 +225,10 @@ translate_shape_string <- function(shape_string) {
       ""
     }
 
-    abort(glue("Shape names must be unambiguous:", collapsed_names, more_problems))
+    rlang::abort(glue::glue("Shape names must be unambiguous:", collapsed_names, more_problems))
   }
 
-  unname(pch_table[shape_match])
+  unname(pch_tbl[shape_match])
 }
 
 #' Helper to adjust trace size
@@ -244,7 +237,7 @@ translate_shape_string <- function(shape_string) {
 #' fontsize and lwd.
 #'
 #' @noRd
-translate_trace_size <- function(data) {
+calculate_trace_size <- function(data) {
   pch_open <- 0:14
 
   pch <- data$shape
@@ -289,9 +282,13 @@ translate_trace_shape <- function(pch) {
     "15" = 0,      # "square"
     "16" = 1,      # "circle small"
     "17" = 2,      # "triangle"
-    "19" = 19,     # "circle"
-    "20" = 20      # "bullet"
+    "19" = 1       # "circle"
+
+    # Exclude shapes that are filled
+    # Exclude diamond and bullet since they do not have an open shape of the
+    # same size
     # "18" = 18,     # "diamond"
+    # "20" = 20      # "bullet"
     # "21" = 21,     # "circle filled"
     # "22" = 22,     # "square filled"
     # "23" = 23,     # "diamond filled"
@@ -300,8 +297,7 @@ translate_trace_shape <- function(pch) {
   )
 
   pch_match <- charmatch(pch, names(pch_tbl))
-
-  bad_pch <- is.na(pch_match)
+  bad_pch   <- is.na(pch_match)
 
   if (any(bad_pch)) {
 
