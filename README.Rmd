@@ -70,7 +70,7 @@ A single cluster can be highlighted using standard ggplot2 syntax.
 p +
   geom_point() +
   geom_point_trace(
-    data = ~ subset(.x, cluster == "c1"),
+    data = ~ subset(.x, cluster %in% c("c1", "c10")),
     trace_size = 1
   )
 ```
