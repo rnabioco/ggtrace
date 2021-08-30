@@ -68,6 +68,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 }
 
 #' GeomPointTrace
+#'
 #' @rdname ggplot2-ggproto
 #' @format NULL
 #' @usage NULL
@@ -113,10 +114,8 @@ GeomPointTrace <- ggplot2::ggproto(
 
     g_trace <- grid::pointsGrob(
       coords$x, coords$y,
-
       pch = coords$trace_shape,
-
-      gp = grid::gpar(
+      gp  = grid::gpar(
         col      = alpha(coords$trace_colour, coords$trace_alpha),
         lty      = coords$trace_linetype,
         fontsize = coords$trace_fontsize,
@@ -126,21 +125,18 @@ GeomPointTrace <- ggplot2::ggproto(
 
     g_points <- grid::pointsGrob(
       coords$x, coords$y,
-
       pch = coords$shape,
-
-      gp = grid::gpar(
+      gp  = grid::gpar(
         col      = alpha(coords$colour, coords$alpha),
         fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
         lwd      = coords$stroke * .stroke / 2
-        # fill     = alpha(coords$fill, coords$alpha),
       )
     )
 
     ggname("geom_point_trace", grid::grobTree(g_trace, g_points))
   },
 
-  draw_key = ggplot2::draw_key_point
+  draw_key = draw_key_point_trace
 )
 
 
