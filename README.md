@@ -101,10 +101,7 @@ ggplot(
   scale_color_gradientn(
     colors = c("white", "red")
   ) +
-  geom_point_trace(
-    size       = 5,
-    trace_size = 1
-  )
+  geom_point_trace(trace_size = 1)
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
