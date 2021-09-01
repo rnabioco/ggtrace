@@ -41,17 +41,61 @@
 #'    that define both data and aesthetics and shouldn't inherit behaviour from
 #'    the default plot specification, e.g. [borders()].
 #' @eval rd_aesthetics("geom", "point_trace")
-#' @rdname geom_point_trace
+#' @importFrom dplyr filter mutate
 #' @export
 # https://stackoverflow.com/questions/67573707/ggplot-extension-function-to-plot-a-superimposed-mean-in-a-scatterplot
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                              ..., trace_position = "all", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
 
-  if (!trace_position %in% c("all", "bottom")) {
-    stop("trace_position must be either 'all' or 'bottom'")
+  if (rlang::is_call(rlang::enexpr(trace_position))) {
+
+    bkgd_data <- data
+
+    if (!is.null(data)) {
+      data <- ggplot2::fortify(data)
+    }
+
+    if (rlang::is_function(data)) {
+
+      data_fn <- data
+
+      data <- ggplot2::fortify(~ dplyr::filter(data_fn(...), {{trace_position}}))
+
+    } else if (is.data.frame(data) || is.null(data)) {
+
+      data <- ggplot2::fortify(~ dplyr::filter(.x, {{trace_position}}))
+    }
+
+    bkgd_params  <- list(na.rm = na.rm, ...)
+    bkgd_params  <- bkgd_params[!grepl("^trace_", names(bkgd_params))]
+    bkgd_mapping <- mapping[!grepl("^trace_", names(mapping))]
+
+    bkgd_lyr <- ggplot2::layer(
+      data        = bkgd_data,
+      mapping     = bkgd_mapping,
+      stat        = stat,
+      geom        = ggplot2::GeomPoint,
+      position    = position,
+      show.legend = show.legend,
+      inherit.aes = inherit.aes,
+      params      = bkgd_params
+    )
+
+  } else if (is.character(rlang::enexpr(trace_position)) && trace_position == "bottom") {
+
+    data <- ggplot2::fortify(~ dplyr::mutate(.x, BOTTOM_TRACE_GROUP = "BOTTOM_TRACE_GROUP"))
+
+    if (is.null(mapping)) {
+      mapping <- ggplot2::aes()
+    }
+
+    mapping$group <- sym("BOTTOM_TRACE_GROUP")
+
+  } else if (!is.character(rlang::enexpr(trace_position)) || !trace_position %in% c("all", "bottom")) {
+    stop("trace_position must be 'all' or 'bottom' or a predicate specifying which points to trace")
   }
 
-  layer(
+  trace_lyr <- layer(
     data        = data,
     mapping     = mapping,
     stat        = stat,
@@ -59,12 +103,14 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params      = list(
-      trace_position = trace_position,
-      na.rm = na.rm,
-      ...
-    )
+    params      = list(na.rm = na.rm, ...)
   )
+
+  if (rlang::is_call(rlang::enexpr(trace_position))) {
+    trace_lyr <- list(bkgd_lyr, trace_lyr)
+  }
+
+  trace_lyr
 }
 
 #' GeomPointTrace
@@ -81,27 +127,19 @@ GeomPointTrace <- ggplot2::ggproto(
   non_missing_aes = c("size", "shape", "colour", "trace_size", "trace_colour", "trace_linetype"),
 
   default_aes = ggplot2::aes(
-    shape  = 19,
-    colour = "black",
-    fill   = NA,
-    alpha  = 1,
-    size   = 1.5,
-    stroke = 0.5,
+    shape          = 19,
+    colour         = "black",
+    fill           = NA,
+    alpha          = 1,
+    size           = 1.5,
+    stroke         = 0.5,
     trace_color    = "black",
     trace_alpha    = 1,
     trace_size     = 1,
     trace_linetype = 1
   ),
 
-  setup_data = function(data, params) {
-    if (params$trace_position == "bottom") {
-      data$group <- -1
-    }
-
-    data
-  },
-
-  draw_group = function(data, panel_params, coord, trace_position = "all", na.rm = FALSE) {
+  draw_group = function(self, data, panel_params, coord, trace_position = "all", na.rm = FALSE) {
 
     if (is.character(data$shape)) {
       data$shape <- translate_shape_string(data$shape)
@@ -307,4 +345,10 @@ translate_trace_shape <- function(pch) {
   res
 }
 
+#' Helper to name grid objects
+#' @noRd
+ggname <- function(prefix, grob) {
+  grob$name <- grid::grobName(grob, prefix)
 
+  grob
+}
