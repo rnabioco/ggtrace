@@ -125,7 +125,7 @@ p +
 ## Position
 
 The ‘position’ of the outline can be modified with the
-`outline_position` parameter. This can be ‘all’, ‘bottom’, or a
+`trace_position` parameter. This can be ‘all’, ‘bottom’, or a
 predicate selecting the points to outline. By default ‘all’ groups are
 outlined.
 
@@ -148,7 +148,7 @@ p +
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 A subset of data points can be highlighted by passing a predicate to
-`outline_position`. This must evaluate to `TRUE` or `FALSE` within the
+`trace_position`. This must evaluate to `TRUE` or `FALSE` within the
 context of the input data.
 
 ``` r
