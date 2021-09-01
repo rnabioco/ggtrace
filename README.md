@@ -18,9 +18,7 @@ distinguish between groups based on color alone. ggtrace provides
 ggplot2 geoms that highlight groups of data points with an outline for
 emphasis.
 
-<br>
-
-## Installation
+### Installation
 
 You can install the development version of ggtrace from
 [GitHub](https://github.com/rnabioco/ggtrace) with:
