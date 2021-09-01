@@ -1,13 +1,16 @@
+#' Base ggproto classes for ggplot2
+#'
+#' If you are creating a new geom, stat, position, or scale in another package,
+#' you'll need to extend from `ggplot2::Geom`, `ggplot2::Stat`,
+#' `ggplot2::Position`, or `ggplot2::Scale`.
+#'
+#' @seealso ggproto
+#' @keywords internal
+#' @name ggplot2-ggproto
+NULL
 
-#' Name ggplot grid object
-#' Helper to name grid objects
-#' https://github.com/tidyverse/ggplot2/blob/master/R/utilities-grid.r
-#' @noRd
-ggname <- function(prefix, grob) {
-  grob$name <- grid::grobName(grob, prefix)
-  grob
-}
-
+# Helpers used to add info for geom documentation
+# https://github.com/tidyverse/ggplot2/blob/master/R/utilities-help.r
 rd_aesthetics <- function(type, name) {
   obj <- switch(
     type,
@@ -46,6 +49,8 @@ rd_aesthetics_item <- function(x) {
   )
 }
 
+# Used by rd_aesthetics
+# https://github.com/tidyverse/ggplot2/blob/master/R/layer.r
 check_subclass <- function(x, subclass, argname = to_lower_ascii(subclass),
                            env = parent.frame()) {
 
@@ -71,16 +76,16 @@ check_subclass <- function(x, subclass, argname = to_lower_ascii(subclass),
 }
 
 # Look for object first in parent environment and if not found, then in
-# ggplot2 namespace environment.  This makes it possible to override default
+# ggplot2 namespace environment. This makes it possible to override default
 # scales by setting them in the parent environment.
+# Used by check_subclass
+# https://github.com/tidyverse/ggplot2/blob/master/R/scale-type.R
 find_global <- function(name, env, mode = "any") {
-
   if (exists(name, envir = env, mode = mode)) {
     return(get(name, envir = env, mode = mode))
   }
 
   nsenv <- asNamespace("ggplot2")
-
   if (exists(name, envir = nsenv, mode = mode)) {
     return(get(name, envir = nsenv, mode = mode))
   }
@@ -88,6 +93,9 @@ find_global <- function(name, env, mode = "any") {
   NULL
 }
 
+# Convert to camel case
+# Used by check_subclass
+# https://github.com/tidyverse/ggplot2/blob/master/R/layer.r
 camelize <- function(x, first = FALSE) {
   x <- gsub("_(.)", "\\U\\1", x, perl = TRUE)
 
@@ -98,20 +106,15 @@ camelize <- function(x, first = FALSE) {
   x
 }
 
+# Used by camelize
+# https://github.com/tidyverse/ggplot2/blob/master/R/utilities.r
 firstUpper <- function(s) {
   paste0(to_upper_ascii(substring(s, 1, 1)), substring(s, 2))
 }
 
-# Use chartr() for safety since toupper() fails to convert i to I in Turkish locale
+# Used by camelize and check_subclass
+# https://github.com/tidyverse/ggplot2/blob/master/R/utilities.r
 lower_ascii <- "abcdefghijklmnopqrstuvwxyz"
 upper_ascii <- "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 to_lower_ascii <- function(x) chartr(upper_ascii, lower_ascii, x)
 to_upper_ascii <- function(x) chartr(lower_ascii, upper_ascii, x)
-
-binned_pal <- function(palette) {
-  function(x) {
-    palette(length(x))
-  }
-}
-
-is.waive <- function(x) inherits(x, "waiver")

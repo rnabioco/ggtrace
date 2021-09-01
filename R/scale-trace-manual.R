@@ -138,3 +138,6 @@ manual_scale <- function(aesthetic, values = NULL, breaks = waiver(), ..., limit
   }
   discrete_scale(aesthetic, "manual", pal, breaks = breaks, limits = limits, ...)
 }
+
+is.waive <- function(x) inherits(x, "waiver")
+

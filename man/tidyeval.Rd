@@ -2,6 +2,11 @@
 % Please edit documentation in R/utilities-tidy-eval.R
 \name{tidyeval}
 \alias{tidyeval}
+\alias{abort}
+\alias{warn}
+\alias{is_call}
+\alias{is_function}
+\alias{is_missing}
 \alias{expr}
 \alias{enquo}
 \alias{enquos}

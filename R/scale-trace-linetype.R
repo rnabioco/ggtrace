@@ -10,6 +10,12 @@ scale_trace_linetype_binned <- function(..., na.value = "blank") {
   binned_scale("trace_linetype", "linetype_b", binned_pal(scales::linetype_pal()), ...)
 }
 
+binned_pal <- function(palette) {
+  function(x) {
+    palette(length(x))
+  }
+}
+
 #' @rdname scale_trace_linetype
 #' @export
 scale_trace_linetype_continuous <- function(...) {
