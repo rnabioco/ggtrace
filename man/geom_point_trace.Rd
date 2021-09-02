@@ -11,6 +11,7 @@ geom_point_trace(
   position = "identity",
   ...,
   trace_position = "all",
+  background_color = NULL,
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -48,9 +49,16 @@ aesthetics, used to set an aesthetic to a fixed value, like
 `colour = "red"` or `size = 3`. They may also be parameters to the
 paired geom/stat.}
 
-\item{trace_position}{Specifies how groups of points should be traced.
-If `all`, the default, every group plotted will be traced, if `bottom`,
-only the bottom most layer of points will be traced.}
+\item{trace_position}{Specifies which groups of data points should be
+outlined. Can be 'all', 'bottom', or a predicate to use for filtering
+data. If 'all', the default, every group plotted will be outlined, if
+'bottom', only the bottom most layer of points will be outlined. A
+subset of data points can be outlined by passing a predicate. This must
+evaluate to `TRUE` or `FALSE` within the context of the input data.}
+
+\item{background_color}{Color to use for background points when a predicate
+is passed to `trace_position`. If NULL, the original point color will be
+used.}
 
 \item{na.rm}{If `FALSE`, the default, missing values are removed with a
 warning. If `TRUE`, missing values are silently removed.}
@@ -77,7 +85,6 @@ Trace points to improve clarity of plots with overplotted geoms.
   \item \strong{\code{y}}
   \item \code{alpha}
   \item \code{colour}
-  \item \code{fill}
   \item \code{group}
   \item \code{shape}
   \item \code{size}

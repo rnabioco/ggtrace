@@ -142,3 +142,21 @@ p +
     trace_position = signal < 0
   )
 ```
+
+```{r TEST, eval = FALSE}
+
+clusters %>%
+  ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
+  geom_point_trace(
+    trace_position = signal < 0,
+    background_color = "grey80",
+    trace_color = NA,
+    alpha = 0.1,
+    size = 5
+  ) +
+  theme_void()
+
+```
+
+
+

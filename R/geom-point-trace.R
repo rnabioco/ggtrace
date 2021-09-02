@@ -26,9 +26,15 @@
 #'     aesthetics, used to set an aesthetic to a fixed value, like
 #'     `colour = "red"` or `size = 3`. They may also be parameters to the
 #'     paired geom/stat.
-#' @param trace_position Specifies how groups of points should be traced.
-#'     If `all`, the default, every group plotted will be traced, if `bottom`,
-#'     only the bottom most layer of points will be traced.
+#' @param trace_position Specifies which groups of data points should be
+#'     outlined. Can be 'all', 'bottom', or a predicate to use for filtering
+#'     data. If 'all', the default, every group plotted will be outlined, if
+#'     'bottom', only the bottom most layer of points will be outlined. A
+#'     subset of data points can be outlined by passing a predicate. This must
+#'     evaluate to `TRUE` or `FALSE` within the context of the input data.
+#' @param background_color Color to use for background points when a predicate
+#'     is passed to `trace_position`. If NULL, the original point color will be
+#'     used.
 #' @param na.rm If `FALSE`, the default, missing values are removed with a
 #'     warning. If `TRUE`, missing values are silently removed.
 #' @param show.legend logical. Should this layer be included in the legends?
@@ -41,33 +47,50 @@
 #'    that define both data and aesthetics and shouldn't inherit behaviour from
 #'    the default plot specification, e.g. [borders()].
 #' @eval rd_aesthetics("geom", "point_trace")
-#' @importFrom dplyr filter mutate
 #' @export
-# https://stackoverflow.com/questions/67573707/ggplot-extension-function-to-plot-a-superimposed-mean-in-a-scatterplot
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                             ..., trace_position = "all", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+                             ..., trace_position = "all", background_color = NULL, na.rm = FALSE,
+                             show.legend = NA, inherit.aes = TRUE) {
 
-  if (rlang::is_call(rlang::enexpr(trace_position))) {
+  # Store trace_position as expression to pass to fortify
+  trace_expr <- enexpr(trace_position)
 
+  # If trace_position includes a logical operator is_call will evaluate TRUE,
+  # character, numeric, and symbol will evaluate FALSE
+  if (is_call(trace_expr)) {
+
+    # Store original data input to use for background points
     bkgd_data <- data
 
+    # If data is not NULL, the user has passed a data.frame, function, or
+    # formula to the geom. Need to fortify this before applying the predicate
+    # passed through trace_position. For a formula fortify will return an
+    # anonymous function, a data.frame will be returned if a data.frame is
+    # passed
     if (!is.null(data)) {
       data <- ggplot2::fortify(data)
     }
 
-    if (rlang::is_function(data)) {
-
-      data_fn <- data
-
-      data <- ggplot2::fortify(~ dplyr::filter(data_fn(...), {{trace_position}}))
+    # If fortify returned a function, need to pass dots to this within a new
+    # formula. This is passed back to fortify to generate an anonymous function
+    # that encompasses what was passed to both data and trace_position
+    if (is_function(data)) {
+      d_fn <- data
+      data <- ggplot2::fortify(~ subset(d_fn(...), eval(trace_expr)))
 
     } else if (is.data.frame(data) || is.null(data)) {
-
-      data <- ggplot2::fortify(~ dplyr::filter(.x, {{trace_position}}))
+      data <- ggplot2::fortify(~ subset(.x, eval(trace_expr)))
     }
 
+    # For the background points, need to remove the trace parameters before
+    # generating GeomPoint layer, otherwise get argument warning
     bkgd_params  <- list(na.rm = na.rm, ...)
     bkgd_params  <- bkgd_params[!grepl("^trace_", names(bkgd_params))]
+
+    if (!is.null(background_color)) {
+      bkgd_params$colour <- background_color
+    }
+
     bkgd_mapping <- mapping[!grepl("^trace_", names(mapping))]
 
     bkgd_lyr <- ggplot2::layer(
@@ -81,9 +104,11 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
       params      = bkgd_params
     )
 
-  } else if (is.character(rlang::enexpr(trace_position)) && trace_position == "bottom") {
+  # If trace_position is 'bottom', create new column and use to override
+  # original group specification.
+  } else if (is.character(trace_expr) && trace_position == "bottom") {
 
-    data <- ggplot2::fortify(~ dplyr::mutate(.x, BOTTOM_TRACE_GROUP = "BOTTOM_TRACE_GROUP"))
+    data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "BOTTOM_TRACE_GROUP"))
 
     if (is.null(mapping)) {
       mapping <- ggplot2::aes()
@@ -91,10 +116,11 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 
     mapping$group <- sym("BOTTOM_TRACE_GROUP")
 
-  } else if (!is.character(rlang::enexpr(trace_position)) || !trace_position %in% c("all", "bottom")) {
+  } else if (!is.character(trace_expr) || trace_position != "all") {
     stop("trace_position must be 'all' or 'bottom' or a predicate specifying which points to trace")
   }
 
+  # Create GeomPointTrace layer
   trace_lyr <- layer(
     data        = data,
     mapping     = mapping,
@@ -106,7 +132,8 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     params      = list(na.rm = na.rm, ...)
   )
 
-  if (rlang::is_call(rlang::enexpr(trace_position))) {
+  # Return list with background and trace layers
+  if (is_call(trace_expr)) {
     trace_lyr <- list(bkgd_lyr, trace_lyr)
   }
 
@@ -124,22 +151,24 @@ GeomPointTrace <- ggplot2::ggproto(
 
   required_aes = c("x", "y"),
 
-  non_missing_aes = c("size", "shape", "colour", "trace_size", "trace_colour", "trace_linetype"),
+  non_missing_aes = c(
+    "size", "shape", "colour",
+    "trace_size", "trace_linetype"
+  ),
 
   default_aes = ggplot2::aes(
     shape          = 19,
     colour         = "black",
-    fill           = NA,
-    alpha          = 1,
     size           = 1.5,
     stroke         = 0.5,
+    alpha          = NA,
     trace_color    = "black",
-    trace_alpha    = 1,
     trace_size     = 1,
-    trace_linetype = 1
+    trace_linetype = 1,
+    trace_alpha    = NA
   ),
 
-  draw_group = function(self, data, panel_params, coord, trace_position = "all", na.rm = FALSE) {
+  draw_group = function(self, data, panel_params, coord, na.rm = FALSE) {
 
     if (is.character(data$shape)) {
       data$shape <- translate_shape_string(data$shape)

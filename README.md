@@ -18,7 +18,9 @@ distinguish between groups based on color alone. ggtrace provides
 ggplot2 geoms that highlight groups of data points with an outline for
 emphasis.
 
-### Installation
+<br>
+
+## Installation
 
 You can install the development version of ggtrace from
 [GitHub](https://github.com/rnabioco/ggtrace) with:
@@ -125,7 +127,7 @@ p +
 ## Position
 
 The ‘position’ of the outline can be modified with the
-`trace_position` parameter. This can be ‘all’, ‘bottom’, or a
+`outline_position` parameter. This can be ‘all’, ‘bottom’, or a
 predicate selecting the points to outline. By default ‘all’ groups are
 outlined.
 
@@ -148,7 +150,7 @@ p +
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 A subset of data points can be highlighted by passing a predicate to
-`trace_position`. This must evaluate to `TRUE` or `FALSE` within the
+`outline_position`. This must evaluate to `TRUE` or `FALSE` within the
 context of the input data.
 
 ``` r
@@ -159,3 +161,16 @@ p +
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+
+``` r
+clusters %>%
+  ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
+  geom_point_trace(
+    trace_position = signal < 0,
+    background_color = "grey80",
+    trace_color = NA,
+    alpha = 0.1,
+    size = 5
+  ) +
+  theme_void()
+```
