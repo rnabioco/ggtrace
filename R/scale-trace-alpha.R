@@ -1,4 +1,11 @@
-#' @inherit ggplot2::scale_alpha
+#' Alpha transparency scales
+#'
+#' Alpha-transparency scales are not tremendously useful, but can be a
+#' convenient way to visually down-weight less important observations.
+#' scale_alpha() is an alias for scale_alpha_continuous() since that is the
+#' most common use of alpha, and it saves a bit of typing.
+#'
+#' @inheritParams ggplot2::scale_alpha
 #' @export
 scale_trace_alpha <- function(..., range = c(0.1, 1)) {
 

@@ -28,24 +28,6 @@ breaks, labels and so forth.}
 \description{
 Alpha-transparency scales are not tremendously useful, but can be a
 convenient way to visually down-weight less important observations.
-\code{scale_alpha()} is an alias for \code{scale_alpha_continuous()} since
-that is the most common use of alpha, and it saves a bit of typing.
-}
-\examples{
-p <- ggplot(mpg, aes(displ, hwy)) +
-  geom_point(aes(alpha = year))
-
-p
-p + scale_alpha("cylinders")
-p + scale_alpha(range = c(0.4, 0.8))
-}
-\seealso{
-Other colour scales: 
-\code{\link[ggplot2]{scale_colour_brewer}()},
-\code{\link[ggplot2]{scale_colour_continuous}()},
-\code{\link[ggplot2]{scale_colour_gradient}()},
-\code{\link[ggplot2]{scale_colour_grey}()},
-\code{\link[ggplot2]{scale_colour_hue}()},
-\code{\link[ggplot2]{scale_colour_steps}()},
-\code{\link[ggplot2]{scale_colour_viridis_d}()}
+scale_alpha() is an alias for scale_alpha_continuous() since that is the
+most common use of alpha, and it saves a bit of typing.
 }

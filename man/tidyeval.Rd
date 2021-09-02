@@ -8,6 +8,7 @@
 \alias{is_function}
 \alias{is_missing}
 \alias{expr}
+\alias{enexpr}
 \alias{enquo}
 \alias{enquos}
 \alias{sym}

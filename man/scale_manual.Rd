@@ -125,6 +125,7 @@ and references therein.
 }
 
 \examples{
+\dontrun{
 p <- ggplot(mtcars, aes(mpg, wt)) +
   geom_point(aes(colour = factor(cyl)))
 p + scale_colour_manual(values = c("red", "blue", "green"))
@@ -156,4 +157,5 @@ p + scale_colour_manual(
 # And limits to control the possible values of the scale
 p + scale_colour_manual(values = cols, limits = c("4", "8"))
 p + scale_colour_manual(values = cols, limits = c("4", "6", "8", "10"))
+}
 }

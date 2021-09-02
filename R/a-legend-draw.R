@@ -10,14 +10,16 @@
 #'   display in this key
 #' @param params A list of additional parameters supplied to the geom.
 #' @param size Width and height of key in mm.
-#' @return A grid grob.
 #' @examples
+#' \dontrun{
 #' p <- ggplot(economics, aes(date, psavert, color = "savings rate"))
 #' # key glyphs can be specified by their name
 #' p + geom_line(key_glyph = "timeseries")
 #'
 #' # key glyphs can be specified via their drawing function
 #' p + geom_line(key_glyph = draw_key_rect)
+#' }
+#' @return A grid grob.
 #' @export
 draw_key_point_trace <- function(data, params, size) {
 

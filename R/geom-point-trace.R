@@ -108,7 +108,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
   # original group specification.
   } else if (is.character(trace_expr) && trace_position == "bottom") {
 
-    data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "BOTTOM_TRACE_GROUP"))
+    data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
 
     if (is.null(mapping)) {
       mapping <- ggplot2::aes()
@@ -158,7 +158,7 @@ GeomPointTrace <- ggplot2::ggproto(
 
   default_aes = ggplot2::aes(
     shape          = 19,
-    colour         = "black",
+    colour         = "white",
     size           = 1.5,
     stroke         = 0.5,
     alpha          = NA,
