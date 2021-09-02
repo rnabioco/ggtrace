@@ -74,9 +74,7 @@ ggplot(
   aes(UMAP_1, UMAP_2, trace_color = cluster)
 ) +
   theme_minimal() +
-  geom_point_trace(
-    trace_size = 2
-  )
+  geom_point_trace()
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
@@ -112,8 +110,7 @@ p <- ggplot(
 
 p +
   geom_point_trace(
-    color      = "white",
-    trace_size = 2
+    color = "white"
   ) +
   scale_trace_color_manual(
     values = c("red", "#0072B2")
@@ -162,15 +159,15 @@ p +
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
+The color of background points can be modified using the
+`background_color` argument.
+
 ``` r
-clusters %>%
-  ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
+p +
   geom_point_trace(
-    trace_position = signal < 0,
-    background_color = "grey80",
-    trace_color = NA,
-    alpha = 0.1,
-    size = 5
-  ) +
-  theme_void()
+    trace_position   = signal < 0,
+    background_color = "grey75"
+  )
 ```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />

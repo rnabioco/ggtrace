@@ -73,9 +73,7 @@ ggplot(
   aes(UMAP_1, UMAP_2, trace_color = cluster)
 ) +
   theme_minimal() +
-  geom_point_trace(
-    trace_size = 2
-  )
+  geom_point_trace()
 ```
 
 By specifying `group` within `aes()`, outlines can also be added when coloring with a continuous variable.
@@ -105,8 +103,7 @@ p <- ggplot(
 
 p +
   geom_point_trace(
-    color      = "white",
-    trace_size = 2
+    color = "white"
   ) +
   scale_trace_color_manual(
     values = c("red", "#0072B2")
@@ -121,7 +118,7 @@ The 'position' of the outline can be modified with the `outline_position` parame
 
 To only add a single outline around all points plotted, set `trace_position` to 'bottom'.
 
-```{r, fig.width = 8, fig.height = 6}
+```{r}
 p <- ggplot(
   clusters,
   aes(UMAP_1, UMAP_2, color = cluster)
@@ -143,20 +140,12 @@ p +
   )
 ```
 
-```{r TEST, eval = FALSE}
+The color of background points can be modified using the `background_color` argument.
 
-clusters %>%
-  ggplot(aes(UMAP_1, UMAP_2, color = cluster)) +
+```{r}
+p +
   geom_point_trace(
-    trace_position = signal < 0,
-    background_color = "grey80",
-    trace_color = NA,
-    alpha = 0.1,
-    size = 5
-  ) +
-  theme_void()
-
+    trace_position   = signal < 0,
+    background_color = "grey75"
+  )
 ```
-
-
-
