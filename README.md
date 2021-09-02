@@ -74,7 +74,10 @@ ggplot(
   aes(UMAP_1, UMAP_2, trace_color = cluster)
 ) +
   theme_minimal() +
-  geom_point_trace()
+  geom_point_trace(
+    color      = "black",
+    trace_size = 2
+  )
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />

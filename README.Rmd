@@ -73,7 +73,10 @@ ggplot(
   aes(UMAP_1, UMAP_2, trace_color = cluster)
 ) +
   theme_minimal() +
-  geom_point_trace()
+  geom_point_trace(
+    color      = "black",
+    trace_size = 2
+  )
 ```
 
 By specifying `group` within `aes()`, outlines can also be added when coloring with a continuous variable.
