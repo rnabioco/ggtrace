@@ -56,6 +56,10 @@ data. If 'all', the default, every group plotted will be outlined, if
 subset of data points can be outlined by passing a predicate. This must
 evaluate to `TRUE` or `FALSE` within the context of the input data.}
 
+\item{background_color}{Color to use for background points when a predicate
+is passed to `trace_position`. If NULL, the original fill color will be
+used.}
+
 \item{na.rm}{If `FALSE`, the default, missing values are removed with a
 warning. If `TRUE`, missing values are silently removed.}
 
@@ -69,10 +73,6 @@ display.}
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. [borders()].}
-
-\item{background_fill}{Fill color to use for background points when a predicate
-is passed to `trace_position`. If NULL, the original fill color will be
-used.}
 }
 \description{
 Trace points to improve clarity of plots with overplotted geoms.

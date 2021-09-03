@@ -32,7 +32,7 @@
 #'     'bottom', only the bottom most layer of points will be outlined. A
 #'     subset of data points can be outlined by passing a predicate. This must
 #'     evaluate to `TRUE` or `FALSE` within the context of the input data.
-#' @param background_fill Fill color to use for background points when a predicate
+#' @param background_color Color to use for background points when a predicate
 #'     is passed to `trace_position`. If NULL, the original fill color will be
 #'     used.
 #' @param na.rm If `FALSE`, the default, missing values are removed with a
