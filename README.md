@@ -111,7 +111,7 @@ p <- ggplot(
 
 p +
   geom_point_trace(fill = "white") +
-  scale_fill_manual(values = c("red", "#0072B2"))
+  scale_color_manual(values = c("red", "#0072B2"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
