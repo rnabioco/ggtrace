@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/index.html</loc>
+  </url>
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/reference/clusters.html</loc>
+  </url>
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/reference/draw_key_point_trace.html</loc>
+  </url>
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/reference/geom_point_trace.html</loc>
+  </url>
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/reference/ggplot2-ggproto.html</loc>
+  </url>
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/reference/ggtrace.html</loc>
+  </url>
+  <url>
+    <loc>https://rnabioco.github.io/ggtrace/reference/tidyeval.html</loc>
+  </url>
+</urlset>
