@@ -18,25 +18,25 @@ geom_point_trace(
 )
 }
 \arguments{
-\item{mapping}{Set of aesthetic mappings created by [aes()] or
-[aes_()]. If specified and `inherit.aes = TRUE` (the
+\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{aes()}} or
+\code{\link[ggplot2:aes_]{aes_()}}. If specified and \code{inherit.aes = TRUE} (the
 default), it is combined with the default mapping at the top level of the
-plot. You must supply `mapping` if there is no plot mapping.}
+plot. You must supply \code{mapping} if there is no plot mapping.}
 
 \item{data}{The data to be displayed in this layer. There are three
-   options:
+options:
 
-   If `NULL`, the default, the data is inherited from the plot
-   data as specified in the call to [ggplot()].
+If \code{NULL}, the default, the data is inherited from the plot
+data as specified in the call to \code{\link[ggplot2:ggplot]{ggplot()}}.
 
-   A `data.frame`, or other object, will override the plot
-   data. All objects will be fortified to produce a data frame. See
-   [fortify()] for which variables will be created.
+A \code{data.frame}, or other object, will override the plot
+data. All objects will be fortified to produce a data frame. See
+\code{\link[ggplot2:fortify]{fortify()}} for which variables will be created.
 
-   A `function` will be called with a single argument,
-   the plot data. The return value must be a `data.frame`, and
-   will be used as the layer data. A `function` can be created
-   from a `formula` (e.g. `~ head(.x, 10)`).}
+A \code{function} will be called with a single argument,
+the plot data. The return value must be a \code{data.frame}, and
+will be used as the layer data. A \code{function} can be created
+from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{stat}{The statistical transformation to use on the data for this
 layer, as a string.}
@@ -44,10 +44,10 @@ layer, as a string.}
 \item{position}{Position adjustment, either as a string, or the result of
 a call to a position adjustment function.}
 
-\item{...}{Other arguments passed on to [layer()]. These are often
-aesthetics, used to set an aesthetic to a fixed value, like
-`colour = "red"` or `size = 3`. They may also be parameters to the
-paired geom/stat.}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
+often aesthetics, used to set an aesthetic to a fixed value, like
+\code{colour = "red"} or \code{size = 3}. They may also be parameters
+to the paired geom/stat.}
 
 \item{trace_position}{Specifies which groups of data points should be
 outlined. Can be 'all', 'bottom', or a predicate to use for filtering
@@ -60,19 +60,19 @@ evaluate to `TRUE` or `FALSE` within the context of the input data.}
 is passed to `trace_position`. If NULL, the original fill color will be
 used.}
 
-\item{na.rm}{If `FALSE`, the default, missing values are removed with a
-warning. If `TRUE`, missing values are silently removed.}
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
+a warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
-`NA`, the default, includes if any aesthetics are mapped.
-`FALSE` never includes, and `TRUE` always includes.
+\code{NA}, the default, includes if any aesthetics are mapped.
+\code{FALSE} never includes, and \code{TRUE} always includes.
 It can also be a named logical vector to finely select the aesthetics to
 display.}
 
-\item{inherit.aes}{If `FALSE`, overrides the default aesthetics,
+\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
-the default plot specification, e.g. [borders()].}
+the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
 \description{
 Trace points to improve clarity of plots with overplotted geoms.
