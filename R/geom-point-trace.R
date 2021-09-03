@@ -33,7 +33,7 @@
 #'     subset of data points can be outlined by passing a predicate. This must
 #'     evaluate to `TRUE` or `FALSE` within the context of the input data.
 #' @param background_color Color to use for background points when a predicate
-#'     is passed to `trace_position`. If NULL, the original point color will be
+#'     is passed to `trace_position`. If NULL, the original fill color will be
 #'     used.
 #' @param na.rm If `FALSE`, the default, missing values are removed with a
 #'     warning. If `TRUE`, missing values are silently removed.
@@ -82,22 +82,19 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
       data <- ggplot2::fortify(~ subset(.x, eval(trace_expr)))
     }
 
-    # For the background points, need to remove the trace parameters before
-    # generating GeomPoint layer, otherwise get argument warning
-    bkgd_params  <- list(na.rm = na.rm, ...)
-    bkgd_params  <- bkgd_params[!grepl("^trace_", names(bkgd_params))]
+    # Adjust parameters for background points
+    bkgd_params       <- list(na.rm = na.rm, ...)
+    bkgd_params$color <- NA
 
     if (!is.null(background_color)) {
-      bkgd_params$colour <- background_color
+      bkgd_params$fill <- background_color
     }
 
-    bkgd_mapping <- mapping[!grepl("^trace_", names(mapping))]
-
-    bkgd_lyr <- ggplot2::layer(
+    bkgd_lyr <- layer(
       data        = bkgd_data,
-      mapping     = bkgd_mapping,
+      mapping     = mapping,
       stat        = stat,
-      geom        = ggplot2::GeomPoint,
+      geom        = GeomPointTrace,
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
@@ -151,21 +148,16 @@ GeomPointTrace <- ggplot2::ggproto(
 
   required_aes = c("x", "y"),
 
-  non_missing_aes = c(
-    "size", "shape", "colour",
-    "trace_size", "trace_linetype"
-  ),
+  non_missing_aes = c("size", "shape", "fill"),
 
   default_aes = ggplot2::aes(
-    shape          = 19,
-    colour         = "white",
-    size           = 1.5,
-    stroke         = 0.5,
-    alpha          = NA,
-    trace_color    = "black",
-    trace_size     = 1,
-    trace_linetype = 1,
-    trace_alpha    = NA
+    shape    = 19,
+    colour   = "black",
+    fill     = "white",
+    size     = 1.5,
+    stroke   = 1,
+    linetype = 1,
+    alpha    = NA
   ),
 
   draw_group = function(self, data, panel_params, coord, na.rm = FALSE) {
@@ -183,20 +175,22 @@ GeomPointTrace <- ggplot2::ggproto(
       coords$x, coords$y,
       pch = coords$trace_shape,
       gp  = grid::gpar(
-        col      = alpha(coords$trace_colour, coords$trace_alpha),
-        lty      = coords$trace_linetype,
+        col      = alpha(coords$colour, 1),
+        lty      = coords$linetype,
         fontsize = coords$trace_fontsize,
         lwd      = coords$trace_lwd
       )
     )
 
+    pt_stroke <- 0.5
+
     g_points <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$shape,
       gp  = grid::gpar(
-        col      = alpha(coords$colour, coords$alpha),
-        fontsize = coords$size * .pt + coords$stroke * .stroke / 2,
-        lwd      = coords$stroke * .stroke / 2
+        col      = alpha(coords$fill, coords$alpha),
+        fontsize = coords$size * .pt + pt_stroke * .stroke / 2,
+        lwd      = pt_stroke * .stroke / 2
       )
     )
 
@@ -303,17 +297,19 @@ translate_shape_string <- function(shape_string) {
 calculate_trace_size <- function(data) {
   pch_open <- 0:14
 
+  pt_stroke <- 0.5
+
   pch <- data$shape
 
   # Calculate fontsize for closed shapes
-  fontsize  <- data$size * .pt + data$stroke * .stroke / 2
+  fontsize  <- data$size * .pt + pt_stroke * .stroke / 2
 
-  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$trace_size * .stroke / 2
+  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$stroke * .stroke / 2
 
   # Calculate lwd for open shapes
-  lwd <- data$trace_size * .stroke / 2
+  lwd <- data$stroke * .stroke / 2
 
-  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (data$stroke * .stroke / 2)
+  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (pt_stroke * .stroke / 2)
 
   # Add results to data
   data$trace_fontsize <- fontsize
