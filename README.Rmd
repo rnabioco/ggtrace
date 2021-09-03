@@ -103,7 +103,7 @@ p <- ggplot(
   theme_minimal()
 
 p +
-  geom_point_trace(fill = "white") +
+  geom_point_trace() +
   scale_color_manual(values = c("red", "#0072B2"))
 ```
 
