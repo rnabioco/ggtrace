@@ -33,12 +33,14 @@ draw_key_point_trace <- function(data, params, size) {
   data$trace_shape <- translate_trace_shape(data$shape)
   data             <- calculate_trace_size(data)
 
+  pt_stroke <- 0.5
+
   g_trace <- grid::pointsGrob(
     0.5, 0.5,
     pch = data$trace_shape,
     gp  = grid::gpar(
-      col      = alpha(data$trace_colour %||% "black", data$trace_alpha),
-      lty      = data$trace_linetype %||% 1,
+      col      = alpha(data$colour %||% "black", 1),
+      lty      = data$linetype %||% 1,
       fontsize = data$trace_fontsize,
       lwd      = data$trace_lwd
     )
@@ -48,9 +50,9 @@ draw_key_point_trace <- function(data, params, size) {
     0.5, 0.5,
     pch = data$shape,
     gp  = grid::gpar(
-      col      = alpha(data$colour %||% "black", data$alpha),
-      fontsize = (data$size %||% 1.5) * .pt + (data$stroke %||% 0.5) * .stroke / 2,
-      lwd      = (data$stroke %||% 0.5) * .stroke / 2
+      col      = alpha(data$fill %||% "white", data$alpha),
+      fontsize = (data$size %||% 1.5) * .pt + pt_stroke * .stroke / 2,
+      lwd      = pt_stroke * .stroke / 2
     )
   )
 
