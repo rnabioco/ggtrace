@@ -10,7 +10,6 @@
 #' @param background_color Color to use for background points when a predicate
 #'     is passed to `trace_position`. If NULL, the original fill color will be
 #'     used.
-
 #' @eval rd_aesthetics("geom", "point_trace")
 #' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
@@ -208,14 +207,14 @@ translate_shape_string <- function(shape_string) {
 
   shape_match <- charmatch(shape_string, names(pch_tbl))
 
-  invalid_strings <- is.na(shape_match)
+  invalid_strings   <- is.na(shape_match)
   nonunique_strings <- shape_match == 0
 
   if (any(invalid_strings)) {
     bad_string <- unique(shape_string[invalid_strings])
     n_bad <- length(bad_string)
 
-    collapsed_names <- sprintf("\n* '%s'", bad_string[1:min(5, n_bad)])
+    collapsed_names <- sprintf("\n* %s", bad_string)
 
     more_problems <- if (n_bad > 5) {
       sprintf("\n* ... and %d more problem%s", n_bad - 5, ifelse(n_bad > 6, "s", ""))
@@ -223,12 +222,12 @@ translate_shape_string <- function(shape_string) {
       ""
     }
 
-    rlang::abort(glue::glue("Can't find shape name:", collapsed_names, more_problems))
+    stop("Can't find shape name:", collapsed_names, more_problems)
   }
 
   if (any(nonunique_strings)) {
     bad_string <- unique(shape_string[nonunique_strings])
-    n_bad <- length(bad_string)
+    n_bad      <- length(bad_string)
 
     n_matches <- vapply(
       bad_string[1:min(5, n_bad)],
@@ -241,13 +240,15 @@ translate_shape_string <- function(shape_string) {
       bad_string[1:min(5, n_bad)], n_matches
     )
 
+    collapsed_names <- paste0(collapsed_names, collapse = "")
+
     more_problems <- if (n_bad > 5) {
       sprintf("\n* ... and %d more problem%s", n_bad - 5, ifelse(n_bad > 6, "s", ""))
     } else {
       ""
     }
 
-    rlang::abort(glue::glue("Shape names must be unambiguous:", collapsed_names, more_problems))
+    stop(paste0("Shape names must be unambiguous: ", collapsed_names, more_problems))
   }
 
   unname(pch_tbl[shape_match])
