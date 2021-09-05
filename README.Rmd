@@ -79,6 +79,8 @@ ggplot(
   )
 ```
 
+<br>
+
 By specifying `group` within `aes()`, outlines can also be added when coloring with a continuous variable.
 
 ```{r}
@@ -92,6 +94,8 @@ p +
   scale_fill_gradient(low = "white", high = "red") +
   geom_point_trace(stroke = 0.5)
 ```
+
+<br>
 
 Aesthetics can be further modified using the ggplot2 `scale_*` functions.
 
@@ -128,6 +132,8 @@ p +
   )
 ```
 
+<br>
+
 A subset of data points can be highlighted by passing a predicate to `outline_position`. This must evaluate to `TRUE` or `FALSE` within the context of the input data.
 
 ```{r}
@@ -136,6 +142,8 @@ p +
     trace_position = signal < 0
   )
 ```
+
+<br>
 
 The color of background points can be modified using the `background_color` argument.
 

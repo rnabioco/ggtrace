@@ -82,6 +82,8 @@ ggplot(
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
+<br>
+
 By specifying `group` within `aes()`, outlines can also be added when
 coloring with a continuous variable.
 
@@ -98,6 +100,8 @@ p +
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+
+<br>
 
 Aesthetics can be further modified using the ggplot2 `scale_*`
 functions.
@@ -143,6 +147,8 @@ p +
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
+<br>
+
 A subset of data points can be highlighted by passing a predicate to
 `outline_position`. This must evaluate to `TRUE` or `FALSE` within the
 context of the input data.
@@ -155,6 +161,8 @@ p +
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+
+<br>
 
 The color of background points can be modified using the
 `background_color` argument.
