@@ -68,12 +68,14 @@ test_that("trace_position predicate data", {
 })
 
 test_that("pass data as data.frame", {
-  p <- geom_point_trace(data = subset(clusters, signal > 10))
+  dat <- subset(clusters, signal > 10)
+  p <- geom_point_trace(data = dat)
   expect_identical(p$data, subset(clusters, signal > 10))
 })
 
 test_that("pass data as function", {
-  p <- geom_point_trace(data = function(x) subset(x, signal > 10))
+  fn <- function(x) subset(x, signal > 10)
+  p <- geom_point_trace(data = fn)
   expect_identical(p$data(clusters), subset(clusters, signal > 10))
 })
 
