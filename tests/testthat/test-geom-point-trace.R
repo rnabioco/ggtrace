@@ -64,7 +64,7 @@ test_that("trace_position predicate data", {
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
     geom_point_trace(trace_position = signal > 10)
 
-  expect_identical(p$layers[[2]]$data(clusters), filter(clusters, signal > 10))
+  expect_identical(p$layers[[2]]$data(clusters), subset(clusters, signal > 10))
 })
 
 test_that("background_color", {
