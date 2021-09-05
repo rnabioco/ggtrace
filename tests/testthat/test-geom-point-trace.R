@@ -67,6 +67,20 @@ test_that("trace_position predicate data", {
   expect_identical(p$layers[[2]]$data(clusters), subset(clusters, signal > 10))
 })
 
+test_that("pass data as data.frame", {
+  p <- geom_point_trace(data = subset(clusters, signal > 10))
+  expect_identical(p$data, subset(clusters, signal > 10))
+})
+
+test_that("pass data as function", {
+  p <- geom_point_trace(data = function(x) subset(x, signal > 10))
+  expect_identical(p$data(clusters), subset(clusters, signal > 10))
+})
+
+test_that("bad trace_position", {
+  expect_error(geom_point_trace(trace_position = "BAD"), "trace_position must be")
+})
+
 test_that("background_color", {
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
     geom_point_trace(trace_position = signal > 10, background_color = "blue")
@@ -98,6 +112,8 @@ test_that("single characters are not translated to integers", {
 test_that("invalid shape names raise an error", {
   expect_error(translate_shape_string("void"), "Can't find shape name")
   expect_error(translate_shape_string("tri"), "Shape names must be unambiguous")
+  expect_error(translate_shape_string(paste0("bad", 1:8)), "more problems")
+  expect_error(translate_shape_string(c("tri", "tr", "cir", "ci", "squa", "squ", "sq")), "more problems")
 })
 
 test_that("correct shape translation", {
@@ -116,5 +132,29 @@ test_that("bad shape", {
   expect_error(translate_trace_shape("23"), "Unsupported shape")
   expect_error(translate_trace_shape("24"), "Unsupported shape")
   expect_error(translate_trace_shape("25"), "Unsupported shape")
+})
+
+test_that("calculate_trace_size", {
+  dat <- data.frame(
+    shape  = 0,
+    size   = 1,
+    stroke = 1
+  )
+
+  sz  <- dat$size * .pt + 0.5 * .stroke / 2
+  lwd <- dat$stroke * .stroke / 2 * 2 + (0.5 * .stroke / 2)
+  expect_identical(calculate_trace_size(dat)$trace_fontsize, sz)
+  expect_identical(calculate_trace_size(dat)$trace_lwd, lwd)
+
+  dat <- data.frame(
+    shape  = 19,
+    size   = 1,
+    stroke = 1
+  )
+
+  sz  <- dat$size * .pt + 0.5 * .stroke / 2 + dat$stroke * .stroke / 2
+  lwd <- dat$stroke * .stroke / 2
+  expect_identical(calculate_trace_size(dat)$trace_fontsize, sz)
+  expect_identical(calculate_trace_size(dat)$trace_lwd, lwd)
 })
 
