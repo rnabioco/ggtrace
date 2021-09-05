@@ -166,7 +166,7 @@ GeomPointTrace <- ggplot2::ggproto(
 
 
 #' Helper to translate shape strings
-#' https://github.com/tidyverse/ggplot2/raw/87e9b85dd9f2a294f339d88a353d0c11c851489d/R/geom-point.r
+#' https://github.com/tidyverse/ggplot2/blob/master/R/geom-point.r
 #' @noRd
 translate_shape_string <- function(shape_string) {
 
@@ -302,8 +302,7 @@ translate_trace_shape <- function(pch) {
     "11" = 11,     # "star"
     "12" = 12,     # "square plus"
     "13" = 13,     # "circle cross"
-    "14" = 14,     # "square triangle"
-    "14" = 14,     # "triangle square"
+    "14" = 14,     # "triangle square, square triangle"
     "15" = 0,      # "square"
     "16" = 1,      # "circle small"
     "17" = 2,      # "triangle"
