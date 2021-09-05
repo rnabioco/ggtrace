@@ -16,8 +16,6 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
                              ..., trace_position = "all", background_color = NULL, na.rm = FALSE,
                              show.legend = NA, inherit.aes = TRUE) {
 
-  browser()
-
   # Store trace_position as expression to pass to fortify
   trace_expr <- enexpr(trace_position)
 
