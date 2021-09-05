@@ -74,6 +74,13 @@ test_that("trace_position pass data as data.frame", {
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
 })
 
+test_that("trace_position pass data as function", {
+  dat <- function(x) subset(x, signal > 10)
+  p   <- geom_point_trace(data = dat, trace_position = signal > 10)
+
+  expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
+})
+
 test_that("bad trace_position", {
   expect_error(geom_point_trace(trace_position = "BAD"), "trace_position must be")
 })
