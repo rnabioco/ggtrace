@@ -135,7 +135,7 @@ GeomPointTrace <- ggplot2::ggproto(
 
     coords <- coord$transform(data, panel_params)
 
-    g_trace <- grid::pointsGrob(
+    trace_grob <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$trace_shape,
       gp  = grid::gpar(
@@ -148,7 +148,7 @@ GeomPointTrace <- ggplot2::ggproto(
 
     pt_stroke <- 0.5
 
-    g_points <- grid::pointsGrob(
+    points_grob <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$shape,
       gp  = grid::gpar(
@@ -158,7 +158,7 @@ GeomPointTrace <- ggplot2::ggproto(
       )
     )
 
-    ggname("geom_point_trace", grid::grobTree(g_trace, g_points))
+    ggname("geom_point_trace", grid::grobTree(trace_grob, points_grob))
   },
 
   draw_key = draw_key_point_trace
@@ -261,11 +261,9 @@ translate_shape_string <- function(shape_string) {
 #'
 #' @noRd
 calculate_trace_size <- function(data) {
-  pch_open <- 0:14
-
+  pch_open  <- 0:14
   pt_stroke <- 0.5
-
-  pch <- data$shape
+  pch       <- data$shape
 
   # Calculate fontsize for closed shapes
   fontsize  <- data$size * .pt + pt_stroke * .stroke / 2
