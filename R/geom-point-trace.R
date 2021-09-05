@@ -17,11 +17,11 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
                              show.legend = NA, inherit.aes = TRUE) {
 
   # Store trace_position as expression to pass to fortify
-  trace_expr <- enexpr(trace_position)
+  trace_expr <- substitute(trace_position)
 
-  # If trace_position includes a logical operator is_call will evaluate TRUE,
+  # If trace_position includes a logical operator is.call will evaluate TRUE,
   # character, numeric, and symbol will evaluate FALSE
-  if (is_call(trace_expr)) {
+  if (is.call(trace_expr)) {
 
     # Store original data input to use for background points
     bkgd_data <- data
@@ -38,7 +38,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     # If fortify returned a function, need to pass dots to this within a new
     # formula. This is passed back to fortify to generate an anonymous function
     # that encompasses what was passed to both data and trace_position
-    if (is_function(data)) {
+    if (is.function(data)) {
       d_fn <- data
       data <- ggplot2::fortify(~ subset(d_fn(...), eval(trace_expr)))
 
@@ -75,7 +75,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
       mapping <- ggplot2::aes()
     }
 
-    mapping$group <- sym("BOTTOM_TRACE_GROUP")
+    mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
   } else if (!is.character(trace_expr) || trace_position != "all") {
     stop("trace_position must be 'all' or 'bottom' or a predicate specifying which points to trace")
@@ -94,7 +94,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
   )
 
   # Return list with background and trace layers
-  if (is_call(trace_expr)) {
+  if (is.call(trace_expr)) {
     trace_lyr <- list(bkgd_lyr, trace_lyr)
   }
 

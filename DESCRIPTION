@@ -17,15 +17,10 @@ Depends:
     R (>= 4.0.0)
 Imports: 
     ggplot2,
-    glue,
-    grid,
-    rlang,
-    scales
+    grid
 Suggests: 
     covr,
-    RColorBrewer,
-    testthat (>= 3.0.0),
-    withr
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
