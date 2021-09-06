@@ -61,7 +61,7 @@ p +
   )
 ```
 
-```{r}
+```{r, eval = FALSE}
 mpg %>%
   group_by(year, manufacturer) %>%
   summarize(displ = mean(displ)) %>%
@@ -76,13 +76,23 @@ mpg %>%
   geom_path() +
   theme_void()
 
-mpg %>%
-  group_by(year, manufacturer) %>%
-  summarize(displ = mean(displ)) %>%
-  ggplot(aes(year, displ, color = manufacturer)) +
-  geom_path_trace(size = 3) +
-  theme_void()
+dat <- mpg %>%
+  group_by(year, model) %>%
+  mutate(displ = mean(displ)) %>%
+  ungroup() %>%
+  distinct(year, model, manufacturer, displ)
 
+dat %>%
+  ggplot(aes(year, displ, color = manufacturer, group = model)) +
+  geom_path_trace(
+    trace_position   = grepl("^(l|a)", manufacturer),
+    background_color = "grey85",
+    fill             = "black",
+    size             = 0.5,
+    stroke           = 1
+  ) +
+  cowplot::theme_cowplot() +
+  scale_color_manual(values = colorspace::lighten(c(clrs, clrs), 0.7))
 ```
 
 

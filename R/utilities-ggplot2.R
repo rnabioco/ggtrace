@@ -363,3 +363,11 @@ lower_ascii <- "abcdefghijklmnopqrstuvwxyz"
 upper_ascii <- "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 to_lower_ascii <- function(x) chartr(upper_ascii, lower_ascii, x)
 to_upper_ascii <- function(x) chartr(lower_ascii, upper_ascii, x)
+
+# Used by GeomPathTrace
+# https://github.com/tidyverse/ggplot2/blob/master/R/utilities.r
+message_wrap <- function(...) {
+  msg <- paste(..., collapse = "", sep = "")
+  wrapped <- strwrap(msg, width = getOption("width") - 2)
+  message(paste0(wrapped, collapse = "\n"))
+}
