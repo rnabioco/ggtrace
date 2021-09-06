@@ -19,9 +19,8 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
   # Store trace_position as expression to pass to fortify
   trace_expr <- substitute(trace_position)
 
-  # If trace_position includes a logical operator is.call will evaluate TRUE,
-  # character, numeric, and symbol will evaluate FALSE
-  if (is.call(trace_expr)) {
+  # If trace_position is not 'all' or 'bottom', evaluate within subset
+  if (!trace_expr %in% c("all", "bottom")) {
 
     # Store original data input to use for background points
     bkgd_data <- data
@@ -67,7 +66,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 
   # If trace_position is 'bottom', create new column and use to override
   # original group specification.
-  } else if (is.character(trace_expr) && trace_position == "bottom") {
+  } else if (trace_expr == "bottom") {
 
     data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
 
@@ -76,9 +75,6 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     }
 
     mapping$group <- as.name("BOTTOM_TRACE_GROUP")
-
-  } else if (!is.character(trace_expr) || trace_position != "all") {
-    stop("trace_position must be 'all' or 'bottom' or a predicate specifying which points to trace")
   }
 
   # Create GeomPointTrace layer
@@ -94,7 +90,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
   )
 
   # Return list with background and trace layers
-  if (is.call(trace_expr)) {
+  if (!trace_expr %in% c("all", "bottom")) {
     trace_lyr <- list(bkgd_lyr, trace_lyr)
   }
 
