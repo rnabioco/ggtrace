@@ -112,7 +112,8 @@ A subset of data points can be highlighted by passing a predicate to `outline_po
 ```{r}
 p +
   geom_point_trace(
-    trace_position = signal < 0
+    trace_position = cluster == "c10",
+    background_color = "grey95"
   )
 ```
 

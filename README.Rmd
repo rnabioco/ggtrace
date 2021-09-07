@@ -76,23 +76,23 @@ mpg %>%
   geom_path() +
   theme_void()
 
+clrs <- colorblindr::palette_OkabeIto
+
 dat <- mpg %>%
   group_by(year, model) %>%
   mutate(displ = mean(displ)) %>%
   ungroup() %>%
-  distinct(year, model, manufacturer, displ)
+  distinct(year, model, manufacturer, displ, fl)
 
 dat %>%
-  ggplot(aes(year, displ, color = manufacturer, group = model)) +
-  geom_path_trace(
+  ggplot(aes(year, displ, fill = manufacturer, group = model)) +
+  geom_line_trace(
     trace_position   = grepl("^(l|a)", manufacturer),
-    background_color = "grey85",
-    fill             = "black",
-    size             = 0.5,
-    stroke           = 1
+    size = 2,
+    background_color = "grey85"
   ) +
-  cowplot::theme_cowplot() +
-  scale_color_manual(values = colorspace::lighten(c(clrs, clrs), 0.7))
+  cowplot::theme_cowplot()
+  # scale_color_manual(values = colorspace::lighten(c(clrs, clrs), 0.7))
 ```
 
 

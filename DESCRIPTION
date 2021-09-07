@@ -28,7 +28,7 @@ RoxygenNote: 7.1.1
 Collate: 
     'a-legend-draw.R'
     'data.R'
-    'geom-line-trace.R'
+    'geom-path-trace.R'
     'geom-point-trace.R'
     'ggtrace-package.R'
     'utilities-ggplot2.R'

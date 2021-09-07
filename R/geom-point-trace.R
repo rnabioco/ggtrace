@@ -1,3 +1,5 @@
+#' Trace points
+#'
 #' Trace points to improve clarity of plots with overplotted geoms.
 #'
 #' @inheritParams ggplot2::geom_point
@@ -16,11 +18,45 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
                              ..., trace_position = "all", background_color = NULL, na.rm = FALSE,
                              show.legend = NA, inherit.aes = TRUE) {
 
-  # Store trace_position as expression to pass to fortify
-  trace_expr <- substitute(trace_position)
+  create_trace_layers(
+    mapping          = mapping,
+    data             = data,
+    stat             = stat,
+    geom             = GeomPointTrace,
+    position         = position,
+    show.legend      = show.legend,
+    inherit.aes      = inherit.aes,
+    params           = list(na.rm = na.rm, ...),
+    trace_position   = substitute(trace_position),
+    background_color = background_color,
+    allow_bottom     = TRUE
+  )
+}
 
-  # If trace_position is not 'all' or 'bottom', evaluate within subset
-  if (!trace_expr %in% c("all", "bottom")) {
+#' Create geom_*_trace layers
+#'
+#' @inheritParams geom_point_trace
+#' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position.
+create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
+                                params, trace_position, background_color, allow_bottom = TRUE) {
+
+  trace_expr <- trace_position
+  lyrs       <- list()
+
+  # If trace_position is 'bottom', create new column and use to override
+  # original group specification.
+  if (allow_bottom && trace_expr == "bottom") {
+
+    data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
+
+    if (is.null(mapping)) {
+      mapping <- ggplot2::aes()
+    }
+
+    mapping$group <- as.name("BOTTOM_TRACE_GROUP")
+
+  # If trace_position is not 'all', evaluate within subset
+  } else if (trace_expr != "all") {
 
     # Store original data input to use for background points
     bkgd_data <- data
@@ -46,7 +82,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     }
 
     # Adjust parameters for background points
-    bkgd_params       <- list(na.rm = na.rm, ...)
+    bkgd_params       <- params
     bkgd_params$color <- NA
 
     if (!is.null(background_color)) {
@@ -57,44 +93,31 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
       data        = bkgd_data,
       mapping     = mapping,
       stat        = stat,
-      geom        = GeomPointTrace,
+      geom        = geom,
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
       params      = bkgd_params
     )
 
-  # If trace_position is 'bottom', create new column and use to override
-  # original group specification.
-  } else if (trace_expr == "bottom") {
-
-    data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
-
-    if (is.null(mapping)) {
-      mapping <- ggplot2::aes()
-    }
-
-    mapping$group <- as.name("BOTTOM_TRACE_GROUP")
+    lyrs <- append(lyrs, list(bkgd_lyr))
   }
 
-  # Create GeomPointTrace layer
+  # Create trace layer
   trace_lyr <- layer(
     data        = data,
     mapping     = mapping,
     stat        = stat,
-    geom        = GeomPointTrace,
+    geom        = geom,
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params      = list(na.rm = na.rm, ...)
+    params      = params
   )
 
-  # Return list with background and trace layers
-  if (!trace_expr %in% c("all", "bottom")) {
-    trace_lyr <- list(bkgd_lyr, trace_lyr)
-  }
+  lyrs <- append(lyrs, list(trace_lyr))
 
-  trace_lyr
+  lyrs
 }
 
 #' GeomPointTrace
