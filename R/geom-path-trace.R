@@ -157,7 +157,7 @@ GeomPathTrace <- ggproto(
 
     if (!constant) {
 
-      # For trace alpha and linetype are always 1
+      # For trace linetype is always 1
       trace_grob <- grid::segmentsGrob(
         munched$x[!end],   munched$y[!end],
         munched$x[!start], munched$y[!start],
@@ -166,7 +166,7 @@ GeomPathTrace <- ggproto(
         arrow         = arrow,
 
         gp = grid::gpar(
-          col       = alpha(munched$colour, 1)[!end],
+          col       = alpha(munched$colour, munched$alpha)[!end],
           lwd       = munched$size[!end] * .pt + munched$stroke[!end] * .pt * 2,
           lty       = 1,
           lineend   = lineend,
@@ -206,9 +206,9 @@ GeomPathTrace <- ggproto(
         default.units = "native",
         arrow         = arrow,
 
-        # For trace alpha and linetype are always 1
+        # For trace linetype is always 1
         gp = grid::gpar(
-          col       = alpha(munched$colour, 1)[start],
+          col       = alpha(munched$colour, munched$alpha)[start],
           lwd       = munched$size[start] * .pt + munched$stroke * .pt * 2,
           lty       = 1,
           lineend   = lineend,
