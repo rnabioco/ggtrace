@@ -3,10 +3,8 @@ title: "geom_point_trace"
 date: '`r format(Sys.Date(), "%B %d %Y")`'
 output:
   rmarkdown::html_vignette:
-    toc_float: true
-    toc_depth: 2
     vignette: >
-      %\VignetteIndexEntry{V(D)J analysis}
+      %\VignetteIndexEntry{geom_point_trace}
       %\VignetteEncoding{UTF-8}
       %\VignetteEngine{knitr::rmarkdown}
 ---

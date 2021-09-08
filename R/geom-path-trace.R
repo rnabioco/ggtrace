@@ -1,5 +1,3 @@
-#' Trace lines
-#'
 #' Trace lines to improve clarity of plots with overplotted geoms.
 #'
 #' @inheritParams ggplot2::geom_path
