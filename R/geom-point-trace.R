@@ -54,6 +54,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #'     is passed to `trace_position`. If NULL, the original fill color will be
 #'     used.
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
+#' @noRd
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
                                 params, trace_position, background_color, allow_bottom = TRUE) {
 
