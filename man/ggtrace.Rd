@@ -26,5 +26,10 @@ Please report issues and suggest improvements at Github:
 \author{
 \strong{Maintainer}: Ryan Sheridan \email{ryan.sheridan@cuanschutz.edu} (\href{https://orcid.org/0000-0003-4012-3147}{ORCID})
 
+Other contributors:
+\itemize{
+  \item RNA Bioscience Initiative [funder]
+}
+
 }
 \keyword{internal}

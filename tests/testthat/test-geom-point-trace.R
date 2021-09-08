@@ -30,25 +30,25 @@ test_that("aesthetics to variable", {
 
 test_that("aesthetics from geom", {
   p <- geom_point_trace(aes(color = cluster))
-  expect_identical(as.character(p$mapping$colour)[2], "cluster")
+  expect_identical(as.character(p[[1]]$mapping$colour)[2], "cluster")
 
   p <- geom_point_trace(aes(fill = cluster))
-  expect_identical(as.character(p$mapping$fill)[2], "cluster")
+  expect_identical(as.character(p[[1]]$mapping$fill)[2], "cluster")
 
   p <- geom_point_trace(aes(linetype = cluster))
-  expect_identical(as.character(p$mapping$linetype)[2], "cluster")
+  expect_identical(as.character(p[[1]]$mapping$linetype)[2], "cluster")
 
   p <- geom_point_trace(aes(alpha = cluster))
-  expect_identical(as.character(p$mapping$alpha)[2], "cluster")
+  expect_identical(as.character(p[[1]]$mapping$alpha)[2], "cluster")
 
   p <- geom_point_trace(aes(stroke = cluster))
-  expect_identical(as.character(p$mapping$stroke)[2], "cluster")
+  expect_identical(as.character(p[[1]]$mapping$stroke)[2], "cluster")
 })
 
 test_that("trace_position bottom", {
   p <- geom_point_trace(trace_position = "bottom")
 
-  expect_identical(as.character(p$mapping$group)[2], "BOTTOM_TRACE_GROUP")
+  expect_identical(as.character(p[[1]]$mapping$group)[2], "BOTTOM_TRACE_GROUP")
 })
 
 test_that("trace_position predicate return list", {
@@ -79,10 +79,6 @@ test_that("trace_position pass data as function", {
   p   <- geom_point_trace(data = dat, trace_position = signal > 10)
 
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
-})
-
-test_that("bad trace_position", {
-  expect_error(geom_point_trace(trace_position = "BAD"), "trace_position must be")
 })
 
 test_that("background_color", {
