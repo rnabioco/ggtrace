@@ -13,7 +13,7 @@ NULL
 #'
 #' This function is akin to `plyr::ddply`. It takes a single data.frame,
 #' splits it by the unique combinations of the columns given in `by`, apply a
-#' function to each split, and then reassembles the results into a sigle
+#' function to each split, and then reassembles the results into a single
 #' data.frame again.
 #'
 #' https://github.com/tidyverse/ggplot2/blob/master/R/compat-plyr.R
@@ -30,6 +30,8 @@ NULL
 #' @return A data.frame if the result of `fun` does not include the columns
 #' given in `by` these will be prepended to the result.
 #'
+#' @importFrom vctrs vec_group_id
+#'
 #' @noRd
 dapply <- function(df, by, fun, ..., drop = TRUE) {
   grouping_cols  <- .subset(df, by)
@@ -42,7 +44,7 @@ dapply <- function(df, by, fun, ..., drop = TRUE) {
 
     if (length(res) == 0) return(new_data_frame())
 
-    vars <- lapply(setNames(by, by), function(col) .subset2(x, col)[1])
+    vars <- lapply(stats::setNames(by, by), function(col) .subset2(x, col)[1])
 
     if (is.matrix(res)) res <- split_matrix(res)
 
@@ -76,7 +78,7 @@ dapply <- function(df, by, fun, ..., drop = TRUE) {
 # https://github.com/tidyverse/ggplot2/blob/master/R/compat-plyr.R
 new_data_frame <- function(x = list(), n = NULL) {
   if (length(x) != 0 && is.null(names(x))) {
-    abort("Elements must be named")
+    stop("Elements must be named")
   }
 
   lengths <- vapply(x, length, integer(1))
@@ -89,7 +91,7 @@ new_data_frame <- function(x = list(), n = NULL) {
     if (lengths[i] == n) next
 
     if (lengths[i] != 1) {
-      abort("Elements must equal the number of rows or 1")
+      stop("Elements must equal the number of rows or 1")
     }
 
     x[[i]] <- rep(x[[i]], n)
@@ -250,6 +252,15 @@ rbind_dfs <- function(dfs) {
   out
 }
 
+# Used by dapply
+# https://github.com/tidyverse/ggplot2/blob/master/R/performance.R
+split_matrix <- function(x, col_names = colnames(x)) {
+  force(col_names)
+  x <- lapply(seq_len(ncol(x)), function(i) x[, i])
+  if (!is.null(col_names)) names(x) <- col_names
+  x
+}
+
 # Used by rbind_dfs
 # https://github.com/tidyverse/ggplot2/blob/master/R/performance.R
 df_rows <- function(x, i) {
@@ -363,11 +374,3 @@ lower_ascii <- "abcdefghijklmnopqrstuvwxyz"
 upper_ascii <- "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 to_lower_ascii <- function(x) chartr(upper_ascii, lower_ascii, x)
 to_upper_ascii <- function(x) chartr(lower_ascii, upper_ascii, x)
-
-# Used by GeomPathTrace
-# https://github.com/tidyverse/ggplot2/blob/master/R/utilities.r
-message_wrap <- function(...) {
-  msg <- paste(..., collapse = "", sep = "")
-  wrapped <- strwrap(msg, width = getOption("width") - 2)
-  message(paste0(wrapped, collapse = "\n"))
-}

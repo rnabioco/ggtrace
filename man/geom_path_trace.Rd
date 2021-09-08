@@ -46,6 +46,8 @@ geom_step_trace(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
+  trace_position = "all",
+  background_color = NULL,
   ...
 )
 }

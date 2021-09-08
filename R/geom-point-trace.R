@@ -33,10 +33,27 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
   )
 }
 
+
 #' Create geom_*_trace layers
 #'
-#' @inheritParams geom_point_trace
-#' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position.
+#' @param mapping Set of aesthetic mappings created by aes() to use for generating layers.
+#' @param data The data to be displayed in these layers.
+#' @param geom The geometric object to use to display the data.
+#' @param stat Statistical transformation to use for these layers.
+#' @param position Position adjustment.
+#' @param show.legend Should these layers be included in the legend?
+#' @param inherit.aes If FALSE, overrides the default aesthetics.
+#' @param params Additional parameters to pass to the geom and stat.
+#' @param trace_position Specifies which groups of data points should be
+#'     outlined. Can be 'all', 'bottom', or a predicate to use for filtering
+#'     data. If 'all', the default, every group plotted will be outlined, if
+#'     'bottom', only the bottom most layer of points will be outlined. A
+#'     subset of data points can be outlined by passing a predicate. This must
+#'     evaluate to `TRUE` or `FALSE` within the context of the input data.
+#' @param background_color Color to use for background points when a predicate
+#'     is passed to `trace_position`. If NULL, the original fill color will be
+#'     used.
+#' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
                                 params, trace_position, background_color, allow_bottom = TRUE) {
 
@@ -53,7 +70,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
       mapping <- ggplot2::aes()
     }
 
-    mapping$group <- as.name("BOTTOM_TRACE_GROUP")
+    mapping$group <- sym("BOTTOM_TRACE_GROUP")
 
   # If trace_position is not 'all', evaluate within subset
   } else if (trace_expr != "all") {
@@ -120,6 +137,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
   lyrs
 }
 
+
 #' GeomPointTrace
 #'
 #' @rdname ggplot2-ggproto
@@ -157,7 +175,8 @@ GeomPointTrace <- ggplot2::ggproto(
     trace_grob <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$trace_shape,
-      gp  = grid::gpar(
+
+      gp = grid::gpar(
         col      = alpha(coords$colour, 1),
         lty      = coords$linetype,
         fontsize = coords$trace_fontsize,
@@ -170,7 +189,8 @@ GeomPointTrace <- ggplot2::ggproto(
     points_grob <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$shape,
-      gp  = grid::gpar(
+
+      gp = grid::gpar(
         col      = alpha(coords$fill, coords$alpha),
         fontsize = coords$size * .pt + pt_stroke * .stroke / 2,
         lwd      = pt_stroke * .stroke / 2
@@ -231,7 +251,7 @@ translate_shape_string <- function(shape_string) {
 
   if (any(invalid_strings)) {
     bad_string <- unique(shape_string[invalid_strings])
-    n_bad <- length(bad_string)
+    n_bad      <- length(bad_string)
 
     collapsed_names <- sprintf("\n* %s", bad_string)
 
@@ -275,8 +295,9 @@ translate_shape_string <- function(shape_string) {
 
 #' Helper to adjust trace size
 #'
-#' To outline both the inside and outside of open shapes, need to adjust
-#' fontsize and lwd.
+#' Adjust fontsize and lwd depending on whether an open or or closed shape is
+#' used. This is need to allow for the inside and outside of open shapes to be
+#' outlined.
 #'
 #' @noRd
 calculate_trace_size <- function(data) {

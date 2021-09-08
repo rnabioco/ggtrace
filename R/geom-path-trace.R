@@ -69,7 +69,7 @@ GeomPathTrace <- ggproto(
     data     <- data[kept, ]
 
     if (!all(kept) && !params$na.rm) {
-      warning(glue::glue("Removed {sum(!kept)} row(s) containing missing values (geom_path)."))
+      warning("Removed ", sum(!kept), " row(s) containing missing values (geom_path_trace).")
     }
 
     data
@@ -116,8 +116,7 @@ GeomPathTrace <- ggproto(
                         linejoin = "round", linemitre = 10, na.rm = FALSE) {
 
     if (!anyDuplicated(data$group)) {
-      message_wrap("geom_path: Each group consists of only one observation. ",
-        "Do you need to adjust the group aesthetic?")
+      message("geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?")
     }
 
     # must be sorted on group
@@ -149,7 +148,7 @@ GeomPathTrace <- ggproto(
     constant    <- all(attr$constant)
 
     if (!solid_lines && !constant) {
-      abort("geom_path: If you are using dotted or dashed lines, color, fill, size and linetype must be constant over the line")
+      stop("geom_path: If you are using dotted or dashed lines, color, fill, size and linetype must be constant over the line")
     }
 
     # Work out grouping variables for grobs
@@ -262,8 +261,8 @@ keep_mid_true <- function(x) {
   )
 }
 
-#' @export
 #' @rdname geom_path_trace
+#' @export
 geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             na.rm = FALSE, orientation = NA, show.legend = NA, inherit.aes = TRUE,
                             trace_position = "all", background_color = NULL, ...) {
@@ -323,6 +322,7 @@ GeomLineTrace <- ggproto(
     }
 
     # Adjust groups
+    #
     if (length(clmn) == 1) {
       data$orig_group <- data$group
 
@@ -348,14 +348,14 @@ GeomLineTrace <- ggproto(
   }
 )
 
+#' @rdname geom_path_trace
 #' @param direction direction of stairs: 'vh' for vertical then horizontal,
 #'   'hv' for horizontal then vertical, or 'mid' for step half-way between
 #'   adjacent x-values.
 #' @export
-#' @rdname geom_path_trace
-geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
-                            position = "identity", direction = "hv",
-                            na.rm = FALSE, show.legend = NA, inherit.aes = TRUE, ...) {
+geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
+                            direction = "hv", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE,
+                            trace_position = "all", background_color = NULL, ...) {
 
   params <- list(
     direction = direction,
@@ -385,16 +385,15 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 GeomStepTrace <- ggproto(
   "GeomStepTrace", GeomPathTrace,
 
-  draw_panel = function(data, panel_params, coord, direction = "hv") {
+  draw_group = function(data, panel_params, coord, direction = "hv") {
     data <- dapply(data, "group", stairstep, direction = direction)
 
-    GeomPath$draw_panel(data, panel_params, coord)
+    GeomPathTrace$draw_group(data, panel_params, coord)
   }
 )
 
-#' Calculate stairsteps for `geom_step()`
-#' Used by `GeomStep()`
-#'
+#' Calculate stairsteps for `geom_step_trace()`
+#' Used by `GeomStepTrace()`
 #' @noRd
 stairstep <- function(data, direction = "hv") {
 
@@ -420,12 +419,12 @@ stairstep <- function(data, direction = "hv") {
     ys <- rep(1:n, each = 2)
 
   } else {
-    abort("Parameter `direction` is invalid.")
+    stop("Parameter `direction` is invalid.")
   }
 
   if (direction == "mid") {
     gaps      <- data$x[-1] - data$x[-n]
-    mid_x     <- data$x[-n] + gaps/2 # map the mid-point between adjacent x-values
+    mid_x     <- data$x[-n] + gaps/2                 # map the mid-point between adjacent x-values
     x         <- c(data$x[1], mid_x[xs], data$x[n])
     y         <- c(data$y[ys])
     data_attr <- data[c(1,xs,n), setdiff(names(data), c("x", "y"))]
