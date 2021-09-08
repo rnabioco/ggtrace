@@ -3,3 +3,23 @@ url: https://rnabioco.github.io/ggtrace
 authors:
   RNA Bioscience Initiative:
     href: https://medschool.cuanschutz.edu/rbi
+
+template:
+  bootstrap: 4
+  bootswatch: simplex
+
+development:
+  mode: auto
+
+reference:
+- title: Geoms
+  contents:
+  - starts_with("geom")
+
+- title: Utilities
+  contents:
+  - starts_with("draw")
+
+- title: Data
+  contents:
+  - clusters
