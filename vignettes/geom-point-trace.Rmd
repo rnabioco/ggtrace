@@ -15,7 +15,7 @@ output:
 
 `geom_point_trace` accepts graphical parameters normally passed to `geom_point` to control the appearance of data points and outlines. The fill color for each point can be modified with `fill` and the outline color can be modified with `color`. Additional parameters including `size`, `linetype`, `stroke` and `alpha` are also accepted.
 
-```{r, fig.width = 8, fig.height = 6}
+```{r}
 library(ggplot2)
 library(ggtrace)
 
@@ -124,7 +124,7 @@ The color of background points can be modified using the `background_color` argu
 p +
   geom_point_trace(
     trace_position   = signal < 0,
-    background_color = "grey75"
+    background_color = "grey85"
   )
 ```
 
