@@ -20,8 +20,10 @@ Imports:
     vctrs,
     grid
 Suggests: 
+    knitr,
     covr,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    rmarkdown
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
@@ -33,3 +35,4 @@ Collate:
     'geom-point-trace.R'
     'ggtrace-package.R'
     'utilities-ggplot2.R'
+VignetteBuilder: knitr
