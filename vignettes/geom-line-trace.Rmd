@@ -1,0 +1,101 @@
+---
+title: "geom_point_trace"
+date: '`r format(Sys.Date(), "%B %d %Y")`'
+output:
+  rmarkdown::html_vignette:
+    toc_float: true
+    toc_depth: 2
+    vignette: >
+      %\VignetteIndexEntry{V(D)J analysis}
+      %\VignetteEncoding{UTF-8}
+      %\VignetteEngine{knitr::rmarkdown}
+---
+
+## Basic Usage
+
+`geom_path_trace()`, `geom_line_trace()`, and `geom_step_trace()` accept arguments normally passed to `geom_path()`, `geom_line()`, and `geom_step()` with some minor modifications. `fill` controls the line color, `color` controls the outline color, and `stroke` controls the outline width, similar to how filled shapes are modified for other `ggplot2` geoms. Additional parameters including `size`, `linetype` and `alpha` are also accepted and behave normally.
+
+```{r}
+library(ggplot2)
+library(ggtrace)
+
+dat <- EuStockMarkets %>%
+  as_tibble() %>%
+  mutate(day = row_number()) %>%
+  pivot_longer(-day)
+
+p <- ggplot(dat, aes(day, value, fill = name)) +
+  theme_minimal()
+
+p +
+  geom_line_trace(
+    color    = "black",
+    size     = 1,
+    linetype = 1,
+    alpha    = 1
+  )
+```
+
+<br>
+
+## Aesthetics
+
+Like other `ggplot2` geoms, variables can be mapped to aesthetic attributes to modify the outline appearance.
+
+```{r}
+p <- ggplot(dat, aes(day, value, color = name)) +
+  theme_minimal()
+
+p +
+  geom_line_trace()
+```
+
+<br>
+
+Aesthetics can be further modified using the ggplot2 `scale_*` functions.
+
+```{r}
+p +
+  geom_line_trace() +
+  scale_color_manual(values = c("#E69F00", "#0072B2", "#56B4E9", "#009E73"))
+```
+
+<br>
+
+## Position
+
+The 'position' of the outline can be modified with the `outline_position` parameter. This can be 'all' or a predicate selecting the data to outline. By default 'all' groups are outlined.
+
+A subset of data points can be highlighted by passing a predicate to `outline_position`. This must evaluate to `TRUE` or `FALSE` within the context of the input data.
+
+```{r}
+p <- ggplot(dat, aes(day, value, color = name, group = name)) +
+  theme_minimal()
+
+p +
+  geom_line_trace(
+    trace_position   = day > 1000,
+    size             = 0.5,
+    stroke           = 1,
+    fill             = "black",
+    background_color = "grey75"
+  ) +
+  scale_color_manual(values = c("#FFC273", "#69A9EA", "#94D3FF", "#5ACCA0"))
+```
+
+<br>
+
+```{r}
+p +
+  geom_line_trace(
+    trace_position   = name == "FTSE",
+    size             = 0.5,
+    stroke           = 1,
+    fill             = "grey75",
+    background_color = "grey75"
+  )
+```
+
+
+
+
