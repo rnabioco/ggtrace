@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trace points — geom_point_trace • ggtrace</title>
+<title>Create geom_*_trace layers — create_trace_layers • ggtrace</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Trace points — geom_point_trace" />
-<meta property="og:description" content="Trace points to improve clarity of plots with overplotted geoms." />
+<meta property="og:title" content="Create geom_*_trace layers — create_trace_layers" />
+<meta property="og:description" content="Create geom_*_trace layers" />
 
 
 
@@ -115,26 +115,27 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Trace points</h1>
+    <h1>Create geom_*_trace layers</h1>
     
-    <div class="hidden name"><code>geom_point_trace.Rd</code></div>
+    <div class="hidden name"><code>create_trace_layers.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Trace points to improve clarity of plots with overplotted geoms.</p>
+    <p>Create geom_*_trace layers</p>
     </div>
 
-    <pre class="usage"><span class='fu'>geom_point_trace</span><span class='op'>(</span>
-  mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
-  data <span class='op'>=</span> <span class='cn'>NULL</span>,
-  stat <span class='op'>=</span> <span class='st'>"identity"</span>,
-  position <span class='op'>=</span> <span class='st'>"identity"</span>,
-  <span class='va'>...</span>,
-  trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
-  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
-  na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
-  inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>
+    <pre class="usage"><span class='fu'>create_trace_layers</span><span class='op'>(</span>
+  <span class='va'>mapping</span>,
+  <span class='va'>data</span>,
+  <span class='va'>stat</span>,
+  <span class='va'>geom</span>,
+  <span class='va'>position</span>,
+  <span class='va'>show.legend</span>,
+  <span class='va'>inherit.aes</span>,
+  <span class='va'>params</span>,
+  <span class='va'>trace_position</span>,
+  <span class='va'>background_color</span>,
+  allow_bottom <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -142,41 +143,35 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>mapping</th>
-      <td><p>Set of aesthetic mappings created by <code><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes()</a></code> or
-<code><a href='https://ggplot2.tidyverse.org/reference/aes_.html'>aes_()</a></code>. If specified and <code>inherit.aes = TRUE</code> (the
-default), it is combined with the default mapping at the top level of the
-plot. You must supply <code>mapping</code> if there is no plot mapping.</p></td>
+      <td><p>Set of aesthetic mappings created by aes() to use for generating layers.</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>The data to be displayed in this layer. There are three
-options:</p>
-<p>If <code>NULL</code>, the default, the data is inherited from the plot
-data as specified in the call to <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot()</a></code>.</p>
-<p>A <code>data.frame</code>, or other object, will override the plot
-data. All objects will be fortified to produce a data frame. See
-<code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>fortify()</a></code> for which variables will be created.</p>
-<p>A <code>function</code> will be called with a single argument,
-the plot data. The return value must be a <code>data.frame</code>, and
-will be used as the layer data. A <code>function</code> can be created
-from a <code>formula</code> (e.g. <code>~ head(.x, 10)</code>).</p></td>
+      <td><p>The data to be displayed in these layers.</p></td>
     </tr>
     <tr>
       <th>stat</th>
-      <td><p>The statistical transformation to use on the data for this
-layer, as a string.</p></td>
+      <td><p>Statistical transformation to use for these layers.</p></td>
+    </tr>
+    <tr>
+      <th>geom</th>
+      <td><p>The geometric object to use to display the data.</p></td>
     </tr>
     <tr>
       <th>position</th>
-      <td><p>Position adjustment, either as a string, or the result of
-a call to a position adjustment function.</p></td>
+      <td><p>Position adjustment.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Other arguments passed on to <code><a href='https://ggplot2.tidyverse.org/reference/layer.html'>layer()</a></code>. These are
-often aesthetics, used to set an aesthetic to a fixed value, like
-<code>colour = "red"</code> or <code>size = 3</code>. They may also be parameters
-to the paired geom/stat.</p></td>
+      <th>show.legend</th>
+      <td><p>Should these layers be included in the legend?</p></td>
+    </tr>
+    <tr>
+      <th>inherit.aes</th>
+      <td><p>If FALSE, overrides the default aesthetics.</p></td>
+    </tr>
+    <tr>
+      <th>params</th>
+      <td><p>Additional parameters to pass to the geom and stat.</p></td>
     </tr>
     <tr>
       <th>trace_position</th>
@@ -194,43 +189,11 @@ is passed to `trace_position`. If NULL, the original fill color will be
 used.</p></td>
     </tr>
     <tr>
-      <th>na.rm</th>
-      <td><p>If <code>FALSE</code>, the default, missing values are removed with
-a warning. If <code>TRUE</code>, missing values are silently removed.</p></td>
-    </tr>
-    <tr>
-      <th>show.legend</th>
-      <td><p>logical. Should this layer be included in the legends?
-<code>NA</code>, the default, includes if any aesthetics are mapped.
-<code>FALSE</code> never includes, and <code>TRUE</code> always includes.
-It can also be a named logical vector to finely select the aesthetics to
-display.</p></td>
-    </tr>
-    <tr>
-      <th>inherit.aes</th>
-      <td><p>If <code>FALSE</code>, overrides the default aesthetics,
-rather than combining with them. This is most useful for helper functions
-that define both data and aesthetics and shouldn't inherit behaviour from
-the default plot specification, e.g. <code><a href='https://ggplot2.tidyverse.org/reference/borders.html'>borders()</a></code>.</p></td>
+      <th>allow_bottom</th>
+      <td><p>Should 'bottom' be allowed as an argument for trace_position?</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="aesthetics"><a class="anchor" href="#aesthetics"></a>Aesthetics</h2>
-
-    
-
-<p><code>geom_point_trace()</code> understands the following aesthetics (required aesthetics are in bold):</p><ul>
-<li><p><strong><code>x</code></strong></p></li>
-<li><p><strong><code>y</code></strong></p></li>
-<li><p><code>alpha</code></p></li>
-<li><p><code>colour</code></p></li>
-<li><p><code>fill</code></p></li>
-<li><p><code>group</code></p></li>
-<li><p><code>linetype</code></p></li>
-<li><p><code>shape</code></p></li>
-<li><p><code>size</code></p></li>
-<li><p><code>stroke</code></p></li>
-</ul><p>Learn more about setting these aesthetics in <code><a href='https://ggplot2.tidyverse.org/articles/ggplot2-specs.html'>vignette("ggplot2-specs")</a></code>.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

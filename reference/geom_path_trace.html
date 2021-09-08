@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trace points — geom_point_trace • ggtrace</title>
+<title>Trace lines — geom_path_trace • ggtrace</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Trace points — geom_point_trace" />
-<meta property="og:description" content="Trace points to improve clarity of plots with overplotted geoms." />
+<meta property="og:title" content="Trace lines — geom_path_trace" />
+<meta property="og:description" content="Trace lines to improve clarity of plots with overplotted geoms." />
 
 
 
@@ -115,16 +115,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Trace points</h1>
+    <h1>Trace lines</h1>
     
-    <div class="hidden name"><code>geom_point_trace.Rd</code></div>
+    <div class="hidden name"><code>geom_path_trace.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Trace points to improve clarity of plots with overplotted geoms.</p>
+    <p>Trace lines to improve clarity of plots with overplotted geoms.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>geom_point_trace</span><span class='op'>(</span>
+    <pre class="usage"><span class='fu'>geom_path_trace</span><span class='op'>(</span>
   mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
   data <span class='op'>=</span> <span class='cn'>NULL</span>,
   stat <span class='op'>=</span> <span class='st'>"identity"</span>,
@@ -132,9 +132,41 @@
   <span class='va'>...</span>,
   trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
   background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  lineend <span class='op'>=</span> <span class='st'>"butt"</span>,
+  linejoin <span class='op'>=</span> <span class='st'>"round"</span>,
+  linemitre <span class='op'>=</span> <span class='fl'>10</span>,
+  arrow <span class='op'>=</span> <span class='cn'>NULL</span>,
   na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
   inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span>
+
+<span class='fu'>geom_line_trace</span><span class='op'>(</span>
+  mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  stat <span class='op'>=</span> <span class='st'>"identity"</span>,
+  position <span class='op'>=</span> <span class='st'>"identity"</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  orientation <span class='op'>=</span> <span class='cn'>NA</span>,
+  show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
+  inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
+  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
+
+<span class='fu'>geom_step_trace</span><span class='op'>(</span>
+  mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  stat <span class='op'>=</span> <span class='st'>"identity"</span>,
+  position <span class='op'>=</span> <span class='st'>"identity"</span>,
+  direction <span class='op'>=</span> <span class='st'>"hv"</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
+  inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
+  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -181,17 +213,32 @@ to the paired geom/stat.</p></td>
     <tr>
       <th>trace_position</th>
       <td><p>Specifies which groups of data points should be
-outlined. Can be 'all', 'bottom', or a predicate to use for filtering
-data. If 'all', the default, every group plotted will be outlined, if
-'bottom', only the bottom most layer of points will be outlined. A
-subset of data points can be outlined by passing a predicate. This must
-evaluate to `TRUE` or `FALSE` within the context of the input data.</p></td>
+outlined. Can be 'all' or a predicate to use for filtering data. If
+all', the default, every group plotted will be outlined. A subset of
+data points can be outlined by passing a predicate. This must evaluate
+to `TRUE` or `FALSE` within the context of the input data.</p></td>
     </tr>
     <tr>
       <th>background_color</th>
-      <td><p>Color to use for background points when a predicate
+      <td><p>Color to use for background lines when a predicate
 is passed to `trace_position`. If NULL, the original fill color will be
 used.</p></td>
+    </tr>
+    <tr>
+      <th>lineend</th>
+      <td><p>Line end style (round, butt, square).</p></td>
+    </tr>
+    <tr>
+      <th>linejoin</th>
+      <td><p>Line join style (round, mitre, bevel).</p></td>
+    </tr>
+    <tr>
+      <th>linemitre</th>
+      <td><p>Line mitre limit (number greater than 1).</p></td>
+    </tr>
+    <tr>
+      <th>arrow</th>
+      <td><p>Arrow specification, as created by <code><a href='https://rdrr.io/r/grid/arrow.html'>grid::arrow()</a></code>.</p></td>
     </tr>
     <tr>
       <th>na.rm</th>
@@ -213,13 +260,26 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. <code><a href='https://ggplot2.tidyverse.org/reference/borders.html'>borders()</a></code>.</p></td>
     </tr>
+    <tr>
+      <th>orientation</th>
+      <td><p>The orientation of the layer. The default (<code>NA</code>)
+automatically determines the orientation from the aesthetic mapping. In the
+rare event that this fails it can be given explicitly by setting <code>orientation</code>
+to either <code>"x"</code> or <code>"y"</code>. See the <em>Orientation</em> section for more detail.</p></td>
+    </tr>
+    <tr>
+      <th>direction</th>
+      <td><p>direction of stairs: 'vh' for vertical then horizontal,
+'hv' for horizontal then vertical, or 'mid' for step half-way between
+adjacent x-values.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="aesthetics"><a class="anchor" href="#aesthetics"></a>Aesthetics</h2>
 
     
 
-<p><code>geom_point_trace()</code> understands the following aesthetics (required aesthetics are in bold):</p><ul>
+<p><code>geom_path_trace()</code> understands the following aesthetics (required aesthetics are in bold):</p><ul>
 <li><p><strong><code>x</code></strong></p></li>
 <li><p><strong><code>y</code></strong></p></li>
 <li><p><code>alpha</code></p></li>
@@ -227,7 +287,6 @@ the default plot specification, e.g. <code><a href='https://ggplot2.tidyverse.or
 <li><p><code>fill</code></p></li>
 <li><p><code>group</code></p></li>
 <li><p><code>linetype</code></p></li>
-<li><p><code>shape</code></p></li>
 <li><p><code>size</code></p></li>
 <li><p><code>stroke</code></p></li>
 </ul><p>Learn more about setting these aesthetics in <code><a href='https://ggplot2.tidyverse.org/articles/ggplot2-specs.html'>vignette("ggplot2-specs")</a></code>.</p>
