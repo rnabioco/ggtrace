@@ -88,7 +88,7 @@ p +
 
 ## Position
 
-The 'position' of the outline can be modified with the `outline_position` parameter. This can be 'all', 'bottom', or a predicate selecting the points to outline. By default 'all' groups are outlined.
+The 'position' of the outline can be modified with the `trace_position` parameter. This can be 'all', 'bottom', or a predicate selecting the points to outline. By default 'all' groups are outlined.
 
 To only add a single outline around all points plotted, set `trace_position` to 'bottom'.
 
@@ -107,7 +107,7 @@ p +
 
 <br>
 
-A subset of data points can be highlighted by passing a predicate to `outline_position`. This must evaluate to `TRUE` or `FALSE` within the context of the input data.
+A subset of data points can be highlighted by passing a predicate to `trace_position`. This must evaluate to `TRUE` or `FALSE` within the context of the input data.
 
 ```{r}
 p +
@@ -130,7 +130,7 @@ p +
 
 <br>
 
-To leave out the outline.
+Outlines can be removed by setting `color` to `NA`.
 
 ```{r}
 p +

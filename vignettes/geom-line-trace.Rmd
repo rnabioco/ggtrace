@@ -1,5 +1,5 @@
 ---
-title: "geom_point_trace"
+title: "geom_line_trace"
 date: '`r format(Sys.Date(), "%B %d %Y")`'
 output:
   rmarkdown::html_vignette:
@@ -13,16 +13,16 @@ output:
 
 ## Basic Usage
 
-`geom_path_trace()`, `geom_line_trace()`, and `geom_step_trace()` accept arguments normally passed to `geom_path()`, `geom_line()`, and `geom_step()` with some minor modifications. `fill` controls the line color, `color` controls the outline color, and `stroke` controls the outline width, similar to how filled shapes are modified for other `ggplot2` geoms. Additional parameters including `size`, `linetype` and `alpha` are also accepted and behave normally.
+`geom_path_trace()`, `geom_line_trace()`, and `geom_step_trace()` accept arguments normally passed to `geom_path()`, `geom_line()`, and `geom_step()` with some minor modifications. `fill` controls the line color, `color` controls the outline color, and `stroke` controls the outline width, similar to how filled shapes are modified for other `ggplot2` geoms. Additional parameters including `size`, `alpha`,  `linetype`, `linejoin`, `lineend` and `linemitre` are also accepted and behave normally.
 
 ```{r}
 library(ggplot2)
 library(ggtrace)
+library(tidyr)
 
-dat <- EuStockMarkets %>%
-  as_tibble() %>%
-  mutate(day = row_number()) %>%
-  pivot_longer(-day)
+dat     <- as.data.frame(EuStockMarkets)
+dat$day <- as.numeric(rownames(dat))
+dat     <- pivot_longer(dat, -day)
 
 p <- ggplot(dat, aes(day, value, fill = name)) +
   theme_minimal()
@@ -31,6 +31,7 @@ p +
   geom_line_trace(
     color    = "black",
     size     = 1,
+    stroke   = 0.5,
     linetype = 1,
     alpha    = 1
   )
@@ -55,46 +56,83 @@ p +
 Aesthetics can be further modified using the ggplot2 `scale_*` functions.
 
 ```{r}
+clrs <- c(
+  CAC  = "#E69F00",
+  DAX  = "#0072B2",
+  SMI  = "#56B4E9",
+  FTSE = "#009E73"
+)
+
 p +
   geom_line_trace() +
-  scale_color_manual(values = c("#E69F00", "#0072B2", "#56B4E9", "#009E73"))
+  scale_color_manual(values = clrs)
 ```
 
 <br>
 
 ## Position
 
-The 'position' of the outline can be modified with the `outline_position` parameter. This can be 'all' or a predicate selecting the data to outline. By default 'all' groups are outlined.
+The 'position' of the outline can be modified with the `trace_position` parameter. This can be 'all' or a predicate selecting the data to outline. By default 'all' groups are outlined.
 
-A subset of data points can be highlighted by passing a predicate to `outline_position`. This must evaluate to `TRUE` or `FALSE` within the context of the input data.
+If a predicate is passed to `trace_position`, it must evaluate to `TRUE` or `FALSE` within the context of the input data.
 
 ```{r}
-p <- ggplot(dat, aes(day, value, color = name, group = name)) +
+p <- ggplot(dat, aes(day, value, color = name)) +
   theme_minimal()
 
 p +
   geom_line_trace(
-    trace_position   = day > 1000,
-    size             = 0.5,
-    stroke           = 1,
-    fill             = "black",
-    background_color = "grey75"
-  ) +
-  scale_color_manual(values = c("#FFC273", "#69A9EA", "#94D3FF", "#5ACCA0"))
+    trace_position = day > 1500,
+    size           = 0.5,
+    stroke         = 1,
+    fill           = "black"
+  )
 ```
 
 <br>
 
+The color of background lines can be modified using the `background_color` argument.
+
 ```{r}
 p +
   geom_line_trace(
-    trace_position   = name == "FTSE",
+    trace_position   = day > 1500,
     size             = 0.5,
     stroke           = 1,
-    fill             = "grey75",
+    fill             = "black",
     background_color = "grey75"
   )
 ```
+
+<br>
+
+Here we only highlight names where the second letter is 'A'.
+
+```{r}
+p +
+  geom_line_trace(
+    trace_position   = grepl("^[A-Z]A", name),
+    fill             = "black",
+    background_color = "grey75"
+  )
+```
+
+<br>
+
+Outlines can be removed by setting `color` to `NA`.
+
+```{r}
+p <- ggplot(dat, aes(day, value, fill = name)) +
+  theme_minimal()
+
+p +
+  geom_line_trace(
+    trace_position   = grepl("^[A-Z]A", name),
+    color            = NA,
+    background_color = "grey75"
+  )
+```
+
 
 
 
