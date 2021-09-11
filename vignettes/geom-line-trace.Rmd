@@ -6,7 +6,7 @@ output:
     toc_float: true
     toc_depth: 2
     vignette: >
-      %\VignetteIndexEntry{V(D)J analysis}
+      %\VignetteIndexEntry{geom_line_trace}
       %\VignetteEncoding{UTF-8}
       %\VignetteEngine{knitr::rmarkdown}
 ---
