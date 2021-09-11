@@ -100,11 +100,11 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     }
 
     # Adjust parameters for background points
-    bkgd_params       <- params
-    bkgd_params$color <- NA
+    bkgd_params            <- params
+    bkgd_params$bkgd_color <- NA
 
     if (!is.null(background_color)) {
-      bkgd_params$fill <- background_color
+      bkgd_params$bkgd_fill <- background_color
     }
 
     bkgd_lyr <- layer(
@@ -162,8 +162,34 @@ GeomPointTrace <- ggplot2::ggproto(
     alpha    = NA
   ),
 
+  extra_params = c("bkgd_colour", "bkgd_fill"),
+
+  setup_data = function(data, params) {
+
+    # Adjust background color and fill if bkgd_* params are passed
+    if ("bkgd_colour" %in% names(params)) {
+      data$bkgd_colour <- params$bkgd_colour
+    }
+
+    if ("bkgd_fill" %in% names(params)) {
+      data$bkgd_fill <- params$bkgd_fill
+    }
+
+    data
+  },
+
   draw_group = function(self, data, panel_params, coord, na.rm = FALSE) {
 
+    # If background colour and/or fill is present override original color/fill
+    if ("bkgd_colour" %in% colnames(data)) {
+      data$colour <- data$bkgd_colour
+    }
+
+    if ("bkgd_fill" %in% colnames(data)) {
+      data$fill <- data$bkgd_fill
+    }
+
+    # Set point shape
     if (is.character(data$shape)) {
       data$shape <- translate_shape_string(data$shape)
     }

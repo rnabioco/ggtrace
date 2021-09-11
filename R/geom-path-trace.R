@@ -60,6 +60,8 @@ GeomPathTrace <- ggproto(
     alpha    = NA
   ),
 
+  extra_params = c("bkgd_colour", "bkgd_fill"),
+
   handle_na = function(data, params) {
 
     # Drop missing values at the start or end of a line - can't drop in the
@@ -75,19 +77,15 @@ GeomPathTrace <- ggproto(
     data
   },
 
-  setup_data = function(data, params, mapping) {
+  setup_data = function(data, params) {
 
     # Want to adjust groups so lines with the same colour or fill do not have
     # overlapping outlines
     clmn <- c("colour", "fill")
     clmn <- clmn[clmn %in% colnames(data)]
 
-    # When both colour and fill are present, use colour
-    if ("colour" %in% clmn) {
-      clmn <- "colour"
-    }
-
     # Adjust groups
+    # Do not adjust groups if both colour and fill are specified
     if (length(clmn) == 1) {
       data$orig_group <- data$group
 
@@ -96,7 +94,7 @@ GeomPathTrace <- ggproto(
       for (i in 1:nrow(data)) {
 
         dat <- data[i, ]
-        clr <- dat[[clmn]]
+        clr <- as.character(dat[[clmn]])
 
         if (!clr %in% names(clr_lst)) {
           clr_lst[clr] <- grp <- dat$group
@@ -109,6 +107,15 @@ GeomPathTrace <- ggproto(
       }
     }
 
+    # Adjust background color and fill if bkgd_* params are passed
+    if ("bkgd_colour" %in% names(params)) {
+      data$bkgd_colour <- params$bkgd_colour
+    }
+
+    if ("bkgd_fill" %in% names(params)) {
+      data$bkgd_fill <- params$bkgd_fill
+    }
+
     data
   },
 
@@ -119,7 +126,16 @@ GeomPathTrace <- ggproto(
       message("geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?")
     }
 
-    # must be sorted on group
+    # If background colour and/or fill is present override original color/fill
+    if ("bkgd_colour" %in% colnames(data)) {
+      data$colour <- data$bkgd_colour
+    }
+
+    if ("bkgd_fill" %in% colnames(data)) {
+      data$fill <- data$bkgd_fill
+    }
+
+    # Must be sorted on group
     data    <- data[order(data$group), , drop = FALSE]
     munched <- coord_munch(coord, data, panel_params)
 
@@ -155,7 +171,7 @@ GeomPathTrace <- ggproto(
     n          <- nrow(munched)
     group_diff <- munched$group[-1] != munched$group[-n]
     start      <- c(TRUE, group_diff)
-    end        <-   c(group_diff, TRUE)
+    end        <- c(group_diff, TRUE)
 
     if (!constant) {
 
@@ -295,13 +311,13 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
 GeomLineTrace <- ggproto(
   "GeomLineTrace", GeomPathTrace,
 
+  extra_params = c("na.rm", "orientation", "bkgd_colour", "bkgd_fill"),
+
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
 
     params
   },
-
-  extra_params = c("na.rm", "orientation"),
 
   setup_data = function(data, params) {
 
@@ -311,40 +327,7 @@ GeomLineTrace <- ggproto(
 
     data <- flip_data(data, params$flipped_aes)
 
-    # Want to adjust groups so lines with the same colour or fill do not have
-    # overlapping outlines
-    clmn <- c("colour", "fill")
-    clmn <- clmn[clmn %in% colnames(data)]
-
-    # When both colour and fill are present, use colour
-    if ("colour" %in% clmn) {
-      clmn <- "colour"
-    }
-
-    # Adjust groups
-    #
-    if (length(clmn) == 1) {
-      data$orig_group <- data$group
-
-      clr_lst <- list()
-
-      for (i in 1:nrow(data)) {
-
-        dat <- data[i, ]
-        clr <- dat[[clmn]]
-
-        if (!clr %in% names(clr_lst)) {
-          clr_lst[clr] <- grp <- dat$group
-
-        } else {
-          grp <- clr_lst[[clr]]
-        }
-
-        data[i, "group"] <- grp
-      }
-    }
-
-    data
+    GeomPathTrace$setup_data(data, params)
   }
 )
 
@@ -384,6 +367,8 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
 #' @export
 GeomStepTrace <- ggproto(
   "GeomStepTrace", GeomPathTrace,
+
+  extra_params = c("bkgd_colour", "bkgd_fill"),
 
   draw_group = function(data, panel_params, coord, direction = "hv") {
     data <- dapply(data, "group", stairstep, direction = direction)
