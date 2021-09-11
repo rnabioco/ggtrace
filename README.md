@@ -10,8 +10,6 @@
 coverage](https://codecov.io/gh/rnabioco/ggtrace/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggtrace?branch=master)
 <!-- badges: end -->
 
-## Overview
-
 ggtrace provides ggplot2 geoms that allow groups of data points to be
 highlighted with an outline for emphasis.
 
