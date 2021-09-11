@@ -20,6 +20,7 @@ Imports:
     grid,
     vctrs
 Suggests: 
+    tidyr,
     covr,
     knitr,
     rmarkdown,

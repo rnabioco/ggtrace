@@ -12,11 +12,8 @@ coverage](https://codecov.io/gh/rnabioco/ggtrace/branch/master/graph/badge.svg)]
 
 ## Overview
 
-A scatter plot is a common way to compare two continuous variables.
-However, when there are thousands of data points, it can be difficult to
-distinguish between groups based on color alone. ggtrace provides
-ggplot2 geoms that highlight groups of data points with an outline for
-emphasis.
+ggtrace provides ggplot2 geoms that allow groups of data points to be
+highlighted with an outline for emphasis.
 
 <br>
 
@@ -35,15 +32,15 @@ devtools::install_github("rnabioco/ggtrace")
 ## Basic Usage
 
 `geom_point_trace` accepts graphical parameters normally passed to
-`geom_point` to control the appearance of data points and outlines. This
-includes `fill`, `color`, `size`, `linetype`, `stroke` and `alpha`. The
+`geom_point` to control the appearance of data points and outlines. The
 arguments `trace_position` and `background_color` can be used to select
 specific sets of points to highlight. For more examples see the
-[vignette]().
+[vignette](https://rnabioco.github.io/ggtrace/articles/geom-point-trace.html).
 
 ``` r
 library(ggplot2)
 library(ggtrace)
+library(tidyr)
 
 p <- ggplot(
   clusters,
@@ -61,3 +58,33 @@ p +
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
+<br>
+
+`geom_line_trace` accepts parameters normally passed to `geom_line` with
+the following exceptions: `fill` controls the inner line color, `color`
+controls the outline color, and `stroke` controls the outline width.
+Like `geom_point_trace()`, the arguments `trace_position` and
+`background_color` can be used to select specific data points to
+highlight. For more examples see the
+[vignette](https://rnabioco.github.io/ggtrace/articles/geom-line-trace.html).
+
+``` r
+dat     <- as.data.frame(EuStockMarkets)
+dat$day <- as.numeric(rownames(dat))
+dat     <- pivot_longer(dat, -day)
+
+p <- ggplot(dat, aes(day, value, color = name)) +
+  theme_minimal()
+
+p +
+  geom_line_trace(
+    trace_position   = day > 1500,
+    size             = 0.5,
+    stroke           = 0.5,
+    fill             = "black",
+    background_color = "grey75"
+  )
+```
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
