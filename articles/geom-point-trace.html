@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/geom-line-trace.html">geom_line_trace</a>
+    </li>
+    <li>
       <a href="../articles/geom-point-trace.html">geom_point_trace</a>
     </li>
   </ul>
@@ -74,7 +77,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>geom_point_trace</h1>
             
-            <h4 class="date">September 08 2021</h4>
+            <h4 class="date">September 11 2021</h4>
       
       
       <div class="hidden name"><code>geom-point-trace.Rmd</code></div>
@@ -153,7 +156,7 @@
 <div id="position" class="section level2">
 <h2 class="hasAnchor">
 <a href="#position" class="anchor"></a>Position</h2>
-<p>The ‘position’ of the outline can be modified with the <code>outline_position</code> parameter. This can be ‘all’, ‘bottom’, or a predicate selecting the points to outline. By default ‘all’ groups are outlined.</p>
+<p>The ‘position’ of the outline can be modified with the <code>trace_position</code> parameter. This can be ‘all’, ‘bottom’, or a predicate selecting the points to outline. By default ‘all’ groups are outlined.</p>
 <p>To only add a single outline around all points plotted, set <code>trace_position</code> to ‘bottom’.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>
@@ -168,7 +171,7 @@
   <span class="op">)</span></code></pre></div>
 <p><img src="geom-point-trace_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p><br></p>
-<p>A subset of data points can be highlighted by passing a predicate to <code>outline_position</code>. This must evaluate to <code>TRUE</code> or <code>FALSE</code> within the context of the input data.</p>
+<p>A subset of data points can be highlighted by passing a predicate to <code>trace_position</code>. This must evaluate to <code>TRUE</code> or <code>FALSE</code> within the context of the input data.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span>
   <span class="fu"><a href="../reference/geom_point_trace.html">geom_point_trace</a></span><span class="op">(</span>
@@ -185,7 +188,7 @@
   <span class="op">)</span></code></pre></div>
 <p><img src="geom-point-trace_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p><br></p>
-<p>To leave out the outline.</p>
+<p>Outlines can be removed by setting <code>color</code> to <code>NA</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span>
   <span class="fu"><a href="../reference/geom_point_trace.html">geom_point_trace</a></span><span class="op">(</span>
