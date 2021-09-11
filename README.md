@@ -12,11 +12,8 @@ coverage](https://codecov.io/gh/rnabioco/ggtrace/branch/master/graph/badge.svg)]
 
 ## Overview
 
-A scatter plot is a common way to compare two continuous variables.
-However, when there are thousands of data points, it can be difficult to
-distinguish between groups based on color alone. ggtrace provides
-ggplot2 geoms that highlight groups of data points with an outline for
-emphasis.
+ggtrace provides ggplot2 geoms that allow groups of data points to be
+highlighted with an outline for emphasis.
 
 <br>
 
