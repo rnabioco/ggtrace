@@ -40,15 +40,12 @@ specific sets of points to highlight. For more examples see the
 ``` r
 library(ggplot2)
 library(ggtrace)
-library(tidyr)
 
-p <- ggplot(
+ggplot(
   clusters,
   aes(UMAP_1, UMAP_2, color = cluster)
 ) + 
-  theme_minimal()
-
-p +
+  theme_minimal() +
   geom_point_trace(
     size             = 1,
     fill             = "white",
@@ -70,14 +67,8 @@ highlight. For more examples see the
 [vignette](https://rnabioco.github.io/ggtrace/articles/geom-line-trace.html).
 
 ``` r
-dat     <- as.data.frame(EuStockMarkets)
-dat$day <- as.numeric(rownames(dat))
-dat     <- pivot_longer(dat, -day)
-
-p <- ggplot(dat, aes(day, value, color = name)) +
-  theme_minimal()
-
-p +
+ggplot(stocks, aes(day, value, color = name)) +
+  theme_minimal() +
   geom_line_trace(
     trace_position   = day > 1500,
     size             = 0.5,
