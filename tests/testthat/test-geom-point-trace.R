@@ -56,7 +56,7 @@ test_that("trace_position predicate return list", {
 
   expect_type(p, "list")
   expect_true(length(p) == 2)
-  expect_identical(p[[1]]$aes_params$colour, NA)
+  expect_identical(p[[1]]$geom_params$bkgd_colour, NA)
   expect_true(length(p[[2]]$aes_params) == 0)
 })
 
@@ -85,8 +85,8 @@ test_that("background_color", {
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
     geom_point_trace(trace_position = signal > 10, background_color = "blue")
 
-  expect_true(is.na(p$layers[[1]]$aes_params$colour))
-  expect_true(p$layers[[1]]$aes_params$fill == "blue")
+  expect_true(is.na(p$layers[[1]]$geom_params$bkgd_colour))
+  expect_true(p$layers[[1]]$geom_params$bkgd_fill == "blue")
 })
 
 test_that("single strings translate to their corresponding integers", {
