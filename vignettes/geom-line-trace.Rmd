@@ -95,16 +95,16 @@ p +
 
 <br>
 
-The color of background lines can be modified using the `background_color` argument.
+The appearance of background lines can be modified by passing a named list of parameters to `background_params`.
 
 ```{r}
 p +
-  geom_line_trace(
-    trace_position   = day > 1500,
-    size             = 0.5,
-    stroke           = 1,
-    fill             = "black",
-    background_color = "grey75"
+  geom_step_trace(
+    trace_position    = day > 1500,
+    size              = 0.5,
+    stroke            = 1,
+    fill              = "black",
+    background_params = list(fill = "grey75")
   )
 ```
 
@@ -115,9 +115,9 @@ Here we only highlight names where the second letter is 'A'.
 ```{r}
 p +
   geom_line_trace(
-    trace_position   = grepl("^[A-Z]A", name),
-    fill             = "black",
-    background_color = "grey75"
+    trace_position    = grepl("^[A-Z]A", name),
+    fill              = "black",
+    background_params = list(fill = "grey75")
   )
 ```
 
@@ -134,9 +134,9 @@ p <- ggplot(
 
 p +
   geom_line_trace(
-    trace_position   = grepl("^[A-Z]A", name),
-    color            = NA,
-    background_color = "grey75"
+    trace_position    = grepl("^[A-Z]A", name),
+    color             = NA,
+    background_params = list(fill = "grey75")
   )
 ```
 

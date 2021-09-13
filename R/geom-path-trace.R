@@ -12,7 +12,7 @@
 #' @eval rd_aesthetics("geom", "path_trace")
 #' @export
 geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                            ..., trace_position = "all", background_color = NULL, lineend = "butt",
+                            ..., trace_position = "all", background_params = NULL, lineend = "butt",
                             linejoin = "round", linemitre = 10, arrow = NULL, na.rm = FALSE,
                             show.legend = NA, inherit.aes = TRUE) {
 
@@ -26,17 +26,17 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
   )
 
   create_trace_layers(
-    mapping          = mapping,
-    data             = data,
-    stat             = stat,
-    geom             = GeomPathTrace,
-    position         = position,
-    show.legend      = show.legend,
-    inherit.aes      = inherit.aes,
-    params           = params,
-    trace_position   = substitute(trace_position),
-    background_color = background_color,
-    allow_bottom     = FALSE
+    mapping           = mapping,
+    data              = data,
+    stat              = stat,
+    geom              = GeomPathTrace,
+    position          = position,
+    show.legend       = show.legend,
+    inherit.aes       = inherit.aes,
+    params            = params,
+    trace_position    = substitute(trace_position),
+    background_params = background_params,
+    allow_bottom      = FALSE
   )
 }
 
@@ -58,7 +58,11 @@ GeomPathTrace <- ggproto(
     alpha    = NA
   ),
 
-  extra_params = c("bkgd_colour", "bkgd_fill"),
+  extra_params = c(
+    "bkgd_colour",   "bkgd_fill",      "bkgd_size",
+    "bkgd_stroke",   "bkgd_linetype",  "bkgd_lineend",
+    "bkgd_linejoin", "bkgd_linemitre", "bkgd_arrow'"
+  ),
 
   handle_na = function(data, params) {
 
@@ -105,14 +109,11 @@ GeomPathTrace <- ggproto(
       }
     }
 
-    # Adjust background color and fill if bkgd_* params are passed
-    if ("bkgd_colour" %in% names(params)) {
-      data$bkgd_colour <- params$bkgd_colour
-    }
-
-    if ("bkgd_fill" %in% names(params)) {
-      data$bkgd_fill <- params$bkgd_fill
-    }
+    # Add background new data columns for background_params
+    # should not override the original columns since final parameters (colour,
+    # fill, etc.) have not been set for groups yet
+    bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
+    data[bkgd_clmns] <- params[bkgd_clmns]
 
     data
   },
@@ -124,14 +125,11 @@ GeomPathTrace <- ggproto(
       message("geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?")
     }
 
-    # If background colour and/or fill is present override original color/fill
-    if ("bkgd_colour" %in% colnames(data)) {
-      data$colour <- data$bkgd_colour
-    }
+    # If background_params are present in data, override original columns
+    bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
+    clmns      <- gsub("^bkgd_", "", bkgd_clmns)
 
-    if ("bkgd_fill" %in% colnames(data)) {
-      data$fill <- data$bkgd_fill
-    }
+    data[clmns] <- data[bkgd_clmns]
 
     # Must be sorted on group
     data    <- data[order(data$group), , drop = FALSE]
@@ -279,7 +277,7 @@ keep_mid_true <- function(x) {
 #' @export
 geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             na.rm = FALSE, orientation = NA, show.legend = NA, inherit.aes = TRUE,
-                            trace_position = "all", background_color = NULL, ...) {
+                            trace_position = "all", background_params = NULL, ...) {
 
   params <- list(
     orientation = orientation,
@@ -288,17 +286,17 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
   )
 
   create_trace_layers(
-    mapping          = mapping,
-    data             = data,
-    stat             = stat,
-    geom             = GeomLineTrace,
-    position         = position,
-    show.legend      = show.legend,
-    inherit.aes      = inherit.aes,
-    params           = params,
-    trace_position   = substitute(trace_position),
-    background_color = background_color,
-    allow_bottom     = FALSE
+    mapping           = mapping,
+    data              = data,
+    stat              = stat,
+    geom              = GeomLineTrace,
+    position          = position,
+    show.legend       = show.legend,
+    inherit.aes       = inherit.aes,
+    params            = params,
+    trace_position    = substitute(trace_position),
+    background_params = background_params,
+    allow_bottom      = FALSE
   )
 }
 
@@ -309,7 +307,12 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
 GeomLineTrace <- ggproto(
   "GeomLineTrace", GeomPathTrace,
 
-  extra_params = c("na.rm", "orientation", "bkgd_colour", "bkgd_fill"),
+  extra_params = c(
+    "bkgd_colour",   "bkgd_fill",      "bkgd_size",
+    "bkgd_stroke",   "bkgd_linetype",  "bkgd_lineend",
+    "bkgd_linejoin", "bkgd_linemitre", "bkgd_arrow",
+    "na.rm",         "orientation"
+  ),
 
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
@@ -336,7 +339,7 @@ GeomLineTrace <- ggproto(
 #' @export
 geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             direction = "hv", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE,
-                            trace_position = "all", background_color = NULL, ...) {
+                            trace_position = "all", background_params = NULL, ...) {
 
   params <- list(
     direction = direction,
@@ -345,17 +348,17 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
   )
 
   create_trace_layers(
-    mapping          = mapping,
-    data             = data,
-    stat             = stat,
-    geom             = GeomStepTrace,
-    position         = position,
-    show.legend      = show.legend,
-    inherit.aes      = inherit.aes,
-    params           = params,
-    trace_position   = substitute(trace_position),
-    background_color = background_color,
-    allow_bottom     = FALSE
+    mapping           = mapping,
+    data              = data,
+    stat              = stat,
+    geom              = GeomStepTrace,
+    position          = position,
+    show.legend       = show.legend,
+    inherit.aes       = inherit.aes,
+    params            = params,
+    trace_position    = substitute(trace_position),
+    background_params = background_params,
+    allow_bottom      = FALSE
   )
 }
 
@@ -365,8 +368,6 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
 #' @export
 GeomStepTrace <- ggproto(
   "GeomStepTrace", GeomPathTrace,
-
-  extra_params = c("bkgd_colour", "bkgd_fill"),
 
   draw_group = function(data, panel_params, coord, direction = "hv") {
     data <- dapply(data, "group", stairstep, direction = direction)

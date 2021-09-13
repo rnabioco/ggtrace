@@ -15,21 +15,25 @@
 #' @eval rd_aesthetics("geom", "point_trace")
 #' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                             ..., trace_position = "all", background_color = NULL, na.rm = FALSE,
-                             show.legend = NA, inherit.aes = TRUE) {
+                             ..., trace_position = "all", background_color = NULL, background_params = NULL,
+                             na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+
+  if (!is.null(background_params) && !is.list(background_params)) {
+    stop("background_params must be a named list with additional parameters to use for modifying background points.")
+  }
 
   create_trace_layers(
-    mapping          = mapping,
-    data             = data,
-    stat             = stat,
-    geom             = GeomPointTrace,
-    position         = position,
-    show.legend      = show.legend,
-    inherit.aes      = inherit.aes,
-    params           = list(na.rm = na.rm, ...),
-    trace_position   = substitute(trace_position),
-    background_color = background_color,
-    allow_bottom     = TRUE
+    mapping           = mapping,
+    data              = data,
+    stat              = stat,
+    geom              = GeomPointTrace,
+    position          = position,
+    show.legend       = show.legend,
+    inherit.aes       = inherit.aes,
+    params            = list(na.rm = na.rm, ...),
+    trace_position    = substitute(trace_position),
+    background_params = background_params,
+    allow_bottom      = TRUE
   )
 }
 
@@ -56,7 +60,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
 #' @noRd
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
-                                params, trace_position, background_color, allow_bottom = TRUE) {
+                                params, trace_position, background_params, allow_bottom = TRUE) {
 
   trace_expr <- trace_position
   lyrs       <- list()
@@ -64,7 +68,6 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
   # If trace_position is 'bottom', create new column and use to override
   # original group specification.
   if (allow_bottom && trace_expr == "bottom") {
-
     data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
 
     if (is.null(mapping)) {
@@ -103,8 +106,10 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     bkgd_params            <- params
     bkgd_params$bkgd_color <- NA
 
-    if (!is.null(background_color)) {
-      bkgd_params$bkgd_fill <- background_color
+    if (!is.null(background_params)) {
+      names(background_params) <- paste0("bkgd_", names(background_params))
+
+      bkgd_params[names(background_params)] <- background_params
     }
 
     bkgd_lyr <- layer(
@@ -162,32 +167,31 @@ GeomPointTrace <- ggplot2::ggproto(
     alpha    = NA
   ),
 
-  extra_params = c("bkgd_colour", "bkgd_fill"),
+  # paste0("bkgd_", names(self$default_aes))
+  extra_params = c(
+    "bkgd_shape", "bkgd_colour", "bkgd_fill",
+    "bkgd_size",  "bkgd_stroke", "bkgd_linetype",
+    "bkgd_alpha"
+  ),
 
   setup_data = function(data, params) {
 
-    # Adjust background color and fill if bkgd_* params are passed
-    if ("bkgd_colour" %in% names(params)) {
-      data$bkgd_colour <- params$bkgd_colour
-    }
-
-    if ("bkgd_fill" %in% names(params)) {
-      data$bkgd_fill <- params$bkgd_fill
-    }
+    # Add background new data columns for background_params
+    # should not override the original columns since final parameters (colour,
+    # fill, etc.) have not been set for groups yet
+    bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
+    data[bkgd_clmns] <- params[bkgd_clmns]
 
     data
   },
 
   draw_group = function(self, data, panel_params, coord, na.rm = FALSE) {
 
-    # If background colour and/or fill is present override original color/fill
-    if ("bkgd_colour" %in% colnames(data)) {
-      data$colour <- data$bkgd_colour
-    }
+    # If background_params are present in data, override original columns
+    bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
+    clmns      <- gsub("^bkgd_", "", bkgd_clmns)
 
-    if ("bkgd_fill" %in% colnames(data)) {
-      data$fill <- data$bkgd_fill
-    }
+    data[clmns] <- data[bkgd_clmns]
 
     # Set point shape
     if (is.character(data$shape)) {

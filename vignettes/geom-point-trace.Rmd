@@ -116,13 +116,13 @@ p +
 
 <br>
 
-The color of background points can be modified using the `background_color` argument.
+The appearance of background points can be modified by passing a named list of parameters to `background_params`.
 
 ```{r}
 p +
   geom_point_trace(
-    trace_position   = signal < 0,
-    background_color = "grey85"
+    trace_position    = signal < 0,
+    background_params = list(fill = "grey85")
   )
 ```
 
@@ -133,9 +133,9 @@ Outlines can be removed by setting `color` to `NA`.
 ```{r}
 p +
   geom_point_trace(
-    trace_position   = signal < 0,
-    background_color = "grey85",
-    color            = NA
+    trace_position    = signal < 0,
+    background_params = list(fill = "grey85"),
+    color             = NA
   )
 ```
 
