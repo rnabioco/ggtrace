@@ -19,7 +19,10 @@ output:
 library(ggplot2)
 library(ggtrace)
 
-p <- ggplot(stocks, aes(day, value, fill = name)) +
+p <- ggplot(
+  stocks,
+  aes(day, value, fill = name)
+) +
   theme_minimal()
 
 p +
@@ -39,7 +42,10 @@ p +
 Like other `ggplot2` geoms, variables can be mapped to aesthetic attributes to modify the outline appearance.
 
 ```{r}
-p <- ggplot(stocks, aes(day, value, color = name)) +
+p <- ggplot(
+  stocks,
+  aes(day, value, color = name)
+) +
   theme_minimal()
 
 p +
@@ -67,12 +73,15 @@ p +
 
 ## Position
 
-The 'position' of the outline can be modified with the `trace_position` parameter. This can be 'all' or a predicate selecting the stocksa to outline. By default 'all' groups are outlined.
+The 'position' of the outline can be modified with the `trace_position` parameter. This can be 'all' or a predicate selecting the data points to outline. By default 'all' groups are outlined.
 
-If a predicate is passed to `trace_position`, it must evaluate to `TRUE` or `FALSE` within the context of the input stocksa.
+If a predicate is passed to `trace_position`, it must evaluate to `TRUE` or `FALSE` within the context of the input data.
 
 ```{r}
-p <- ggplot(stocks, aes(day, value, color = name)) +
+p <- ggplot(
+  stocks,
+  aes(day, value, color = name)
+) +
   theme_minimal()
 
 p +
@@ -117,7 +126,10 @@ p +
 Outlines can be removed by setting `color` to `NA`.
 
 ```{r}
-p <- ggplot(stocks, aes(day, value, fill = name)) +
+p <- ggplot(
+  stocks,
+  aes(day, value, fill = name)
+) +
   theme_minimal()
 
 p +
