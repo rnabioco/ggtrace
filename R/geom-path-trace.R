@@ -36,9 +36,28 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
     params            = params,
     trace_position    = substitute(trace_position),
     background_params = background_params,
+    trans_fn          = trans_fn,
     allow_bottom      = FALSE
   )
 }
+
+
+
+
+
+
+path_trans_fn <- function(dat, dat_expr) {
+  dat <- transform(dat, KEEP = eval(dat_expr))
+
+  dat[!dat$KEEP, "value"] <- NA  # NEEDS TO BE Y VALUE
+
+  dat
+}
+
+
+
+
+
 
 #' @rdname ggplot2-ggproto
 #' @format NULL
@@ -296,6 +315,7 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
     params            = params,
     trace_position    = substitute(trace_position),
     background_params = background_params,
+    trans_fn          = path_trans_fn,
     allow_bottom      = FALSE
   )
 }
@@ -358,6 +378,7 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
     params            = params,
     trace_position    = substitute(trace_position),
     background_params = background_params,
+    trans_fn          = path_trans_fn,
     allow_bottom      = FALSE
   )
 }

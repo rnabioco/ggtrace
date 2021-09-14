@@ -22,6 +22,12 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     stop("background_params must be a named list with additional parameters to use for modifying background points.")
   }
 
+  trans_fn <- function(dat, dat_expr) {
+    dat <- subset(dat, eval(dat_expr))
+
+    dat
+  }
+
   create_trace_layers(
     mapping           = mapping,
     data              = data,
@@ -33,6 +39,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     params            = list(na.rm = na.rm, ...),
     trace_position    = substitute(trace_position),
     background_params = background_params,
+    trans_fn          = trans_fn,
     allow_bottom      = TRUE
   )
 }
@@ -60,7 +67,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
 #' @noRd
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
-                                params, trace_position, background_params, allow_bottom = TRUE) {
+                                params, trace_position, background_params, trans_fn, allow_bottom = TRUE) {
 
   trace_expr <- trace_position
   lyrs       <- list()
@@ -76,7 +83,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
 
     mapping$group <- sym("BOTTOM_TRACE_GROUP")
 
-  # If trace_position is not 'all', evaluate within subset
+  # If trace_position is not 'all', evaluate expression
   } else if (trace_expr != "all") {
 
     # Store original data input to use for background points
@@ -96,10 +103,10 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     # that encompasses what was passed to both data and trace_position
     if (is.function(data)) {
       d_fn <- data
-      data <- ggplot2::fortify(~ subset(d_fn(...), eval(trace_expr)))
+      data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
 
     } else if (is.data.frame(data) || is.null(data)) {
-      data <- ggplot2::fortify(~ subset(.x, eval(trace_expr)))
+      data <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
     }
 
     # Adjust parameters for background points
