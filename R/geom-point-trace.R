@@ -12,7 +12,7 @@
 #' @eval rd_aesthetics("geom", "point_trace")
 #' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                             ..., trace_position = "all", background_color = NULL, background_params = NULL,
+                             ..., trace_position = "all", background_params = NULL,
                              na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
 
   if (!is.null(background_params) && !is.list(background_params)) {
@@ -47,6 +47,8 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' Create geom_*_trace layers
 #'
 #' @inheritParams geom_point_trace
+#' @param geom The geometric object to use to display the data.
+#' @param params Additional parameters to pass to the geom and stat.
 #' @param trans_fn Function to use for transforming data when predicate is
 #' passed to trace_position. Must accept three arguments: dat, data to transform;
 #' ex, expression to use for transforming data; inv, should the expression be
