@@ -60,7 +60,7 @@ ggplot(clusters, aes(UMAP_1, UMAP_2, color = cluster)) +
 ```{r, fig.width = 8, fig.height = 4}
 ggplot(stocks, aes(day, value, color = name)) +
   theme_minimal() +
-  geom_path_trace(
+  geom_line_trace(
     trace_position    = day < 500 | day > 1500,
     stroke            = 1,
     background_params = list(fill = "grey75")
