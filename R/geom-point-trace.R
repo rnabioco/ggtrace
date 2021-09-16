@@ -1,5 +1,3 @@
-#' Trace points
-#'
 #' Trace points to improve clarity of plots with overplotted geoms.
 #'
 #' @inheritParams ggplot2::geom_point
@@ -9,54 +7,55 @@
 #'     'bottom', only the bottom most layer of points will be outlined. A
 #'     subset of data points can be outlined by passing a predicate. This must
 #'     evaluate to `TRUE` or `FALSE` within the context of the input data.
-#' @param background_color Color to use for background points when a predicate
-#'     is passed to `trace_position`. If NULL, the original fill color will be
-#'     used.
+#' @param background_params Named list specifying aesthetic parameters to use
+#'     for background points when a predicate is passed to `trace_position`.
 #' @eval rd_aesthetics("geom", "point_trace")
 #' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                             ..., trace_position = "all", background_color = NULL, na.rm = FALSE,
-                             show.legend = NA, inherit.aes = TRUE) {
+                             ..., trace_position = "all", background_params = NULL,
+                             na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+
+  if (!is.null(background_params) && !is.list(background_params)) {
+    stop("background_params must be a named list with additional parameters to use for modifying background points.")
+  }
+
+  trans_fn <- function(dat, ex, inv = FALSE) {
+    if (inv) {
+      return(subset(dat, !eval(ex)))
+    }
+
+    subset(dat, eval(ex))
+  }
 
   create_trace_layers(
-    mapping          = mapping,
-    data             = data,
-    stat             = stat,
-    geom             = GeomPointTrace,
-    position         = position,
-    show.legend      = show.legend,
-    inherit.aes      = inherit.aes,
-    params           = list(na.rm = na.rm, ...),
-    trace_position   = substitute(trace_position),
-    background_color = background_color,
-    allow_bottom     = TRUE
+    mapping           = mapping,
+    data              = data,
+    stat              = stat,
+    geom              = GeomPointTrace,
+    position          = position,
+    show.legend       = show.legend,
+    inherit.aes       = inherit.aes,
+    params            = list(na.rm = na.rm, ...),
+    trace_position    = substitute(trace_position),
+    background_params = background_params,
+    trans_fn          = trans_fn,
+    allow_bottom      = TRUE
   )
 }
 
 
 #' Create geom_*_trace layers
 #'
-#' @param mapping Set of aesthetic mappings created by aes() to use for generating layers.
-#' @param data The data to be displayed in these layers.
+#' @inheritParams geom_point_trace
 #' @param geom The geometric object to use to display the data.
-#' @param stat Statistical transformation to use for these layers.
-#' @param position Position adjustment.
-#' @param show.legend Should these layers be included in the legend?
-#' @param inherit.aes If FALSE, overrides the default aesthetics.
 #' @param params Additional parameters to pass to the geom and stat.
-#' @param trace_position Specifies which groups of data points should be
-#'     outlined. Can be 'all', 'bottom', or a predicate to use for filtering
-#'     data. If 'all', the default, every group plotted will be outlined, if
-#'     'bottom', only the bottom most layer of points will be outlined. A
-#'     subset of data points can be outlined by passing a predicate. This must
-#'     evaluate to `TRUE` or `FALSE` within the context of the input data.
-#' @param background_color Color to use for background points when a predicate
-#'     is passed to `trace_position`. If NULL, the original fill color will be
-#'     used.
+#' @param trans_fn Function to use for transforming data when predicate is
+#' passed to trace_position. Must accept three arguments: dat, data to transform;
+#' ex, expression to use for transforming data; inv, should the expression be
+#' negated, this allows the inverse data points to be transformed.
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
-#' @noRd
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
-                                params, trace_position, background_color, allow_bottom = TRUE) {
+                                params, trace_position, background_params, trans_fn, allow_bottom = TRUE) {
 
   trace_expr <- trace_position
   lyrs       <- list()
@@ -64,20 +63,16 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
   # If trace_position is 'bottom', create new column and use to override
   # original group specification.
   if (allow_bottom && trace_expr == "bottom") {
-
     data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
 
     if (is.null(mapping)) {
       mapping <- ggplot2::aes()
     }
 
-    mapping$group <- sym("BOTTOM_TRACE_GROUP")
+    mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
-  # If trace_position is not 'all', evaluate within subset
+  # If trace_position is not 'all', evaluate expression
   } else if (trace_expr != "all") {
-
-    # Store original data input to use for background points
-    bkgd_data <- data
 
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate
@@ -93,18 +88,23 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     # that encompasses what was passed to both data and trace_position
     if (is.function(data)) {
       d_fn <- data
-      data <- ggplot2::fortify(~ subset(d_fn(...), eval(trace_expr)))
+
+      data      <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
+      bkgd_data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr, inv = TRUE))
 
     } else if (is.data.frame(data) || is.null(data)) {
-      data <- ggplot2::fortify(~ subset(.x, eval(trace_expr)))
+      data      <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
+      bkgd_data <- ggplot2::fortify(~ trans_fn(.x, trace_expr, inv = TRUE))
     }
 
     # Adjust parameters for background points
     bkgd_params            <- params
     bkgd_params$bkgd_color <- NA
 
-    if (!is.null(background_color)) {
-      bkgd_params$bkgd_fill <- background_color
+    if (!is.null(background_params)) {
+      names(background_params) <- paste0("bkgd_", names(background_params))
+
+      bkgd_params[names(background_params)] <- background_params
     }
 
     bkgd_lyr <- layer(
@@ -155,39 +155,35 @@ GeomPointTrace <- ggplot2::ggproto(
   default_aes = ggplot2::aes(
     shape    = 19,
     colour   = "black",
-    fill     = "white",
+    fill     = "black",
     size     = 1.5,
     stroke   = 1,
     linetype = 1,
     alpha    = NA
   ),
 
-  extra_params = c("bkgd_colour", "bkgd_fill"),
+  # WISH THESE COULD BE AUTOMATICALLY DETERMINED BASED ON self$default_aes
+  # paste0("bkgd_", names(self$default_aes))
+  extra_params = c(extra_bkgd_params, "bkgd_shape"),
 
   setup_data = function(data, params) {
 
-    # Adjust background color and fill if bkgd_* params are passed
-    if ("bkgd_colour" %in% names(params)) {
-      data$bkgd_colour <- params$bkgd_colour
-    }
-
-    if ("bkgd_fill" %in% names(params)) {
-      data$bkgd_fill <- params$bkgd_fill
-    }
+    # Add background new data columns for background_params
+    # should not override the original columns since final parameters (colour,
+    # fill, etc.) have not been set for groups yet
+    bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
+    data[bkgd_clmns] <- params[bkgd_clmns]
 
     data
   },
 
   draw_group = function(self, data, panel_params, coord, na.rm = FALSE) {
 
-    # If background colour and/or fill is present override original color/fill
-    if ("bkgd_colour" %in% colnames(data)) {
-      data$colour <- data$bkgd_colour
-    }
+    # If background_params are present in data, override original columns
+    bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
+    clmns      <- gsub("^bkgd_", "", bkgd_clmns)
 
-    if ("bkgd_fill" %in% colnames(data)) {
-      data$fill <- data$bkgd_fill
-    }
+    data[clmns] <- data[bkgd_clmns]
 
     # Set point shape
     if (is.character(data$shape)) {

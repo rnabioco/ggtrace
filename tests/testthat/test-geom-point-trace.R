@@ -83,7 +83,7 @@ test_that("trace_position pass data as function", {
 
 test_that("background_color", {
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
-    geom_point_trace(trace_position = signal > 10, background_color = "blue")
+    geom_point_trace(trace_position = signal > 10, background_params = list(fill = "blue"))
 
   expect_true(is.na(p$layers[[1]]$geom_params$bkgd_colour))
   expect_true(p$layers[[1]]$geom_params$bkgd_fill == "blue")
