@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trace points — geom_point_trace • ggtrace</title>
+<title>Trace points to improve clarity of plots with overplotted geoms. — geom_point_trace • ggtrace</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Trace points — geom_point_trace" />
+<meta property="og:title" content="Trace points to improve clarity of plots with overplotted geoms. — geom_point_trace" />
 <meta property="og:description" content="Trace points to improve clarity of plots with overplotted geoms." />
 
 
@@ -118,7 +118,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Trace points</h1>
+    <h1>Trace points to improve clarity of plots with overplotted geoms.</h1>
     
     <div class="hidden name"><code>geom_point_trace.Rd</code></div>
     </div>
@@ -134,7 +134,7 @@
   position <span class='op'>=</span> <span class='st'>"identity"</span>,
   <span class='va'>...</span>,
   trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
-  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  background_params <span class='op'>=</span> <span class='cn'>NULL</span>,
   na.rm <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
   inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>
@@ -191,10 +191,9 @@ subset of data points can be outlined by passing a predicate. This must
 evaluate to `TRUE` or `FALSE` within the context of the input data.</p></td>
     </tr>
     <tr>
-      <th>background_color</th>
-      <td><p>Color to use for background points when a predicate
-is passed to `trace_position`. If NULL, the original fill color will be
-used.</p></td>
+      <th>background_params</th>
+      <td><p>Named list specifying aesthetic parameters to use
+for background points when a predicate is passed to `trace_position`.</p></td>
     </tr>
     <tr>
       <th>na.rm</th>

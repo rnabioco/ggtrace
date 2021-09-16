@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ggtrace</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
       </span>
     </div>
 
@@ -94,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/geom-line-trace.html">geom_line_trace</a>
+    </li>
     <li>
       <a href="../articles/geom-point-trace.html">geom_point_trace</a>
     </li>
@@ -134,7 +137,8 @@
   <span class='va'>inherit.aes</span>,
   <span class='va'>params</span>,
   <span class='va'>trace_position</span>,
-  <span class='va'>background_color</span>,
+  <span class='va'>background_params</span>,
+  <span class='va'>trans_fn</span>,
   allow_bottom <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span></pre>
 
@@ -143,15 +147,29 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>mapping</th>
-      <td><p>Set of aesthetic mappings created by aes() to use for generating layers.</p></td>
+      <td><p>Set of aesthetic mappings created by <code><a href='https://ggplot2.tidyverse.org/reference/aes.html'>aes()</a></code> or
+<code><a href='https://ggplot2.tidyverse.org/reference/aes_.html'>aes_()</a></code>. If specified and <code>inherit.aes = TRUE</code> (the
+default), it is combined with the default mapping at the top level of the
+plot. You must supply <code>mapping</code> if there is no plot mapping.</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>The data to be displayed in these layers.</p></td>
+      <td><p>The data to be displayed in this layer. There are three
+options:</p>
+<p>If <code>NULL</code>, the default, the data is inherited from the plot
+data as specified in the call to <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot()</a></code>.</p>
+<p>A <code>data.frame</code>, or other object, will override the plot
+data. All objects will be fortified to produce a data frame. See
+<code><a href='https://ggplot2.tidyverse.org/reference/fortify.html'>fortify()</a></code> for which variables will be created.</p>
+<p>A <code>function</code> will be called with a single argument,
+the plot data. The return value must be a <code>data.frame</code>, and
+will be used as the layer data. A <code>function</code> can be created
+from a <code>formula</code> (e.g. <code>~ head(.x, 10)</code>).</p></td>
     </tr>
     <tr>
       <th>stat</th>
-      <td><p>Statistical transformation to use for these layers.</p></td>
+      <td><p>The statistical transformation to use on the data for this
+layer, as a string.</p></td>
     </tr>
     <tr>
       <th>geom</th>
@@ -159,15 +177,23 @@
     </tr>
     <tr>
       <th>position</th>
-      <td><p>Position adjustment.</p></td>
+      <td><p>Position adjustment, either as a string, or the result of
+a call to a position adjustment function.</p></td>
     </tr>
     <tr>
       <th>show.legend</th>
-      <td><p>Should these layers be included in the legend?</p></td>
+      <td><p>logical. Should this layer be included in the legends?
+<code>NA</code>, the default, includes if any aesthetics are mapped.
+<code>FALSE</code> never includes, and <code>TRUE</code> always includes.
+It can also be a named logical vector to finely select the aesthetics to
+display.</p></td>
     </tr>
     <tr>
       <th>inherit.aes</th>
-      <td><p>If FALSE, overrides the default aesthetics.</p></td>
+      <td><p>If <code>FALSE</code>, overrides the default aesthetics,
+rather than combining with them. This is most useful for helper functions
+that define both data and aesthetics and shouldn't inherit behaviour from
+the default plot specification, e.g. <code><a href='https://ggplot2.tidyverse.org/reference/borders.html'>borders()</a></code>.</p></td>
     </tr>
     <tr>
       <th>params</th>
@@ -183,10 +209,16 @@ subset of data points can be outlined by passing a predicate. This must
 evaluate to `TRUE` or `FALSE` within the context of the input data.</p></td>
     </tr>
     <tr>
-      <th>background_color</th>
-      <td><p>Color to use for background points when a predicate
-is passed to `trace_position`. If NULL, the original fill color will be
-used.</p></td>
+      <th>background_params</th>
+      <td><p>Named list specifying aesthetic parameters to use
+for background points when a predicate is passed to `trace_position`.</p></td>
+    </tr>
+    <tr>
+      <th>trans_fn</th>
+      <td><p>Function to use for transforming data when predicate is
+passed to trace_position. Must accept three arguments: dat, data to transform;
+ex, expression to use for transforming data; inv, should the expression be
+negated, this allows the inverse data points to be transformed.</p></td>
     </tr>
     <tr>
       <th>allow_bottom</th>

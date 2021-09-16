@@ -134,7 +134,7 @@
   position <span class='op'>=</span> <span class='st'>"identity"</span>,
   <span class='va'>...</span>,
   trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
-  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  background_params <span class='op'>=</span> <span class='cn'>NULL</span>,
   lineend <span class='op'>=</span> <span class='st'>"butt"</span>,
   linejoin <span class='op'>=</span> <span class='st'>"round"</span>,
   linemitre <span class='op'>=</span> <span class='fl'>10</span>,
@@ -154,7 +154,7 @@
   show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
   inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>,
   trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
-  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  background_params <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -168,7 +168,7 @@
   show.legend <span class='op'>=</span> <span class='cn'>NA</span>,
   inherit.aes <span class='op'>=</span> <span class='cn'>TRUE</span>,
   trace_position <span class='op'>=</span> <span class='st'>"all"</span>,
-  background_color <span class='op'>=</span> <span class='cn'>NULL</span>,
+  background_params <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -222,10 +222,9 @@ data points can be outlined by passing a predicate. This must evaluate
 to `TRUE` or `FALSE` within the context of the input data.</p></td>
     </tr>
     <tr>
-      <th>background_color</th>
-      <td><p>Color to use for background lines when a predicate
-is passed to `trace_position`. If NULL, the original fill color will be
-used.</p></td>
+      <th>background_params</th>
+      <td><p>Named list specifying aesthetic parameters to use
+for background points when a predicate is passed to `trace_position`.</p></td>
     </tr>
     <tr>
       <th>lineend</th>
@@ -289,6 +288,7 @@ adjacent x-values.</p></td>
 <li><p><code>colour</code></p></li>
 <li><p><code>fill</code></p></li>
 <li><p><code>group</code></p></li>
+<li><p><code>KEEP_THIS_ROW</code></p></li>
 <li><p><code>linetype</code></p></li>
 <li><p><code>size</code></p></li>
 <li><p><code>stroke</code></p></li>
