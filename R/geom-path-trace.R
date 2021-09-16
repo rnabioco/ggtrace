@@ -6,15 +6,22 @@
 #'     all', the default, every group plotted will be outlined. A subset of
 #'     data points can be outlined by passing a predicate. This must evaluate
 #'     to `TRUE` or `FALSE` within the context of the input data.
-#' @param background_color Color to use for background lines when a predicate
-#'     is passed to `trace_position`. If NULL, the original fill color will be
-#'     used.
+#' @param background_params Named list specifying aesthetic parameters to use
+#'     for background points when a predicate is passed to `trace_position`.
 #' @eval rd_aesthetics("geom", "path_trace")
 #' @export
 geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             ..., trace_position = "all", background_params = NULL, lineend = "butt",
                             linejoin = "round", linemitre = 10, arrow = NULL, na.rm = FALSE,
                             show.legend = NA, inherit.aes = TRUE) {
+
+  if (substitute(trace_position) != "all") {
+    if (is.null(mapping)) {
+      mapping <- ggplot2::aes()
+    }
+
+    mapping$KEEP_THIS_ROW <- as.name("KEEP_THIS_ROW")
+  }
 
   params <- list(
     lineend   = lineend,
@@ -36,28 +43,27 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
     params            = params,
     trace_position    = substitute(trace_position),
     background_params = background_params,
-    trans_fn          = trans_fn,
+    trans_fn          = path_trans_fn,
     allow_bottom      = FALSE
   )
 }
 
+# Function to use for transforming data when predicate is passed to
+# trace_position
+path_trans_fn <- function(dat, ex, inv = FALSE) {
+  if (inv) {
+    return(transform(dat, KEEP_THIS_ROW = !eval(ex)))
+  }
 
-
-
-
-
-path_trans_fn <- function(dat, dat_expr) {
-  dat <- transform(dat, KEEP = eval(dat_expr))
-
-  dat[!dat$KEEP, "value"] <- NA  # NEEDS TO BE Y VALUE
-
-  dat
+  transform(dat, KEEP_THIS_ROW = eval(ex))
 }
 
 
-
-
-
+# Extra parameters to include for background points
+extra_bkgd_params <- c(
+  "bkgd_colour", "bkgd_fill",     "bkgd_size",
+  "bkgd_stroke", "bkgd_linetype", "bkgd_alpha"
+)
 
 #' @rdname ggplot2-ggproto
 #' @format NULL
@@ -69,30 +75,45 @@ GeomPathTrace <- ggproto(
   required_aes = c("x", "y"),
 
   default_aes = ggplot2::aes(
-    colour   = "black",
-    fill     = "white",
-    size     = 0.5,
-    stroke   = 0.5,
-    linetype = 1,
-    alpha    = NA
+    colour        = "black",
+    fill          = "black",
+    size          = 0.5,
+    stroke        = 0.5,
+    linetype      = 1,
+    alpha         = NA,
+    KEEP_THIS_ROW = TRUE
   ),
 
   extra_params = c(
-    "bkgd_colour",   "bkgd_fill",      "bkgd_size",
-    "bkgd_stroke",   "bkgd_linetype",  "bkgd_lineend",
-    "bkgd_linejoin", "bkgd_linemitre", "bkgd_arrow'"
+    extra_bkgd_params,
+    "bkgd_lineend",   "bkgd_linejoin",
+    "bkgd_linemitre", "bkgd_arrow"
   ),
 
   handle_na = function(data, params) {
 
     # Drop missing values at the start or end of a line - can't drop in the
     # middle since you expect those to be shown by a break in the line
-    complete <- stats::complete.cases(data[c("x", "y", "size", "stroke", "fill", "linetype")])
-    kept     <- stats::ave(complete, data$group, FUN = keep_mid_true)
-    data     <- data[kept, ]
+    # do not include colour here so the user can choose to exclude the outline
+    drop_na_values <- function(dat, warn = TRUE, clmns = c("x", "y", "size", "fill", "stroke", "linetype")) {
+      complete <- stats::complete.cases(dat[clmns])
+      kept     <- stats::ave(complete, dat$group, FUN = keep_mid_true)
+      dat      <- dat[kept, ]
 
-    if (!all(kept) && !params$na.rm) {
-      warning("Removed ", sum(!kept), " row(s) containing missing values (geom_path_trace).")
+      if (warn && !all(kept) && !params$na.rm) {
+        warning("Removed ", sum(!kept), " row(s) containing missing values (geom_path_trace).")
+      }
+
+      dat
+    }
+
+    data <- drop_na_values(data)
+
+    if (!all(data$KEEP_THIS_ROW)) {
+      data[!data$KEEP_THIS_ROW, "y"] <- NA
+
+      data <- drop_na_values(data, warn = FALSE)
+      data <- data[, colnames(data) != "KEEP_THIS_ROW"]
     }
 
     data
@@ -100,31 +121,33 @@ GeomPathTrace <- ggproto(
 
   setup_data = function(data, params) {
 
+    # Want to adjust groups if KEEP_THIS_ROW column is present in data
+    # this column is added when user passes predicate to trace_position and
+    # indicates which data points should be highlighted
+    if (!all(data$KEEP_THIS_ROW)) {
+      d <- data[, !colnames(data) %in% c("KEEP_THIS_ROW", "group")]
+      d <- add_group(d)
+
+      data$group <- d$group
+    }
+
     # Want to adjust groups so lines with the same colour or fill do not have
     # overlapping outlines
     clmn <- c("colour", "fill")
     clmn <- clmn[clmn %in% colnames(data)]
 
-    # Adjust groups
     # Do not adjust groups if both colour and fill are specified
+    # Do not adjust groups if groups are already unique for each color/fill
     if (length(clmn) == 1) {
-      data$orig_group <- data$group
+      uniq_grps <- unique(data[, c(clmn, "group")])
 
-      clr_lst <- list()
+      if (anyDuplicated(uniq_grps[[clmn]])) {
+        grps <- data$group
+        d    <- data[, colnames(data) != "group"]
+        d    <- add_group(d)
 
-      for (i in 1:nrow(data)) {
-
-        dat <- data[i, ]
-        clr <- as.character(dat[[clmn]])
-
-        if (!clr %in% names(clr_lst)) {
-          clr_lst[clr] <- grp <- dat$group
-
-        } else {
-          grp <- clr_lst[[clr]]
-        }
-
-        data[i, "group"] <- grp
+        data$group      <- d$group
+        data$orig_group <- grps
       }
     }
 
@@ -133,6 +156,9 @@ GeomPathTrace <- ggproto(
     # fill, etc.) have not been set for groups yet
     bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
     data[bkgd_clmns] <- params[bkgd_clmns]
+
+    # Must be sorted on group
+    data <- data[order(data$group), , drop = FALSE]
 
     data
   },
@@ -150,8 +176,8 @@ GeomPathTrace <- ggproto(
 
     data[clmns] <- data[bkgd_clmns]
 
-    # Must be sorted on group
-    data    <- data[order(data$group), , drop = FALSE]
+    # Munch data
+    # this divides data into line segments to plot
     munched <- coord_munch(coord, data, panel_params)
 
     # Silently drop lines with less than two points, preserving order
@@ -226,6 +252,7 @@ GeomPathTrace <- ggproto(
       )
 
     } else {
+
       id <- match(munched$group, unique(munched$group))
 
       if ("orig_group" %in% colnames(munched)) {
@@ -292,11 +319,20 @@ keep_mid_true <- function(x) {
   )
 }
 
+
 #' @rdname geom_path_trace
 #' @export
 geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             na.rm = FALSE, orientation = NA, show.legend = NA, inherit.aes = TRUE,
                             trace_position = "all", background_params = NULL, ...) {
+
+  if (substitute(trace_position) != "all") {
+    if (is.null(mapping)) {
+      mapping <- ggplot2::aes()
+    }
+
+    mapping$KEEP_THIS_ROW <- as.name("KEEP_THIS_ROW")
+  }
 
   params <- list(
     orientation = orientation,
@@ -327,12 +363,7 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
 GeomLineTrace <- ggproto(
   "GeomLineTrace", GeomPathTrace,
 
-  extra_params = c(
-    "bkgd_colour",   "bkgd_fill",      "bkgd_size",
-    "bkgd_stroke",   "bkgd_linetype",  "bkgd_lineend",
-    "bkgd_linejoin", "bkgd_linemitre", "bkgd_arrow",
-    "na.rm",         "orientation"
-  ),
+  extra_params = c(GeomPathTrace$extra_params, "na.rm", "orientation"),
 
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
@@ -342,13 +373,15 @@ GeomLineTrace <- ggproto(
 
   setup_data = function(data, params) {
 
+    data <- GeomPathTrace$setup_data(data, params)
+
     data$flipped_aes <- params$flipped_aes
-    data             <- flip_data(data, params$flipped_aes)
-    data             <- data[order(data$PANEL, data$group, data$x), ]
 
     data <- flip_data(data, params$flipped_aes)
+    data <- data[order(data$PANEL, data$group, data$x), ]
+    data <- flip_data(data, params$flipped_aes)
 
-    GeomPathTrace$setup_data(data, params)
+    data
   }
 )
 
@@ -360,6 +393,14 @@ GeomLineTrace <- ggproto(
 geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             direction = "hv", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE,
                             trace_position = "all", background_params = NULL, ...) {
+
+  if (substitute(trace_position) != "all") {
+    if (is.null(mapping)) {
+      mapping <- ggplot2::aes()
+    }
+
+    mapping$KEEP_THIS_ROW <- as.name("KEEP_THIS_ROW")
+  }
 
   params <- list(
     direction = direction,
