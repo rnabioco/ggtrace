@@ -188,6 +188,13 @@ GeomPathTrace <- ggproto(
       return(zeroGrob())
     }
 
+    # Set values for params
+    # if params are not present in munched use default value
+    arrow     <- munched$arrow %||% arrow
+    lineend   <- munched$lineend %||% lineend
+    linejoin  <- munched$linejoin %||% linejoin
+    linemitre <- munched$linemitre %||% linemitre
+
     # Work out whether we should use lines or segments
     attr <- dapply(munched, "group", function(df) {
       linetype <- unique(df$linetype)
