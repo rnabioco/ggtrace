@@ -38,4 +38,5 @@ Collate:
     'geom-path-trace.R'
     'geom-point-trace.R'
     'ggtrace-package.R'
+    'grouping.R'
     'utilities-ggplot2.R'

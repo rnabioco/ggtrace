@@ -13,7 +13,7 @@ geom_path_trace(
   position = "identity",
   ...,
   trace_position = "all",
-  background_color = NULL,
+  background_params = NULL,
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
@@ -33,7 +33,7 @@ geom_line_trace(
   show.legend = NA,
   inherit.aes = TRUE,
   trace_position = "all",
-  background_color = NULL,
+  background_params = NULL,
   ...
 )
 
@@ -47,7 +47,7 @@ geom_step_trace(
   show.legend = NA,
   inherit.aes = TRUE,
   trace_position = "all",
-  background_color = NULL,
+  background_params = NULL,
   ...
 )
 }
@@ -89,9 +89,8 @@ all', the default, every group plotted will be outlined. A subset of
 data points can be outlined by passing a predicate. This must evaluate
 to `TRUE` or `FALSE` within the context of the input data.}
 
-\item{background_color}{Color to use for background lines when a predicate
-is passed to `trace_position`. If NULL, the original fill color will be
-used.}
+\item{background_params}{Named list specifying aesthetic parameters to use
+for background points when a predicate is passed to `trace_position`.}
 
 \item{lineend}{Line end style (round, butt, square).}
 
@@ -137,6 +136,7 @@ Trace lines to improve clarity of plots with overplotted geoms.
   \item \code{colour}
   \item \code{fill}
   \item \code{group}
+  \item \code{KEEP_THIS_ROW}
   \item \code{linetype}
   \item \code{size}
   \item \code{stroke}
