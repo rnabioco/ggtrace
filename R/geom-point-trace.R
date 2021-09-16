@@ -1,5 +1,3 @@
-#' Trace points
-#'
 #' Trace points to improve clarity of plots with overplotted geoms.
 #'
 #' @inheritParams ggplot2::geom_point
@@ -9,9 +7,8 @@
 #'     'bottom', only the bottom most layer of points will be outlined. A
 #'     subset of data points can be outlined by passing a predicate. This must
 #'     evaluate to `TRUE` or `FALSE` within the context of the input data.
-#' @param background_color Color to use for background points when a predicate
-#'     is passed to `trace_position`. If NULL, the original fill color will be
-#'     used.
+#' @param background_params Named list specifying aesthetic parameters to use
+#'     for background points when a predicate is passed to `trace_position`.
 #' @eval rd_aesthetics("geom", "point_trace")
 #' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
@@ -22,10 +19,12 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
     stop("background_params must be a named list with additional parameters to use for modifying background points.")
   }
 
-  trans_fn <- function(dat, dat_expr) {
-    dat <- subset(dat, eval(dat_expr))
+  trans_fn <- function(dat, ex, inv = FALSE) {
+    if (inv) {
+      return(subset(dat, !eval(ex)))
+    }
 
-    dat
+    subset(dat, eval(ex))
   }
 
   create_trace_layers(
@@ -47,25 +46,12 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 
 #' Create geom_*_trace layers
 #'
-#' @param mapping Set of aesthetic mappings created by aes() to use for generating layers.
-#' @param data The data to be displayed in these layers.
-#' @param geom The geometric object to use to display the data.
-#' @param stat Statistical transformation to use for these layers.
-#' @param position Position adjustment.
-#' @param show.legend Should these layers be included in the legend?
-#' @param inherit.aes If FALSE, overrides the default aesthetics.
-#' @param params Additional parameters to pass to the geom and stat.
-#' @param trace_position Specifies which groups of data points should be
-#'     outlined. Can be 'all', 'bottom', or a predicate to use for filtering
-#'     data. If 'all', the default, every group plotted will be outlined, if
-#'     'bottom', only the bottom most layer of points will be outlined. A
-#'     subset of data points can be outlined by passing a predicate. This must
-#'     evaluate to `TRUE` or `FALSE` within the context of the input data.
-#' @param background_color Color to use for background points when a predicate
-#'     is passed to `trace_position`. If NULL, the original fill color will be
-#'     used.
+#' @inheritParams geom_point_trace
+#' @param trans_fn Function to use for transforming data when predicate is
+#' passed to trace_position. Must accept three arguments: dat, data to transform;
+#' ex, expression to use for transforming data; inv, should the expression be
+#' negated, this allows the inverse data points to be transformed.
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
-#' @noRd
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
                                 params, trace_position, background_params, trans_fn, allow_bottom = TRUE) {
 
@@ -81,13 +67,10 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
       mapping <- ggplot2::aes()
     }
 
-    mapping$group <- sym("BOTTOM_TRACE_GROUP")
+    mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
   # If trace_position is not 'all', evaluate expression
   } else if (trace_expr != "all") {
-
-    # Store original data input to use for background points
-    bkgd_data <- data
 
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate
@@ -103,10 +86,13 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     # that encompasses what was passed to both data and trace_position
     if (is.function(data)) {
       d_fn <- data
-      data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
+
+      data      <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
+      bkgd_data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr, inv = TRUE))
 
     } else if (is.data.frame(data) || is.null(data)) {
-      data <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
+      data      <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
+      bkgd_data <- ggplot2::fortify(~ trans_fn(.x, trace_expr, inv = TRUE))
     }
 
     # Adjust parameters for background points
@@ -167,19 +153,16 @@ GeomPointTrace <- ggplot2::ggproto(
   default_aes = ggplot2::aes(
     shape    = 19,
     colour   = "black",
-    fill     = "white",
+    fill     = "black",
     size     = 1.5,
     stroke   = 1,
     linetype = 1,
     alpha    = NA
   ),
 
+  # WISH THESE COULD BE AUTOMATICALLY DETERMINED BASED ON self$default_aes
   # paste0("bkgd_", names(self$default_aes))
-  extra_params = c(
-    "bkgd_shape", "bkgd_colour", "bkgd_fill",
-    "bkgd_size",  "bkgd_stroke", "bkgd_linetype",
-    "bkgd_alpha"
-  ),
+  extra_params = c(extra_bkgd_params, "bkgd_shape"),
 
   setup_data = function(data, params) {
 
