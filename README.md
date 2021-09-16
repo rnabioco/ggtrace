@@ -31,24 +31,20 @@ devtools::install_github("rnabioco/ggtrace")
 
 `geom_point_trace` accepts graphical parameters normally passed to
 `geom_point` to control the appearance of data points and outlines. The
-arguments `trace_position` and `background_color` can be used to select
-specific sets of points to highlight. For more examples see the
+`trace_position` argument can be used to select specific sets of points
+to highlight. For more examples see the
 [vignette](https://rnabioco.github.io/ggtrace/articles/geom-point-trace.html).
 
 ``` r
 library(ggplot2)
 library(ggtrace)
 
-ggplot(
-  clusters,
-  aes(UMAP_1, UMAP_2, color = cluster)
-) + 
+ggplot(clusters, aes(UMAP_1, UMAP_2, color = cluster)) + 
   theme_minimal() +
   geom_point_trace(
-    size             = 1,
-    fill             = "white",
-    trace_position   = signal < 0,
-    background_color = "grey85"
+    trace_position    = signal < 0,
+    fill              = "white",
+    background_params = list(fill = "grey85")
   )
 ```
 
@@ -59,20 +55,17 @@ ggplot(
 `geom_line_trace` accepts parameters normally passed to `geom_line` with
 the following exceptions: `fill` controls the inner line color, `color`
 controls the outline color, and `stroke` controls the outline width.
-Like `geom_point_trace()`, the arguments `trace_position` and
-`background_color` can be used to select specific data points to
-highlight. For more examples see the
+Like `geom_point_trace()`, the `trace_position` argument can be used to
+select specific data points to highlight. For more examples see the
 [vignette](https://rnabioco.github.io/ggtrace/articles/geom-line-trace.html).
 
 ``` r
 ggplot(stocks, aes(day, value, color = name)) +
   theme_minimal() +
   geom_line_trace(
-    trace_position   = day > 1500,
-    size             = 0.5,
-    stroke           = 0.5,
-    fill             = "black",
-    background_color = "grey75"
+    trace_position    = day < 500 | day > 1500,
+    stroke            = 1,
+    background_params = list(fill = "grey75")
   )
 ```
 

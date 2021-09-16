@@ -49,7 +49,7 @@ p <- ggplot(
   theme_minimal()
 
 p +
-  geom_line_trace()
+  geom_line_trace(stroke = 1)
 ```
 
 <br>
@@ -65,7 +65,7 @@ clrs <- c(
 )
 
 p +
-  geom_line_trace() +
+  geom_line_trace(stroke = 1) +
   scale_color_manual(values = clrs)
 ```
 
@@ -87,9 +87,7 @@ p <- ggplot(
 p +
   geom_line_trace(
     trace_position = day > 1500,
-    size           = 0.5,
-    stroke         = 1,
-    fill           = "black"
+    stroke         = 1
   )
 ```
 
@@ -100,10 +98,8 @@ The appearance of background lines can be modified by passing a named list of pa
 ```{r}
 p +
   geom_step_trace(
-    trace_position    = day > 1500,
-    size              = 0.5,
+    trace_position    = day < 500 | value > 4000,
     stroke            = 1,
-    fill              = "black",
     background_params = list(fill = "grey75")
   )
 ```
@@ -116,7 +112,7 @@ Here we only highlight names where the second letter is 'A'.
 p +
   geom_line_trace(
     trace_position    = grepl("^[A-Z]A", name),
-    fill              = "black",
+    stroke            = 1,
     background_params = list(fill = "grey75")
   )
 ```

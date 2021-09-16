@@ -78,7 +78,7 @@ p <- ggplot(
   theme_minimal()
 
 p +
-  geom_point_trace() +
+  geom_point_trace(fill = "white") +
   scale_color_manual(values = c("red", "#0072B2"))
 ```
 
@@ -134,8 +134,8 @@ Outlines can be removed by setting `color` to `NA`.
 p +
   geom_point_trace(
     trace_position    = signal < 0,
-    background_params = list(fill = "grey85"),
-    color             = NA
+    color             = NA,
+    background_params = list(fill = "grey85")
   )
 ```
 
