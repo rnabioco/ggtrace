@@ -16,11 +16,7 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
                             show.legend = NA, inherit.aes = TRUE) {
 
   if (substitute(trace_position) != "all") {
-    if (is.null(mapping)) {
-      mapping <- ggplot2::aes()
-    }
-
-    mapping$KEEP_THIS_ROW <- as.name("KEEP_THIS_ROW")
+    mapping <- add_dummy_aes(mapping, KEEP_CLMN)
   }
 
   params <- list(
@@ -48,23 +44,59 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
   )
 }
 
+# To filter data when user passes a predicate to trace_position, a new column
+# is added to mark rows to be highlighted. The column name is specified by
+# KEEP_CLMN.
+# To keep this column in the data, KEEP_CLMN must also be added to aes, and a
+# value must be provided to default_aes().
+KEEP_CLMN <- "KEEP_THIS_ROW_PLEASE"
+
+# Helper to add dummy aes
+add_dummy_aes <- function(mapping, nm) {
+  if (is.null(mapping)) {
+    mapping <- ggplot2::aes()
+  }
+
+  mapping[[nm]] <- as.name(nm)
+
+  mapping
+}
 
 # Function to use for transforming data when predicate is passed to
 # trace_position
 path_trans_fn <- function(dat, ex, inv = FALSE) {
   if (inv) {
-    return(transform(dat, KEEP_THIS_ROW = !eval(ex)))
+    dat <- transform(dat, KEEP_THIS_ROW_PLEASE = !eval(ex))
+
+  } else {
+    dat <- transform(dat, KEEP_THIS_ROW_PLEASE = eval(ex))
   }
 
-  transform(dat, KEEP_THIS_ROW = eval(ex))
+  names(dat)[names(dat) == "KEEP_THIS_ROW_PLEASE"] <- KEEP_CLMN
+
+  dat
 }
 
+# Default aes for geom_path_trace geoms
+# set this outside of ggproto since need to add dummy KEEP_CLMN so this column
+# is included for trace_position predicate
+default_path_aes <- ggplot2::aes(
+  colour   = "black",
+  fill     = "black",
+  size     = 0.5,
+  stroke   = 0.5,
+  linetype = 1,
+  alpha    = NA
+)
+
+default_path_aes[[KEEP_CLMN]] <- TRUE
 
 # Extra parameters to include for background points
 extra_bkgd_params <- c(
   "bkgd_colour", "bkgd_fill",     "bkgd_size",
   "bkgd_stroke", "bkgd_linetype", "bkgd_alpha"
 )
+
 
 #' @rdname ggplot2-ggproto
 #' @format NULL
@@ -75,15 +107,7 @@ GeomPathTrace <- ggproto(
 
   required_aes = c("x", "y"),
 
-  default_aes = ggplot2::aes(
-    colour        = "black",
-    fill          = "black",
-    size          = 0.5,
-    stroke        = 0.5,
-    linetype      = 1,
-    alpha         = NA,
-    KEEP_THIS_ROW = TRUE
-  ),
+  default_aes = default_path_aes,
 
   extra_params = c(
     extra_bkgd_params,
@@ -110,11 +134,13 @@ GeomPathTrace <- ggproto(
 
     data <- drop_na_values(data)
 
-    if (!all(data$KEEP_THIS_ROW)) {
-      data[!data$KEEP_THIS_ROW, "y"] <- NA
+    # If KEEP_CLMN has been modified by user-provided predicate, add NAs to
+    # create line breaks
+    if (!all(data[[KEEP_CLMN]])) {
+      data[!data[[KEEP_CLMN]], "y"] <- NA
 
       data <- drop_na_values(data, warn = FALSE)
-      data <- data[, colnames(data) != "KEEP_THIS_ROW"]
+      data <- data[, colnames(data) != KEEP_CLMN]
     }
 
     data
@@ -122,11 +148,11 @@ GeomPathTrace <- ggproto(
 
   setup_data = function(data, params) {
 
-    # Want to adjust groups if KEEP_THIS_ROW column is present in data
-    # this column is added when user passes predicate to trace_position and
-    # indicates which data points should be highlighted
-    if (!all(data$KEEP_THIS_ROW)) {
-      d <- data[, !colnames(data) %in% c("KEEP_THIS_ROW", "group")]
+    # Do not want KEEP_CLMN to influence groups since this column is only
+    # needed to select data point to highlight. Need to re-adjust groups if
+    # KEEP_CLMN has been modified by user-provided predicate
+    if (!all(data[[KEEP_CLMN]])) {
+      d <- data[, !colnames(data) %in% c(KEEP_CLMN, "group")]
       d <- add_group(d)
 
       data$group <- d$group
@@ -152,8 +178,8 @@ GeomPathTrace <- ggproto(
       }
     }
 
-    # Add background new data columns for background_params
-    # should not override the original columns since final parameters (colour,
+    # Add new background data columns for background_params
+    # should not overwrite the original columns since final parameters (colour,
     # fill, etc.) have not been set for groups yet
     bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
     data[bkgd_clmns] <- params[bkgd_clmns]
@@ -327,11 +353,7 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
                             trace_position = "all", background_params = NULL, ...) {
 
   if (substitute(trace_position) != "all") {
-    if (is.null(mapping)) {
-      mapping <- ggplot2::aes()
-    }
-
-    mapping$KEEP_THIS_ROW <- as.name("KEEP_THIS_ROW")
+    mapping <- add_dummy_aes(mapping, KEEP_CLMN)
   }
 
   params <- list(
@@ -395,11 +417,7 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
                             trace_position = "all", background_params = NULL, ...) {
 
   if (substitute(trace_position) != "all") {
-    if (is.null(mapping)) {
-      mapping <- ggplot2::aes()
-    }
-
-    mapping$KEEP_THIS_ROW <- as.name("KEEP_THIS_ROW")
+    mapping <- add_dummy_aes(mapping, KEEP_CLMN)
   }
 
   params <- list(
@@ -453,15 +471,15 @@ stairstep <- function(data, direction = "hv") {
   }
 
   if (direction == "vh") {
-    xs <- rep(1:n, each = 2)[-2*n]
+    xs <- rep(1:n, each = 2)[-2 * n]
     ys <- c(1, rep(2:n, each = 2))
 
   } else if (direction == "hv") {
-    ys <- rep(1:n, each = 2)[-2*n]
+    ys <- rep(1:n, each = 2)[-2 * n]
     xs <- c(1, rep(2:n, each = 2))
 
   } else if (direction == "mid") {
-    xs <- rep(1:(n-1), each = 2)
+    xs <- rep(1:(n - 1), each = 2)
     ys <- rep(1:n, each = 2)
 
   } else {
@@ -470,10 +488,10 @@ stairstep <- function(data, direction = "hv") {
 
   if (direction == "mid") {
     gaps      <- data$x[-1] - data$x[-n]
-    mid_x     <- data$x[-n] + gaps/2                 # map the mid-point between adjacent x-values
+    mid_x     <- data$x[-n] + gaps / 2                 # map the mid-point between adjacent x-values
     x         <- c(data$x[1], mid_x[xs], data$x[n])
     y         <- c(data$y[ys])
-    data_attr <- data[c(1,xs,n), setdiff(names(data), c("x", "y"))]
+    data_attr <- data[c(1, xs, n), setdiff(names(data), c("x", "y"))]
 
   } else {
     x         <- data$x[xs]

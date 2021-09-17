@@ -136,7 +136,7 @@ Trace lines to improve clarity of plots with overplotted geoms.
   \item \code{colour}
   \item \code{fill}
   \item \code{group}
-  \item \code{KEEP_THIS_ROW}
+  \item \code{KEEP_THIS_ROW_PLEASE}
   \item \code{linetype}
   \item \code{size}
   \item \code{stroke}
