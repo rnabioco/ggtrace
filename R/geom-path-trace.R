@@ -165,8 +165,9 @@ GeomPathTrace <- ggproto(
     clmn <- clmn[clmn %in% colnames(data)]
 
     # Do not adjust groups if both colour and fill are specified
-    # Do not adjust groups if groups are already unique for each color/fill
-    if (length(clmn) == 1) {
+    # Do not adjust groups if groups are already unique for each colour/fill
+    # Do not adjust groups if colour/fill is numeric
+    if (length(clmn) == 1 && !is.numeric(data[[clmn]])) {
       uniq_grps <- unique(data[, c(clmn, "group")])
 
       if (anyDuplicated(uniq_grps[[clmn]])) {
