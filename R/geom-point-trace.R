@@ -89,37 +89,49 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     if (is.function(data)) {
       d_fn <- data
 
-      data      <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
-      bkgd_data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr, inv = TRUE))
+      data      <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr, inv = TRUE))
+      # bkgd_data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr, inv = TRUE))
 
     } else if (is.data.frame(data) || is.null(data)) {
-      data      <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
-      bkgd_data <- ggplot2::fortify(~ trans_fn(.x, trace_expr, inv = TRUE))
+      data      <- ggplot2::fortify(~ trans_fn(.x, trace_expr, inv = TRUE))
+      # bkgd_data <- ggplot2::fortify(~ trans_fn(.x, trace_expr, inv = TRUE))
     }
+
+    # browser()
 
     # Adjust parameters for background points
-    bkgd_params            <- params
-    bkgd_params$bkgd_color <- NA
+    # bkgd_params            <- params
+    # bkgd_params$bkgd_color <- NA
 
-    if (!is.null(background_params)) {
+    if (length(background_params) > 0) {
       names(background_params) <- paste0("bkgd_", names(background_params))
 
-      bkgd_params[names(background_params)] <- background_params
+      params <- append(params, background_params)
     }
 
-    bkgd_lyr <- layer(
-      data        = bkgd_data,
-      mapping     = mapping,
-      stat        = stat,
-      geom        = geom,
-      position    = position,
-      show.legend = show.legend,
-      inherit.aes = inherit.aes,
-      params      = bkgd_params
-    )
+    # if (!is.null(background_params)) {
+    #   names(background_params) <- paste0("bkgd_", names(background_params))
+    #
+    #   params <- append(params, background_params)
+    #
+    #   # bkgd_params[names(background_params)] <- background_params
+    # }
 
-    lyrs <- append(lyrs, list(bkgd_lyr))
+    # bkgd_lyr <- layer(
+    #   data        = bkgd_data,
+    #   mapping     = mapping,
+    #   stat        = stat,
+    #   geom        = geom,
+    #   position    = position,
+    #   show.legend = show.legend,
+    #   inherit.aes = inherit.aes,
+    #   params      = append(params, bkgd_params)
+    # )
+    #
+    # lyrs <- append(lyrs, list(bkgd_lyr))
   }
+
+  # browser()
 
   # Create trace layer
   trace_lyr <- layer(

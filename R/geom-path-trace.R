@@ -11,7 +11,7 @@
 #' @eval rd_aesthetics("geom", "path_trace")
 #' @export
 geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                            ..., trace_position = "all", background_params = NULL, lineend = "butt",
+                            ..., trace_position = "all", background_params = list(colour = NA), lineend = "butt",
                             linejoin = "round", linemitre = 10, arrow = NULL, na.rm = FALSE,
                             show.legend = NA, inherit.aes = TRUE) {
 
@@ -137,12 +137,12 @@ GeomPathTrace <- ggproto(
 
     # If KEEP_CLMN has been modified by user-provided predicate, add NAs to
     # create line breaks
-    if (!all(data[[KEEP_CLMN]])) {
-      data[!data[[KEEP_CLMN]], "y"] <- NA
-
-      data <- drop_na_values(data, warn = FALSE)
-      data <- data[, colnames(data) != KEEP_CLMN]
-    }
+    # if (!all(data[[KEEP_CLMN]])) {
+    #   data[!data[[KEEP_CLMN]], "y"] <- NA
+    #
+    #   data <- drop_na_values(data, warn = FALSE)
+    #   data <- data[, colnames(data) != KEEP_CLMN]
+    # }
 
     data
   },
@@ -183,8 +183,11 @@ GeomPathTrace <- ggproto(
     # Add new background data columns for background_params
     # should not overwrite the original columns since final parameters (colour,
     # fill, etc.) have not been set for groups yet
-    bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
-    data[bkgd_clmns] <- params[bkgd_clmns]
+    bkgd_clmns <- names(params)[grepl("^bkgd_", names(params))]
+
+    data[data[[KEEP_CLMN]], bkgd_clmns] <- params[bkgd_clmns]
+
+    data <- data[, colnames(data) != KEEP_CLMN]
 
     # Must be sorted on group
     data <- data[order(data$group), , drop = FALSE]
@@ -199,11 +202,29 @@ GeomPathTrace <- ggproto(
       message("geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?")
     }
 
-    # If background_params are present in data, override original columns
-    bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
-    clmns      <- gsub("^bkgd_", "", bkgd_clmns)
+    bkgd_clmns <- colnames(data)
+    bkgd_clmns <- bkgd_clmns[grepl("^bkgd_", bkgd_clmns)]
 
-    data[clmns] <- data[bkgd_clmns]
+    for (clmn in bkgd_clmns) {
+
+      # Get column name and add default value if not in data
+      nm <- gsub("^bkgd_", "", clmn)
+
+      data[[nm]] <- data[[nm]] %||% eval(as.name(nm))
+
+      # Add background values to data columns
+      vals <- data[[clmn]]
+
+      data[[nm]] <- replace(data[[nm]], !is.na(vals), vals[!is.na(vals)])
+    }
+
+    # browser()
+
+    # If background_params are present in data, override original columns
+    # bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
+    # clmns      <- gsub("^bkgd_", "", bkgd_clmns)
+    #
+    # data[clmns] <- data[bkgd_clmns]
 
     # Munch data
     # this divides data into line segments to plot
