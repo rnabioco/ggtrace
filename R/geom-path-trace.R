@@ -48,6 +48,7 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", posi
   )
 }
 
+
 # Function to use for transforming data when predicate is passed to
 # trace_position
 path_trans_fn <- function(dat, ex, inv = FALSE) {
@@ -189,7 +190,7 @@ GeomPathTrace <- ggproto(
     }
 
     # Set values for params
-    # if params are not present in munched use default value
+    # if params are not present in munched, use default value
     arrow     <- munched$arrow %||% arrow
     lineend   <- munched$lineend %||% lineend
     linejoin  <- munched$linejoin %||% linejoin
@@ -223,39 +224,35 @@ GeomPathTrace <- ggproto(
 
     if (!constant) {
 
-      # For trace linetype is always 1
-      trace_grob <- grid::segmentsGrob(
-        munched$x[!end],   munched$y[!end],
-        munched$x[!start], munched$y[!start],
+      create_seg_grob <- function(clr, strk, lty) {
+        grid::segmentsGrob(
+          munched$x[!end],   munched$y[!end],
+          munched$x[!start], munched$y[!start],
 
-        default.units = "native",
-        arrow         = arrow,
+          default.units = "native",
+          arrow         = arrow,
 
-        gp = grid::gpar(
-          col       = alpha(munched$colour, munched$alpha)[!end],
-          lwd       = munched$size[!end] * .pt + munched$stroke[!end] * .pt * 2,
-          lty       = 1,
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre
+          gp = grid::gpar(
+            col       = alpha(clr, munched$alpha)[!end],
+            lwd       = munched$size[!end] * .pt + strk * .pt * 2,
+            lty       = lty,
+            lineend   = lineend,
+            linejoin  = linejoin,
+            linemitre = linemitre
+          )
         )
+      }
+
+      trace_grob <- create_seg_grob(
+        clr  = munched$colour,
+        strk = munched$stroke[!end],
+        lty  = 1
       )
 
-      line_grob <- grid::segmentsGrob(
-        munched$x[!end],   munched$y[!end],
-        munched$x[!start], munched$y[!start],
-
-        default.units = "native",
-        arrow         = arrow,
-
-        gp = grid::gpar(
-          col       = alpha(munched$fill, munched$alpha)[!end],
-          lwd       = munched$size[!end] * .pt,
-          lty       = munched$linetype[!end],
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre
-        )
+      line_grob <- create_seg_grob(
+        clr  = munched$fill,
+        strk = 0,
+        lty  = munched$linetype[!end]
       )
 
     } else {
@@ -266,39 +263,35 @@ GeomPathTrace <- ggproto(
         id <- match(munched$orig_group, unique(munched$orig_group))
       }
 
-      trace_grob <- grid::polylineGrob(
-        munched$x, munched$y,
+      create_line_grob <- function(clr, strk, lty) {
+        grid::polylineGrob(
+          munched$x, munched$y,
 
-        id            = id,
-        default.units = "native",
-        arrow         = arrow,
+          id            = id,
+          default.units = "native",
+          arrow         = arrow,
 
-        # For trace linetype is always 1
-        gp = grid::gpar(
-          col       = alpha(munched$colour, munched$alpha)[start],
-          lwd       = munched$size[start] * .pt + munched$stroke * .pt * 2,
-          lty       = 1,
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre
+          gp = grid::gpar(
+            col       = alpha(clr, munched$alpha)[start],
+            lwd       = munched$size[start] * .pt + strk * .pt * 2,
+            lty       = lty,
+            lineend   = lineend,
+            linejoin  = linejoin,
+            linemitre = linemitre
+          )
         )
+      }
+
+      trace_grob <- create_line_grob(
+        clr  = munched$colour,
+        strk = munched$stroke,
+        lty  = 1
       )
 
-      line_grob <- grid::polylineGrob(
-        munched$x, munched$y,
-
-        id            = id,
-        default.units = "native",
-        arrow         = arrow,
-
-        gp = grid::gpar(
-          col       = alpha(munched$fill, munched$alpha)[start],
-          lwd       = munched$size[start] * .pt,
-          lty       = munched$linetype[start],
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre
-        )
+      line_grob <- create_line_grob(
+        clr  = munched$fill,
+        strk = 0,
+        lty  = munched$linetype[start]
       )
     }
 

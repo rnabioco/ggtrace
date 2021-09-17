@@ -113,7 +113,7 @@ p +
   geom_line_trace(
     trace_position    = grepl("^[A-Z]A", name),
     stroke            = 1,
-    background_params = list(fill = "grey75")
+    background_params = list(linetype = 2)
   )
 ```
 
