@@ -78,7 +78,7 @@ path_trans_fn <- function(dat, ex, inv = FALSE) {
 }
 
 # Default aes for geom_path_trace geoms
-# set this outside of ggproto since need to add dummy KEEP_CLMN so this column
+# set this outside of ggproto since need to add KEEP_CLMN so this column
 # is included for trace_position predicate
 default_path_aes <- ggplot2::aes(
   colour   = "black",
@@ -120,6 +120,7 @@ GeomPathTrace <- ggproto(
     # Drop missing values at the start or end of a line - can't drop in the
     # middle since you expect those to be shown by a break in the line
     # do not include colour here so the user can choose to exclude the outline
+    # by setting colour = NA
     drop_na_values <- function(dat, warn = TRUE, clmns = c("x", "y", "size", "fill", "stroke", "linetype")) {
       complete <- stats::complete.cases(dat[clmns])
       kept     <- stats::ave(complete, dat$group, FUN = keep_mid_true)
@@ -394,10 +395,10 @@ GeomLineTrace <- ggproto(
   },
 
   setup_data = function(data, params) {
-
-    data <- GeomPathTrace$setup_data(data, params)
-
     data$flipped_aes <- params$flipped_aes
+
+    data <- data[order(data$PANEL, data$group, data$x), ]
+    data <- GeomPathTrace$setup_data(data, params)
 
     data <- flip_data(data, params$flipped_aes)
     data <- data[order(data$PANEL, data$group, data$x), ]
