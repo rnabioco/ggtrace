@@ -13,6 +13,8 @@ Authors@R:
 Description: Provides a geom for 'ggplot2' that improves the clarity of
     plots with many overlapping geoms.
 License: MIT + file LICENSE
+URL: https://github.com/rnabioco/ggtrace
+BugReports: https://github.com/rnabioco/ggtrace/issues
 Depends: 
     R (>= 4.0.0)
 Imports: 
@@ -20,11 +22,11 @@ Imports:
     grid,
     vctrs
 Suggests: 
-    tidyr,
     covr,
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tidyr
 VignetteBuilder: 
     knitr
 Config/testthat/edition: 3
