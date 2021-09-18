@@ -98,10 +98,11 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
     }
 
     # Adjust parameters for background points
-    bkgd_params            <- params
-    bkgd_params$bkgd_color <- NA
+    if (length(background_params) > 0) {
+      bkgd_params <- params
 
-    if (!is.null(background_params)) {
+      bkgd_params$bkgd_layer <- TRUE
+
       names(background_params) <- paste0("bkgd_", names(background_params))
 
       bkgd_params[names(background_params)] <- background_params

@@ -97,7 +97,7 @@ The appearance of background lines can be modified by passing a named list of pa
 
 ```{r}
 p +
-  geom_step_trace(
+  geom_line_trace(
     trace_position    = day < 500 | value > 4000,
     stroke            = 1,
     background_params = list(fill = "grey75")

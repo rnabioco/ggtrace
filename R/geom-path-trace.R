@@ -11,7 +11,7 @@
 #' @eval rd_aesthetics("geom", "path_trace")
 #' @export
 geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                            ..., trace_position = "all", background_params = NULL, lineend = "butt",
+                            ..., trace_position = "all", background_params = list(color = NA), lineend = "butt",
                             linejoin = "round", linemitre = 10, arrow = NULL, na.rm = FALSE,
                             show.legend = NA, inherit.aes = TRUE) {
 
@@ -94,7 +94,8 @@ default_path_aes[[KEEP_CLMN]] <- TRUE
 # Extra parameters to include for background points
 extra_bkgd_params <- c(
   "bkgd_colour", "bkgd_fill",     "bkgd_size",
-  "bkgd_stroke", "bkgd_linetype", "bkgd_alpha"
+  "bkgd_stroke", "bkgd_linetype", "bkgd_alpha",
+  "bkgd_layer"
 )
 
 
@@ -134,6 +135,32 @@ GeomPathTrace <- ggproto(
     }
 
     data <- drop_na_values(data)
+
+    browser()
+
+    # Expand background line so there are no breaks with highlighted segments
+    if (params$bkgd_layer) {
+      keep_row <- data[[KEEP_CLMN]]
+      idx      <- seq_along(keep_row)
+      idx      <- idx[keep_row]
+
+      seg_ends <- idx[c(TRUE, diff(idx) != 1)]
+      seg_idx  <- seq_along(seg_ends) %% 2
+
+      seg_ends[seg_idx == 1] <- seg_ends[seg_idx == 1] - 1
+      seg_ends[seg_idx == 0] <- seg_ends[seg_idx == 0] + 1
+
+      expanded_idx <- c()
+
+      for (i in seq(1, length(seg_ends), 2)) {
+        expanded_idx <- c(expanded_idx, seg_ends[i]:seg_ends[i + 1])
+      }
+
+      browser()
+
+      data[expanded_idx, KEEP_CLMN] <- TRUE
+    }
+
 
     # If KEEP_CLMN has been modified by user-provided predicate, add NAs to
     # create line breaks
@@ -352,7 +379,7 @@ keep_mid_true <- function(x) {
 #' @export
 geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             na.rm = FALSE, orientation = NA, show.legend = NA, inherit.aes = TRUE,
-                            trace_position = "all", background_params = NULL, ...) {
+                            trace_position = "all", background_params = list(color = NA), ...) {
 
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)
@@ -416,7 +443,7 @@ GeomLineTrace <- ggproto(
 #' @export
 geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
                             direction = "hv", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE,
-                            trace_position = "all", background_params = NULL, ...) {
+                            trace_position = "all", background_params = list(color = NA), ...) {
 
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)
