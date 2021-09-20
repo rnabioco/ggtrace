@@ -100,7 +100,7 @@ p +
   geom_line_trace(
     trace_position    = day < 500 | value > 4000,
     stroke            = 1,
-    background_params = list(fill = "grey75")
+    background_params = list(color = NA, fill = "grey75")
   )
 ```
 
@@ -113,7 +113,7 @@ p +
   geom_line_trace(
     trace_position    = grepl("^[A-Z]A", name),
     stroke            = 1,
-    background_params = list(linetype = 2)
+    background_params = list(color = NA, linetype = 2)
   )
 ```
 
@@ -132,6 +132,48 @@ p +
   geom_line_trace(
     trace_position    = grepl("^[A-Z]A", name),
     color             = NA,
+    background_params = list(fill = "grey75")
+  )
+```
+
+```{r, eval = FALSE}
+p <- ggplot(
+  stocks,
+) +
+  theme_minimal()
+
+stocks %>%
+  filter(day < 5) %>%
+  ggplot(aes(day, value)) +
+  
+  # geom_line(arrow = arrow(type = "closed"), linetype = 2)
+  
+  geom_line_trace(
+    trace_position = day < 3,
+    # arrow = arrow(type = "closed"),
+    
+    colour   = "red",
+    size     = 5,
+    stroke   = 1,
+    linejoin = "mitre",
+    lineend  = "round",
+    linemitre = 20,
+    
+    background_params = list(
+      # arrow    = arrow(type = "closed"),
+      colour   = NA,
+      size     = 5,
+      fill     = "blue",
+      linejoin = "round",
+      lineend  = "square"
+    )
+  )
+  
+  
+p +
+  geom_line_trace(
+    trace_position    = 1 == 1,
+    # color             = NA,
     background_params = list(fill = "grey75")
   )
 ```

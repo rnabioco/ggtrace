@@ -12,7 +12,7 @@
 #' @eval rd_aesthetics("geom", "point_trace")
 #' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                             ..., trace_position = "all", background_params = NULL,
+                             ..., trace_position = "all", background_params = list(color = NA),
                              na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
 
   if (!is.null(background_params) && !is.list(background_params)) {
@@ -73,7 +73,6 @@ create_trace_layers <- function(mapping, data, stat, geom, position, show.legend
 
   # If trace_position is not 'all', evaluate expression
   } else if (trace_expr != "all") {
-
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate
     # passed through trace_position. For a formula fortify will return an
@@ -168,7 +167,6 @@ GeomPointTrace <- ggplot2::ggproto(
   extra_params = c(extra_bkgd_params, "bkgd_shape"),
 
   setup_data = function(data, params) {
-
     # Add background new data columns for background_params
     # should not override the original columns since final parameters (colour,
     # fill, etc.) have not been set for groups yet

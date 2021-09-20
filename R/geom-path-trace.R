@@ -92,11 +92,10 @@ default_path_aes <- ggplot2::aes(
 default_path_aes[[KEEP_CLMN]] <- TRUE
 
 # Extra parameters to include for background points
-extra_bkgd_params <- c(
-  "bkgd_colour", "bkgd_fill",     "bkgd_size",
-  "bkgd_stroke", "bkgd_linetype", "bkgd_alpha",
-  "bkgd_layer"
-)
+extra_bkgd_params <- paste0("bkgd_", c(
+  "colour",   "fill",  "size", "stroke",
+  "linetype", "alpha", "layer"
+))
 
 
 #' @rdname ggplot2-ggproto
@@ -112,12 +111,10 @@ GeomPathTrace <- ggproto(
 
   extra_params = c(
     extra_bkgd_params,
-    "bkgd_lineend",   "bkgd_linejoin",
-    "bkgd_linemitre", "bkgd_arrow"
+    paste0("bkgd_", c("lineend", "linejoin", "linemitre", "arrow"))
   ),
 
   handle_na = function(data, params) {
-
     # Drop missing values at the start or end of a line - can't drop in the
     # middle since you expect those to be shown by a break in the line
     # do not include colour here so the user can choose to exclude the outline
@@ -136,35 +133,45 @@ GeomPathTrace <- ggproto(
 
     data <- drop_na_values(data)
 
-    browser()
+    # Expand background line so one data point overlaps with highlighted segments
+    # this is to eliminate breaks between background and highlighted lines
+    # params$bkgd_layer is only set for background layer
+    if (!is.null(params$bkgd_layer)) {
+      expand_line <- function(grp) {
+        dat <- subset(data, group == grp)
 
-    # Expand background line so there are no breaks with highlighted segments
-    if (params$bkgd_layer) {
-      keep_row <- data[[KEEP_CLMN]]
-      idx      <- seq_along(keep_row)
-      idx      <- idx[keep_row]
+        if (!any(dat[[KEEP_CLMN]])) {
+          return(dat)
+        }
 
-      seg_ends <- idx[c(TRUE, diff(idx) != 1)]
-      seg_idx  <- seq_along(seg_ends) %% 2
+        keep_row <- dat[[KEEP_CLMN]]
+        idx      <- seq_along(keep_row)
+        idx      <- idx[keep_row]
 
-      seg_ends[seg_idx == 1] <- seg_ends[seg_idx == 1] - 1
-      seg_ends[seg_idx == 0] <- seg_ends[seg_idx == 0] + 1
+        n_rows <- length(keep_row)
 
-      expanded_idx <- c()
+        seg_strts <- idx[c(TRUE, diff(idx) != 1)]
+        seg_ends  <- idx[c(diff(idx) != 1, TRUE)]
 
-      for (i in seq(1, length(seg_ends), 2)) {
-        expanded_idx <- c(expanded_idx, seg_ends[i]:seg_ends[i + 1])
+        seg_strts[seg_strts > 1]    <- seg_strts[seg_strts > 1] - 1
+        seg_ends[seg_ends < n_rows] <- seg_ends[seg_ends < n_rows] + 1
+
+        expanded_idx <- lapply(seq_along(seg_strts), function(i) seg_strts[i]:seg_ends[i])
+        expanded_idx <- Reduce(c, expanded_idx)
+
+        dat[expanded_idx, KEEP_CLMN] <- TRUE
+
+        dat
       }
 
-      browser()
-
-      data[expanded_idx, KEEP_CLMN] <- TRUE
+      grps <- unique(data$group)
+      data <- lapply(grps, expand_line)
+      data <- Reduce(rbind, data)
     }
-
 
     # If KEEP_CLMN has been modified by user-provided predicate, add NAs to
     # create line breaks
-    if (!all(data[[KEEP_CLMN]])) {
+    if (!is.null(data[[KEEP_CLMN]]) && !all(data[[KEEP_CLMN]])) {
       data[!data[[KEEP_CLMN]], "y"] <- NA
 
       data <- drop_na_values(data, warn = FALSE)
@@ -176,14 +183,24 @@ GeomPathTrace <- ggproto(
 
   setup_data = function(data, params) {
 
-    # Do not want KEEP_CLMN to influence groups since this column is only
-    # needed to select data point to highlight. Need to re-adjust groups if
-    # KEEP_CLMN has been modified by user-provided predicate
-    if (!all(data[[KEEP_CLMN]])) {
-      d <- data[, !colnames(data) %in% c(KEEP_CLMN, "group")]
-      d <- add_group(d)
+    if (!is.null(data[[KEEP_CLMN]])) {
+      # If user passes predicate that selects all data points, return empty data
+      # for background layer so it is not passed to draw_group()
+      if (!any(data[[KEEP_CLMN]])) {
+        data <- subset(data, eval(as.name(KEEP_CLMN)))
 
-      data$group <- d$group
+        return(data)
+      }
+
+      # Do not want KEEP_CLMN to influence groups since this column is only
+      # needed to select data points to highlight. Need to re-adjust groups if
+      # KEEP_CLMN has been modified by user-provided predicate
+      if (!all(data[[KEEP_CLMN]])) {
+        d <- data[, !colnames(data) %in% c(KEEP_CLMN, "group")]
+        d <- add_group(d)
+
+        data$group <- d$group
+      }
     }
 
     # Want to adjust groups so lines with the same colour or fill do not have
@@ -289,6 +306,7 @@ GeomPathTrace <- ggproto(
 
           gp = grid::gpar(
             col       = alpha(clr, munched$alpha)[!end],
+            fill      = alpha(clr, munched$alpha)[!end],  # modifies arrow fill
             lwd       = munched$size[!end] * .pt + strk * .pt * 2,
             lty       = lty,
             lineend   = lineend,
@@ -328,6 +346,7 @@ GeomPathTrace <- ggproto(
 
           gp = grid::gpar(
             col       = alpha(clr, munched$alpha)[start],
+            fill      = alpha(clr, munched$alpha)[start],  # modifies arrow fill
             lwd       = munched$size[start] * .pt + strk * .pt * 2,
             lty       = lty,
             lineend   = lineend,
