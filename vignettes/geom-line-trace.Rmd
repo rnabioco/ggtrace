@@ -60,8 +60,8 @@ Aesthetics can be further modified using the ggplot2 `scale_*` functions.
 clrs <- c(
   CAC  = "#E69F00",
   DAX  = "#0072B2",
-  SMI  = "#56B4E9",
-  FTSE = "#009E73"
+  FTSE = "#009E73",
+  SMI  = "#56B4E9"
 )
 
 p +
@@ -135,50 +135,3 @@ p +
     background_params = list(fill = "grey75")
   )
 ```
-
-```{r, eval = FALSE}
-p <- ggplot(
-  stocks,
-) +
-  theme_minimal()
-
-stocks %>%
-  filter(day < 5) %>%
-  ggplot(aes(day, value)) +
-  
-  # geom_line(arrow = arrow(type = "closed"), linetype = 2)
-  
-  geom_line_trace(
-    trace_position = day < 3,
-    # arrow = arrow(type = "closed"),
-    
-    colour   = "red",
-    size     = 5,
-    stroke   = 1,
-    linejoin = "mitre",
-    lineend  = "round",
-    linemitre = 20,
-    
-    background_params = list(
-      # arrow    = arrow(type = "closed"),
-      colour   = NA,
-      size     = 5,
-      fill     = "blue",
-      linejoin = "round",
-      lineend  = "square"
-    )
-  )
-  
-  
-p +
-  geom_line_trace(
-    trace_position    = 1 == 1,
-    # color             = NA,
-    background_params = list(fill = "grey75")
-  )
-```
-
-
-
-
-

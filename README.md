@@ -44,7 +44,7 @@ ggplot(clusters, aes(UMAP_1, UMAP_2, color = cluster)) +
   geom_point_trace(
     trace_position    = signal < 0,
     fill              = "white",
-    background_params = list(fill = "grey85")
+    background_params = list(color = NA, fill = "grey85")
   )
 ```
 
@@ -65,7 +65,7 @@ ggplot(stocks, aes(day, value, color = name)) +
   geom_line_trace(
     trace_position    = day < 500 | day > 1500,
     stroke            = 1,
-    background_params = list(fill = "grey75")
+    background_params = list(color = NA, fill = "grey75")
   )
 ```
 

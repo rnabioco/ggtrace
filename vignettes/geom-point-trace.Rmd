@@ -122,7 +122,7 @@ The appearance of background points can be modified by passing a named list of p
 p +
   geom_point_trace(
     trace_position    = signal < 0,
-    background_params = list(fill = "grey85")
+    background_params = list(color = NA, fill = "grey85")
   )
 ```
 
@@ -135,7 +135,7 @@ p +
   geom_point_trace(
     trace_position    = signal < 0,
     color             = NA,
-    background_params = list(fill = "grey85")
+    background_params = list(color = NA, fill = "grey85")
   )
 ```
 
