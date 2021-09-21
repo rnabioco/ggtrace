@@ -4,7 +4,7 @@
 \alias{geom_path_trace}
 \alias{geom_line_trace}
 \alias{geom_step_trace}
-\title{Trace lines to improve clarity of plots with overplotted geoms.}
+\title{Trace lines to improve clarity of plots with overplotted geoms}
 \usage{
 geom_path_trace(
   mapping = NULL,
@@ -13,7 +13,7 @@ geom_path_trace(
   position = "identity",
   ...,
   trace_position = "all",
-  background_params = NULL,
+  background_params = list(color = NA),
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
@@ -33,7 +33,7 @@ geom_line_trace(
   show.legend = NA,
   inherit.aes = TRUE,
   trace_position = "all",
-  background_params = NULL,
+  background_params = list(color = NA),
   ...
 )
 
@@ -47,7 +47,7 @@ geom_step_trace(
   show.legend = NA,
   inherit.aes = TRUE,
   trace_position = "all",
-  background_params = NULL,
+  background_params = list(color = NA),
   ...
 )
 }
@@ -124,7 +124,7 @@ to either \code{"x"} or \code{"y"}. See the \emph{Orientation} section for more 
 adjacent x-values.}
 }
 \description{
-Trace lines to improve clarity of plots with overplotted geoms.
+Trace lines to improve clarity of plots with overplotted geoms
 }
 \section{Aesthetics}{
 

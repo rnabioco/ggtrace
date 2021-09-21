@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom-point-trace.R
 \name{geom_point_trace}
 \alias{geom_point_trace}
-\title{Trace points to improve clarity of plots with overplotted geoms.}
+\title{Trace points to improve clarity of plots with overplotted geoms}
 \usage{
 geom_point_trace(
   mapping = NULL,
@@ -11,7 +11,7 @@ geom_point_trace(
   position = "identity",
   ...,
   trace_position = "all",
-  background_params = NULL,
+  background_params = list(color = NA),
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -74,7 +74,7 @@ that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
 \description{
-Trace points to improve clarity of plots with overplotted geoms.
+Trace points to improve clarity of plots with overplotted geoms
 }
 \section{Aesthetics}{
 

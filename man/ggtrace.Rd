@@ -23,6 +23,14 @@ Please report issues and suggest improvements at Github:
 
 \url{https://github.com/rnabioco/ggtrace}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/rnabioco/ggtrace}
+  \item Report bugs at \url{https://github.com/rnabioco/ggtrace/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Ryan Sheridan \email{ryan.sheridan@cuanschutz.edu} (\href{https://orcid.org/0000-0003-4012-3147}{ORCID})
 

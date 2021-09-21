@@ -1,4 +1,4 @@
-#' Trace lines to improve clarity of plots with overplotted geoms.
+#' Trace lines to improve clarity of plots with overplotted geoms
 #'
 #' @inheritParams ggplot2::geom_path
 #' @param trace_position Specifies which groups of data points should be
@@ -137,6 +137,7 @@ GeomPathTrace <- ggproto(
     # this is to eliminate breaks between background and highlighted lines
     # params$bkgd_layer is only set for background layer
     if (!is.null(params$bkgd_layer)) {
+
       expand_line <- function(grp) {
         dat <- subset(data, group == grp)
 
@@ -184,8 +185,8 @@ GeomPathTrace <- ggproto(
   setup_data = function(data, params) {
 
     if (!is.null(data[[KEEP_CLMN]])) {
-      # If user passes predicate that selects all data points, return empty data
-      # for background layer so it is not passed to draw_group()
+      # If trace_position predicate does not select any data points, return
+      # empty data for layer so it is not passed to draw_group()
       if (!any(data[[KEEP_CLMN]])) {
         data <- subset(data, eval(as.name(KEEP_CLMN)))
 

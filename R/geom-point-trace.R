@@ -1,4 +1,4 @@
-#' Trace points to improve clarity of plots with overplotted geoms.
+#' Trace points to improve clarity of plots with overplotted geoms
 #'
 #' @inheritParams ggplot2::geom_point
 #' @param trace_position Specifies which groups of data points should be
