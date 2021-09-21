@@ -81,12 +81,19 @@ test_that("trace_position pass data as function", {
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
 })
 
-test_that("background_color", {
+test_that("background_params color", {
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
-    geom_point_trace(trace_position = signal > 10, background_params = list(fill = "blue"))
+    geom_point_trace(
+      trace_position = signal > 10,
+      background_params = list(fill = "blue")
+    )
+
+  expect_true(p$layers[[1]]$geom_params$bkgd_fill == "blue")
+
+  p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
+    geom_point_trace(trace_position = signal > 10)
 
   expect_true(is.na(p$layers[[1]]$geom_params$bkgd_colour))
-  expect_true(p$layers[[1]]$geom_params$bkgd_fill == "blue")
 })
 
 test_that("single strings translate to their corresponding integers", {
