@@ -19,8 +19,7 @@ Depends:
     R (>= 4.0.0)
 Imports: 
     ggplot2,
-    grid,
-    vctrs
+    grid
 Suggests: 
     covr,
     knitr,
