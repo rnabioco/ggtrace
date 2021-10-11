@@ -30,8 +30,6 @@ NULL
 #' @return A data.frame if the result of `fun` does not include the columns
 #' given in `by` these will be prepended to the result.
 #'
-#' @importFrom vctrs vec_group_id
-#'
 #' @noRd
 dapply <- function(df, by, fun, ..., drop = TRUE) {
   grouping_cols  <- .subset(df, by)
@@ -62,7 +60,7 @@ dapply <- function(df, by, fun, ..., drop = TRUE) {
     return(apply_fun(df))
   }
 
-  ids        <- vctrs::vec_group_id(grouping_cols)
+  ids        <- id(grouping_cols, drop = drop)
   group_rows <- split_with_index(seq_len(nrow(df)), ids)
 
   rbind_dfs(lapply(seq_along(group_rows), function(i) {
