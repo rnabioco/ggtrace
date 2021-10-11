@@ -231,6 +231,9 @@ GeomPathTrace <- ggproto(
     bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
     data[bkgd_clmns] <- params[bkgd_clmns]
 
+    # Must be sorted on group
+    data <- data[order(data$group), , drop = FALSE]
+
     data
   },
 
