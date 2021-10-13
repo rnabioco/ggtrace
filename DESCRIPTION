@@ -1,17 +1,26 @@
 Type: Package
 Package: ggtrace
-Title: Trace groups of geoms from 'ggplot2'
+Title: Trace and Highlight Groups of Data Points
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     c(person(given = "Ryan",
              family = "Sheridan",
              role = c("aut", "cre"),
              email = "ryan.sheridan@cuanschutz.edu",
              comment = c(ORCID = "0000-0003-4012-3147")),
+      person(given = "Rui",
+             family = "Fu",
+             role = "ctb",
+             email = "raysinensis@gmail.com",
+             comment = c(ORCID = "0000-0001-8183-4549")),
+      person(given = "Jay",
+             family = "Hesselberth",
+             role = "ctb",
+             email = "jay.hesselberth@gmail.com",
+             comment = c(ORCID = "0000-0002-6299-179X")),
       person(given = "RNA Bioscience Initiative",
              role = "fnd"))
-Description: Provides a geom for 'ggplot2' that improves the clarity of
-    plots with many overlapping geoms.
+Description: Provides ggplot2 geoms to trace and highlight groups of data points.
 License: MIT + file LICENSE
 URL: https://github.com/rnabioco/ggtrace
 BugReports: https://github.com/rnabioco/ggtrace/issues
