@@ -140,19 +140,19 @@ test_that("stairstep() output is correct for direction = 'mid'", {
   expect_equal(stepped, stepped_expected)
 })
 
-test_that("geom_path group reorder trace_position", {
-  lvls <- c("SMI", "CAC", "DAX", "FTSE")
-  dat  <- stocks
-
-  dat$name <- factor(dat$name, lvls)
-
-  p <- ggplot(dat, aes(day, value, fill = name)) +
-    geom_path_trace(
-      trace_position = day > 500
-    )
-
-  expect_doppelganger("geom_path group reorder trace_position", p)
-})
+# test_that("geom_path group reorder trace_position", {
+#   lvls <- c("SMI", "CAC", "DAX", "FTSE")
+#   dat  <- stocks
+#
+#   dat$name <- factor(dat$name, lvls)
+#
+#   p <- ggplot(dat, aes(day, value, fill = name)) +
+#     geom_path_trace(
+#       trace_position = day > 500
+#     )
+#
+#   expect_doppelganger("geom_path group reorder trace_position", p)
+# })
 
 
 
