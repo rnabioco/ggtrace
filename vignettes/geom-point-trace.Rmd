@@ -139,6 +139,75 @@ p +
   )
 ```
 
+```{r POINT GROUP ORDER, eval = FALSE}
+library(colorblindr)
 
+# geom_point_trace should keep groups in the order they appear in the data
+clrs <- c(palette_OkabeIto, "grey40", "pink")
+names(clrs) <- str_c("c", 1:10)
+
+# Groups plotted in alphabetical order, likely due to use of draw_group instead of draw_panel
+# trace_position does not affect this behavior
+# groups can be reordered with fct_relevel
+clusters %>%
+  # mutate(cluster = fct_relevel(cluster, names(clrs))) %>%
+  ggplot(aes(UMAP_1, UMAP_2, fill = cluster)) +
+  # scale_fill_manual(values = clrs) +
+  # geom_point(size = 2)
+  geom_point_trace(
+    trace_position = signal < 1,
+    stroke = 2
+  )
+```
+
+```{r LINE GROUP ORDER, eval = FALSE}
+clrs <- c(
+  "SMI"  = "purple",
+  "DAX"  = "red",
+  "FTSE" = "blue",
+  "CAC"  = "orange"
+)
+
+stocks %>%
+  mutate(name = fct_relevel(name, c("SMI", "CAC", "DAX", "FTSE"))) %>%
+  ggplot(aes(day, value, color = name)) +
+  # scale_color_manual(values = clrs) +
+  geom_path(size = 3)
+
+  geom_path_trace(
+    trace_position = day < 500 | day > 1500,
+    stroke = 3
+  )
+
+# Out of order when position used with path_trace or step_trace, expect SMI, CAC, DAX, FTSE
+# fct_relevel does not affect order
+# geom_line_trace works
+stocks %>%
+  group_by(name) %>%
+  mutate(mean_val = mean(value)) %>%
+  ungroup() %>%
+  arrange(desc(mean_val)) %>%
+  mutate(name = fct_inorder(name)) %>%
+  # mutate(name = fct_relevel(name, c("SMI", "CAC", "DAX", "FTSE"))) %>%
+  
+  ggplot(aes(day, value, color = name)) +
+  scale_color_manual(values = clrs) +
+  # geom_path(size = 4)
+
+  geom_path_trace(
+    # trace_position = day < 500 | day > 1500,
+    stroke = 2
+  )
+
+stocks %>%
+  mutate(name = fct_relevel(name, c("SMI", "CAC", "DAX", "FTSE"))) %>%
+  ggplot(aes(day, value, color = name)) +
+  scale_color_manual(values = clrs) +
+  # geom_path(size = 4)
+  geom_path_trace(
+    trace_position = day < 500 | day > 1500,
+    stroke = 2
+  )
+```
 
 
