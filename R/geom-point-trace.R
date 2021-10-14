@@ -15,10 +15,6 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
                              ..., trace_position = "all", background_params = list(color = NA),
                              na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
 
-  if (!is.null(background_params) && !is.list(background_params)) {
-    stop("background_params must be a named list with additional parameters to use for modifying background points.")
-  }
-
   trans_fn <- function(dat, ex, inv = FALSE) {
     if (inv) {
       return(subset(dat, !eval(ex)))
@@ -56,6 +52,10 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
                                 params, trace_position, background_params, trans_fn, allow_bottom = TRUE) {
+
+  if (!is.list(background_params)) {
+    stop("background_params must be a named list with additional parameters to use for modifying background points.")
+  }
 
   trace_expr <- trace_position
   lyrs       <- list()

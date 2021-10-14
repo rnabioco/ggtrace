@@ -165,3 +165,14 @@ test_that("calculate_trace_size", {
   expect_identical(calculate_trace_size(dat)$trace_lwd, lwd)
 })
 
+test_that("bad background_params", {
+  expect_error(
+    ggplot(clusters, aes(UMAP_1, UMAP_2, color = cluster)) +
+      geom_point_trace(background_params = "BAD")
+  )
+})
+
+
+
+
+
