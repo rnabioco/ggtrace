@@ -49,6 +49,7 @@ test_that("trace_position bottom", {
   p <- geom_point_trace(trace_position = "bottom")
 
   expect_identical(as.character(p[[1]]$mapping$group)[2], "BOTTOM_TRACE_GROUP")
+  expect_doppelganger("trace_position bottom", p)
 })
 
 test_that("trace_position predicate return list", {
@@ -58,6 +59,7 @@ test_that("trace_position predicate return list", {
   expect_true(length(p) == 2)
   expect_identical(p[[1]]$geom_params$bkgd_colour, NA)
   expect_true(length(p[[2]]$aes_params) == 0)
+  expect_doppelganger("trace_position predicate return list", p)
 })
 
 test_that("trace_position predicate data", {
@@ -65,6 +67,7 @@ test_that("trace_position predicate data", {
     geom_point_trace(trace_position = signal > 10)
 
   expect_identical(p$layers[[2]]$data(clusters), subset(clusters, signal > 10))
+  expect_doppelganger("trace_position predicate data", p)
 })
 
 test_that("trace_position pass data as data.frame", {
@@ -72,6 +75,7 @@ test_that("trace_position pass data as data.frame", {
   p   <- geom_point_trace(data = dat, trace_position = signal > 10)
 
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
+  expect_doppelganger("trace_position pass data as data.frame", p)
 })
 
 test_that("trace_position pass data as function", {
@@ -79,6 +83,7 @@ test_that("trace_position pass data as function", {
   p   <- geom_point_trace(data = dat, trace_position = signal > 10)
 
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
+  expect_doppelganger("trace_position pass data as function", p)
 })
 
 test_that("background_params color", {
@@ -89,11 +94,13 @@ test_that("background_params color", {
     )
 
   expect_true(p$layers[[1]]$geom_params$bkgd_fill == "blue")
+  expect_doppelganger("background_params color 1", p)
 
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2)) +
     geom_point_trace(trace_position = signal > 10)
 
   expect_true(is.na(p$layers[[1]]$geom_params$bkgd_colour))
+  expect_doppelganger("background_params color 2", p)
 })
 
 test_that("single strings translate to their corresponding integers", {
