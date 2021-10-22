@@ -1,7 +1,7 @@
 Type: Package
 Package: ggtrace
 Title: Trace and Highlight Groups of Data Points
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R:
     c(person(given = "Ryan",
              family = "Sheridan",
