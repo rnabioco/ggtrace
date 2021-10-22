@@ -9,6 +9,6 @@ test_that("rbind_dfs keep classes of columns", {
     date      = Sys.Date()
   )
 
-  df2 <- rbind_dfs(list(df[1:5, ], df[6:10, ]))
+  df2 <- rbind_dfs(list(df1[1:5, ], df1[6:10, ]))
   expect_equal(df1, df2)
 })
