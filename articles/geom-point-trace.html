@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">ggtrace</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -204,73 +204,6 @@
     background_params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>color <span class="op">=</span> <span class="cn">NA</span>, fill <span class="op">=</span> <span class="st">"grey85"</span><span class="op">)</span>
   <span class="op">)</span></code></pre></div>
 <p><img src="geom-point-trace_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">colorblindr</span><span class="op">)</span>
-
-<span class="co"># geom_point_trace should keep groups in the order they appear in the data</span>
-<span class="va">clrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">palette_OkabeIto</span>, <span class="st">"grey40"</span>, <span class="st">"pink"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">clrs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">str_c</span><span class="op">(</span><span class="st">"c"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
-
-<span class="co"># Groups plotted in alphabetical order, likely due to use of draw_group instead of draw_panel</span>
-<span class="co"># trace_position does not affect this behavior</span>
-<span class="co"># groups can be reordered with fct_relevel</span>
-<span class="va">clusters</span> <span class="op">%&gt;%</span>
-  <span class="co"># mutate(cluster = fct_relevel(cluster, names(clrs))) %&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">UMAP_1</span>, <span class="va">UMAP_2</span>, fill <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># scale_fill_manual(values = clrs) +</span>
-  <span class="co"># geom_point(size = 2)</span>
-  <span class="fu"><a href="../reference/geom_point_trace.html">geom_point_trace</a></span><span class="op">(</span>
-    trace_position <span class="op">=</span> <span class="va">signal</span> <span class="op">&lt;</span> <span class="fl">1</span>,
-    stroke <span class="op">=</span> <span class="fl">2</span>
-  <span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">clrs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
-  <span class="st">"SMI"</span>  <span class="op">=</span> <span class="st">"purple"</span>,
-  <span class="st">"DAX"</span>  <span class="op">=</span> <span class="st">"red"</span>,
-  <span class="st">"FTSE"</span> <span class="op">=</span> <span class="st">"blue"</span>,
-  <span class="st">"CAC"</span>  <span class="op">=</span> <span class="st">"orange"</span>
-<span class="op">)</span>
-
-<span class="va">stocks</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>name <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">name</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"SMI"</span>, <span class="st">"CAC"</span>, <span class="st">"DAX"</span>, <span class="st">"FTSE"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">day</span>, <span class="va">value</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># scale_color_manual(values = clrs) +</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_path</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-
-  <span class="fu"><a href="../reference/geom_path_trace.html">geom_path_trace</a></span><span class="op">(</span>
-    trace_position <span class="op">=</span> <span class="va">day</span> <span class="op">&lt;</span> <span class="fl">500</span> <span class="op">|</span> <span class="va">day</span> <span class="op">&gt;</span> <span class="fl">1500</span>,
-    stroke <span class="op">=</span> <span class="fl">3</span>
-  <span class="op">)</span>
-
-<span class="co"># Out of order when position used with path_trace or step_trace, expect SMI, CAC, DAX, FTSE</span>
-<span class="co"># fct_relevel does not affect order</span>
-<span class="co"># geom_line_trace works</span>
-<span class="va">stocks</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>mean_val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">mean_val</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>name <span class="op">=</span> <span class="fu">fct_inorder</span><span class="op">(</span><span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="co"># mutate(name = fct_relevel(name, c("SMI", "CAC", "DAX", "FTSE"))) %&gt;%</span>
-  
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">day</span>, <span class="va">value</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">clrs</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># geom_path(size = 4)</span>
-
-  <span class="fu"><a href="../reference/geom_path_trace.html">geom_path_trace</a></span><span class="op">(</span>
-    <span class="co"># trace_position = day &lt; 500 | day &gt; 1500,</span>
-    stroke <span class="op">=</span> <span class="fl">2</span>
-  <span class="op">)</span>
-
-<span class="va">stocks</span> <span class="op">%&gt;%</span>
-  <span class="fu">mutate</span><span class="op">(</span>name <span class="op">=</span> <span class="fu">fct_relevel</span><span class="op">(</span><span class="va">name</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"SMI"</span>, <span class="st">"CAC"</span>, <span class="st">"DAX"</span>, <span class="st">"FTSE"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">day</span>, <span class="va">value</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">clrs</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># geom_path(size = 4)</span>
-  <span class="fu"><a href="../reference/geom_path_trace.html">geom_path_trace</a></span><span class="op">(</span>
-    trace_position <span class="op">=</span> <span class="va">day</span> <span class="op">&lt;</span> <span class="fl">500</span> <span class="op">|</span> <span class="va">day</span> <span class="op">&gt;</span> <span class="fl">1500</span>,
-    stroke <span class="op">=</span> <span class="fl">2</span>
-  <span class="op">)</span></code></pre></div>
 </div>
   </div>
 
