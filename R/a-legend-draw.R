@@ -1,3 +1,4 @@
+
 #' Key glyphs for legends
 #'
 #' Each geom has an associated function that draws the key when the geom needs
