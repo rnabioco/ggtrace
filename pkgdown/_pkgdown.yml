@@ -7,8 +7,11 @@ authors:
     href: https://medschool.cuanschutz.edu/rbi
 
 template:
-  bootstrap: 4
+  bootstrap: 5
   bootswatch: simplex
+
+navbar:
+  bg: light
 
 development:
   mode: auto
