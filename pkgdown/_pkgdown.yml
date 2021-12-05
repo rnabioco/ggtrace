@@ -24,6 +24,7 @@ reference:
 - title: Utilities
   contents:
   - starts_with("draw")
+  - create_trace_layers
 
 - title: Data
   contents:
