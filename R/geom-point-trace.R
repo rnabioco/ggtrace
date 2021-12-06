@@ -50,6 +50,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' ex, expression to use for transforming data; inv, should the expression be
 #' negated, this allows the inverse data points to be transformed.
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
+#' @noRd
 create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
                                 params, trace_position, background_params, trans_fn, allow_bottom = TRUE) {
 
