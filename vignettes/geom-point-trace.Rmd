@@ -1,5 +1,5 @@
 ---
-title: "geom_point_trace"
+title: "Trace Points"
 date: '`r format(Sys.Date(), "%B %d %Y")`'
 output:
   rmarkdown::html_vignette:
@@ -43,7 +43,7 @@ p +
 
 ## Aesthetics
 
-Like other `ggplot2` geoms, variables can be mapped to aesthetic attributes to
+Like other ggplot2 geoms, variables can be mapped to aesthetic attributes to
 modify the outline appearance.
 
 ```{r}
@@ -51,17 +51,18 @@ ggplot(
   clusters,
   aes(UMAP_1, UMAP_2, color = cluster)
 ) +
-  theme_minimal() +
   geom_point_trace(
     fill   = "black",
     stroke = 2
-  )
+  ) +
+  theme_minimal()
 ```
 
 <br>
 
 By specifying `group` within `aes()`, outlines can also be added when coloring
-with a continuous variable.
+with a continuous variable. This is useful for visualizing points that are
+lightly colored.
 
 ```{r}
 p <- ggplot(
@@ -71,13 +72,13 @@ p <- ggplot(
   theme_minimal()
 
 p +
-  scale_fill_gradient(low = "white", high = "red") +
-  geom_point_trace(stroke = 0.5)
+  geom_point_trace(stroke = 0.5) +
+  scale_fill_gradient(low = "white", high = "red")
 ```
 
 <br>
 
-Aesthetics can be further modified using the ggplot2 `scale_*` functions.
+Aesthetics can be further modified using the ggplot2 `scale_*()` functions.
 
 ```{r}
 p <- ggplot(

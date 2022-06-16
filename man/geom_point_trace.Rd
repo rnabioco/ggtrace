@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom-point-trace.R
 \name{geom_point_trace}
 \alias{geom_point_trace}
-\title{Trace points}
+\title{Trace Points}
 \usage{
 geom_point_trace(
   mapping = NULL,
