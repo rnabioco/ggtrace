@@ -57,7 +57,6 @@
 #'   stocks,
 #'   ggplot2::aes(day, value, color = name)
 #' ) +
-#'   geom_line_trace() +
 #'   geom_line_trace(stroke = 1) +
 #'   ggplot2::scale_color_manual(values = clrs) +
 #'   ggplot2::theme_minimal()
