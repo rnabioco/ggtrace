@@ -1,18 +1,93 @@
 #' Trace lines to improve clarity of plots with overplotted geoms
 #'
 #' @inheritParams ggplot2::geom_path
-#' @param trace_position Specifies which groups of data points should be
-#'     outlined. Can be 'all' or a predicate to use for filtering data. If
-#'     all', the default, every group plotted will be outlined. A subset of
-#'     data points can be outlined by passing a predicate. This must evaluate
-#'     to `TRUE` or `FALSE` within the context of the input data.
+#' @param trace_position Specifies which data points to outline, can be one of:
+#'
+#' \itemize{
+#'   \item 'all' to outline every group plotted
+#'   \item A predicate specifying which data points to outline. This must
+#'         evaluate to \code{TRUE} or \code{FALSE} within the context of the
+#'         input data. e.g. \code{value > 100}
+#' }
+#'
 #' @param background_params Named list specifying aesthetic parameters to use
-#'     for background points when a predicate is passed to `trace_position`.
+#'    for background data points when a predicate is passed to
+#'    \code{trace_position}, e.g. \code{list(color = "red")}
+#'
 #' @eval rd_aesthetics("geom", "path_trace")
+#'
+#' @examples
+#' # Modify line color for each group
+#' ggplot(
+#'   stocks,
+#'   aes(day, value, fill = name)
+#' ) +
+#'   geom_line_trace() +
+#'   theme_minimal()
+#'
+#' # Modify outline color for each group
+#' ggplot(
+#'   stocks,
+#'   aes(day, value, color = name)
+#' ) +
+#'   geom_line_trace() +
+#'   theme_minimal()
+#'
+#' # Specify outline color for each group
+#' clrs <- c(
+#'   CAC  = "#E69F00",
+#'   DAX  = "#0072B2",
+#'   FTSE = "#009E73",
+#'   SMI  = "#56B4E9"
+#' )
+#'
+#' ggplot(
+#'   stocks,
+#'   aes(day, value, color = name)
+#' ) +
+#'   geom_line_trace() +
+#'   geom_line_trace(stroke = 1) +
+#'   scale_color_manual(values = clrs) +
+#'   theme_minimal()
+#'
+#' # Outline a subset of data points
+#' ggplot(
+#'   stocks,
+#'   aes(day, value, color = name)
+#' ) +
+#'   geom_line_trace(trace_position = day > 1500, stroke = 1) +
+#'   theme_minimal()
+#'
+#' # Modify appearance of background data points
+#' ggplot(
+#'   stocks,
+#'   aes(day, value, color = name)
+#' ) +
+#'   geom_line_trace(
+#'     trace_position    = day > 1500,
+#'     background_params = list(color = NA, fill = "grey75"),
+#'     stroke            = 1
+#'   ) +
+#'   theme_minimal()
+#'
+#' # Remove outline
+#' ggplot(
+#'   stocks,
+#'   aes(day, value, fill = name)
+#' ) +
+#'   geom_line_trace(
+#'     trace_position    = day > 1500,
+#'     background_params = list(fill = "grey75"),
+#'     color             = NA
+#'   ) +
+#'   theme_minimal()
+#'
 #' @export
-geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                            ..., trace_position = "all", background_params = list(color = NA), lineend = "butt",
-                            linejoin = "round", linemitre = 10, arrow = NULL, na.rm = FALSE,
+geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity",
+                            position = "identity", ..., trace_position = "all",
+                            background_params = list(color = NA),
+                            lineend = "butt", linejoin = "round",
+                            linemitre = 10, arrow = NULL, na.rm = FALSE,
                             show.legend = NA, inherit.aes = TRUE) {
 
   if (substitute(trace_position) != "all") {
@@ -237,8 +312,9 @@ GeomPathTrace <- ggproto(
     data
   },
 
-  draw_group = function(data, panel_params, coord, arrow = NULL, lineend = "butt",
-                        linejoin = "round", linemitre = 10, na.rm = FALSE) {
+  draw_group = function(data, panel_params, coord, arrow = NULL,
+                        lineend = "butt", linejoin = "round", linemitre = 10,
+                        na.rm = FALSE) {
 
     if (!anyDuplicated(data$group)) {
       message("geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?")
@@ -397,9 +473,11 @@ keep_mid_true <- function(x) {
 
 #' @rdname geom_path_trace
 #' @export
-geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                            na.rm = FALSE, orientation = NA, show.legend = NA, inherit.aes = TRUE,
-                            trace_position = "all", background_params = list(color = NA), ...) {
+geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity",
+                            position = "identity", na.rm = FALSE,
+                            orientation = NA, show.legend = NA,
+                            inherit.aes = TRUE, trace_position = "all",
+                            background_params = list(color = NA), ...) {
 
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)
@@ -461,9 +539,11 @@ GeomLineTrace <- ggproto(
 #'   'hv' for horizontal then vertical, or 'mid' for step half-way between
 #'   adjacent x-values.
 #' @export
-geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                            direction = "hv", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE,
-                            trace_position = "all", background_params = list(color = NA), ...) {
+geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
+                            position = "identity", direction = "hv",
+                            na.rm = FALSE, show.legend = NA,
+                            inherit.aes = TRUE, trace_position = "all",
+                            background_params = list(color = NA), ...) {
 
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)

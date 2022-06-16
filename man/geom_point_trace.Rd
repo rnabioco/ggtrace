@@ -49,15 +49,18 @@ often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
 
-\item{trace_position}{Specifies which groups of data points should be
-outlined. Can be 'all', 'bottom', or a predicate to use for filtering
-data. If 'all', the default, every group plotted will be outlined, if
-'bottom', only the bottom most layer of points will be outlined. A
-subset of data points can be outlined by passing a predicate. This must
-evaluate to `TRUE` or `FALSE` within the context of the input data.}
+\item{trace_position}{Specifies which data points to outline, can be one of:
+\itemize{
+  \item 'all' to outline every group plotted
+  \item 'bottom' to only outline the bottom layer of data points
+  \item A predicate specifying which data points to outline. This must
+        evaluate to \code{TRUE} or \code{FALSE} within the context of the
+        input data. e.g. \code{value > 100}
+}}
 
 \item{background_params}{Named list specifying aesthetic parameters to use
-for background points when a predicate is passed to `trace_position`.}
+for background data points when a predicate is passed to
+\code{trace_position}, e.g. \code{list(color = "red")}}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
@@ -94,3 +97,69 @@ Trace points to improve clarity of plots with overplotted geoms
 Learn more about setting these aesthetics in \code{vignette("ggplot2-specs")}.
 }
 
+\examples{
+# Modify outline color for each group
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, color = cluster)
+) +
+  geom_point_trace() +
+  theme_minimal()
+
+# Modify point color for each group
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace() +
+  theme_minimal()
+
+# Outline groups when coloring by a continuous variable
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, fill = signal, group = cluster)
+) +
+  geom_point_trace(stroke = 0.5) +
+  scale_fill_gradientn(colours = c("white", "red")) +
+  theme_minimal()
+
+# Only outline bottom points
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(trace_position = "bottom") +
+  theme_minimal()
+
+# Outline a subset of points
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(trace_position = signal < 0 | signal > 17) +
+  theme_minimal()
+
+# Modify appearance of background points
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(
+    trace_position    = signal < 0 | signal > 17,
+    background_params = list(color = NA, fill = "grey85")
+  ) +
+  theme_minimal()
+
+# Remove outline
+ggplot(
+  clusters,
+  aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(
+    trace_position    = signal < 0 | signal > 17,
+    background_params = list(color = NA, fill = "grey85"),
+    color             = NA
+  ) +
+  theme_minimal()
+
+}

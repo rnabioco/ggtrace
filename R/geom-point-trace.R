@@ -1,19 +1,94 @@
 #' Trace points to improve clarity of plots with overplotted geoms
 #'
 #' @inheritParams ggplot2::geom_point
-#' @param trace_position Specifies which groups of data points should be
-#'     outlined. Can be 'all', 'bottom', or a predicate to use for filtering
-#'     data. If 'all', the default, every group plotted will be outlined, if
-#'     'bottom', only the bottom most layer of points will be outlined. A
-#'     subset of data points can be outlined by passing a predicate. This must
-#'     evaluate to `TRUE` or `FALSE` within the context of the input data.
+#'
+#' @param trace_position Specifies which data points to outline, can be one of:
+#' \itemize{
+#'   \item 'all' to outline every group plotted
+#'   \item 'bottom' to only outline the bottom layer of data points
+#'   \item A predicate specifying which data points to outline. This must
+#'         evaluate to \code{TRUE} or \code{FALSE} within the context of the
+#'         input data. e.g. \code{value > 100}
+#' }
+#'
 #' @param background_params Named list specifying aesthetic parameters to use
-#'     for background points when a predicate is passed to `trace_position`.
+#'    for background data points when a predicate is passed to
+#'    \code{trace_position}, e.g. \code{list(color = "red")}
+#'
 #' @eval rd_aesthetics("geom", "point_trace")
-#' @export
-geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", position = "identity",
-                             ..., trace_position = "all", background_params = list(color = NA),
-                             na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+#'
+#' @examples
+#' # Modify outline color for each group
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, color = cluster)
+#' ) +
+#'   geom_point_trace() +
+#'   theme_minimal()
+#'
+#' # Modify point color for each group
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, fill = cluster)
+#' ) +
+#'   geom_point_trace() +
+#'   theme_minimal()
+#'
+#' # Outline groups when coloring by a continuous variable
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, fill = signal, group = cluster)
+#' ) +
+#'   geom_point_trace(stroke = 0.5) +
+#'   scale_fill_gradientn(colours = c("white", "red")) +
+#'   theme_minimal()
+#'
+#' # Only outline bottom points
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, fill = cluster)
+#' ) +
+#'   geom_point_trace(trace_position = "bottom") +
+#'   theme_minimal()
+#'
+#' # Outline a subset of points
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, fill = cluster)
+#' ) +
+#'   geom_point_trace(trace_position = signal < 0 | signal > 17) +
+#'   theme_minimal()
+#'
+#' # Modify appearance of background points
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, fill = cluster)
+#' ) +
+#'   geom_point_trace(
+#'     trace_position    = signal < 0 | signal > 17,
+#'     background_params = list(color = NA, fill = "grey85")
+#'   ) +
+#'   theme_minimal()
+#'
+#' # Remove outline
+#' ggplot(
+#'   clusters,
+#'   aes(UMAP_1, UMAP_2, fill = cluster)
+#' ) +
+#'   geom_point_trace(
+#'     trace_position    = signal < 0 | signal > 17,
+#'     background_params = list(color = NA, fill = "grey85"),
+#'     color             = NA
+#'   ) +
+#'   theme_minimal()
+#'
+#'@export
+geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
+                             position = "identity", ...,
+                             trace_position = "all",
+                             background_params = list(color = NA),
+                             na.rm = FALSE, show.legend = NA,
+                             inherit.aes = TRUE) {
 
   trans_fn <- function(dat, ex, inv = FALSE) {
     if (inv) {
@@ -51,11 +126,16 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity", pos
 #' negated, this allows the inverse data points to be transformed.
 #' @param allow_bottom Should 'bottom' be allowed as an argument for trace_position?
 #' @noRd
-create_trace_layers <- function(mapping, data, stat, geom, position, show.legend, inherit.aes,
-                                params, trace_position, background_params, trans_fn, allow_bottom = TRUE) {
+create_trace_layers <- function(mapping, data, stat, geom, position,
+                                show.legend, inherit.aes, params,
+                                trace_position, background_params, trans_fn,
+                                allow_bottom = TRUE) {
 
   if (!is.list(background_params)) {
-    stop("background_params must be a named list with additional parameters to use for modifying background points.")
+    stop(
+      "background_params must be a named list with additional parameters to ",
+      "use for modifying background points."
+    )
   }
 
   trace_expr <- trace_position
