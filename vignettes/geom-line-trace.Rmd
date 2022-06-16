@@ -13,7 +13,16 @@ output:
 
 ## Basic Usage
 
-`geom_path_trace()`, `geom_line_trace()`, and `geom_step_trace()` accept arguments normally passed to `geom_path()`, `geom_line()`, and `geom_step()` with some minor modifications. `fill` controls the line color, `color` controls the outline color, and `stroke` controls the outline width, similar to how filled shapes are modified for other `ggplot2` geoms. Additional parameters including `size`, `alpha`,  `linetype`, `linejoin`, `lineend` and `linemitre` are also accepted and behave normally.
+`geom_path_trace()`, `geom_line_trace()`, and `geom_step_trace()` are similar
+to `ggplot2::geom_path()`, `ggplot2::geom_line()`, and `ggplot2::geom_step()`,
+but also include the ability to highlight data points of interest. This is
+particularly useful when working with dense datasets that are prone to
+overplotting. These geoms accept normal ggplot2 graphical parameters with some
+modifications. `fill` controls the color of the center line, `color` controls
+the outline color, and `stroke` controls outline width, similar to how filled
+shapes are modified for other ggplot2 geoms. Additional parameters including
+`size`, `alpha`,  `linetype`, `linejoin`, `lineend` and `linemitre` are also
+accepted.
 
 ```{r}
 library(ggplot2)
@@ -39,7 +48,8 @@ p +
 
 ## Aesthetics
 
-Like other `ggplot2` geoms, variables can be mapped to aesthetic attributes to modify the outline appearance.
+Like other ggplot2 geoms, variables can be mapped to aesthetic attributes to
+modify the outline appearance.
 
 ```{r}
 p <- ggplot(
@@ -73,9 +83,12 @@ p +
 
 ## Position
 
-The 'position' of the outline can be modified with the `trace_position` parameter. This can be 'all' or a predicate selecting the data points to outline. By default 'all' groups are outlined.
+The "position" of the outline can be modified with the `trace_position`
+parameter. This can be "all" or a predicate selecting the data points to
+outline. By default all groups are outlined.
 
-If a predicate is passed to `trace_position`, it must evaluate to `TRUE` or `FALSE` within the context of the input data.
+If a predicate is passed to `trace_position`, it must evaluate to `TRUE` or
+`FALSE` within the context of the input data.
 
 ```{r}
 p <- ggplot(
@@ -93,7 +106,8 @@ p +
 
 <br>
 
-The appearance of background lines can be modified by passing a named list of parameters to `background_params`.
+The appearance of background lines can be modified by passing a named list of
+parameters to the `background_params` argument.
 
 ```{r}
 p +
@@ -106,7 +120,7 @@ p +
 
 <br>
 
-Here we only highlight names where the second letter is 'A'.
+Here we only highlight names where the second letter is "A".
 
 ```{r}
 p +

@@ -1,7 +1,7 @@
 Type: Package
 Package: ggtrace
 Title: Trace and Highlight Groups of Data Points
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     c(person(given = "Ryan",
              family = "Sheridan",
@@ -20,7 +20,9 @@ Authors@R:
              comment = c(ORCID = "0000-0002-6299-179X")),
       person(given = "RNA Bioscience Initiative",
              role = "fnd"))
-Description: Provides ggplot2 geoms to trace and highlight groups of data points.
+Description: Provides ggplot2 geoms that allow groups of data points to be
+    outlined or highlighted for emphasis. This is particularly useful when
+    working with dense datasets that are prone to overplotting.
 License: MIT + file LICENSE
 URL: https://github.com/rnabioco/ggtrace
 BugReports: https://github.com/rnabioco/ggtrace/issues
