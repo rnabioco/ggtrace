@@ -1,10 +1,10 @@
 pandoc: 2.14.2
-pkgdown: 2.0.2
+pkgdown: 2.0.4
 pkgdown_sha: ~
 articles:
   geom-line-trace: geom-line-trace.html
   geom-point-trace: geom-point-trace.html
-last_built: 2022-02-21T14:21Z
+last_built: 2022-06-16T17:13Z
 urls:
   reference: https://rnabioco.github.io/ggtrace/reference
   article: https://rnabioco.github.io/ggtrace/articles
