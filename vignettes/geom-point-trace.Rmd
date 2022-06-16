@@ -11,7 +11,14 @@ output:
 
 ## Basic Usage
 
-`geom_point_trace` accepts graphical parameters normally passed to `geom_point` to control the appearance of data points and outlines. The fill color for each point can be modified with `fill` and the outline color can be modified with `color`. Additional parameters including `size`, `linetype`, `stroke` and `alpha` are also accepted.
+`geom_point_trace()` is similar to `ggplot2::geom_point()`, but also includes
+the ability to outline points of interest. This is particularly useful when
+working with dense datasets that are prone to overplotting. This geom accepts
+normal ggplot2 graphical parameters with some modifications. `fill` controls the
+color of each point, `color` controls the outline color, and `stroke` controls
+outline width, similar to how filled shapes are modified for other ggplot2
+geoms. Additional parameters including `size`, `linetype`, and `alpha` are also
+accepted.
 
 ```{r}
 library(ggplot2)
@@ -36,7 +43,8 @@ p +
 
 ## Aesthetics
 
-Like other `ggplot2` geoms, variables can be mapped to aesthetic attributes to modify the outline appearance.
+Like other `ggplot2` geoms, variables can be mapped to aesthetic attributes to
+modify the outline appearance.
 
 ```{r}
 ggplot(
@@ -52,7 +60,8 @@ ggplot(
 
 <br>
 
-By specifying `group` within `aes()`, outlines can also be added when coloring with a continuous variable.
+By specifying `group` within `aes()`, outlines can also be added when coloring
+with a continuous variable.
 
 ```{r}
 p <- ggplot(
@@ -86,9 +95,12 @@ p +
 
 ## Position
 
-The 'position' of the outline can be modified with the `trace_position` parameter. This can be 'all', 'bottom', or a predicate selecting the points to outline. By default 'all' groups are outlined.
+The "position" of the outline can be modified with the `trace_position`
+argument. This can be "all", "bottom", or a predicate selecting the points to
+outline. By default all groups are outlined.
 
-To only add a single outline around all points plotted, set `trace_position` to 'bottom'.
+To only add a single outline around all points plotted, set `trace_position` to
+"bottom".
 
 ```{r}
 p <- ggplot(
@@ -98,25 +110,24 @@ p <- ggplot(
   theme_minimal()
 
 p +
-  geom_point_trace(
-    trace_position = "bottom"
-  )
+  geom_point_trace(trace_position = "bottom")
 ```
 
 <br>
 
-A subset of data points can be highlighted by passing a predicate to `trace_position`. This must evaluate to `TRUE` or `FALSE` within the context of the input data.
+A subset of data points can be highlighted by passing a predicate to
+`trace_position`. This must evaluate to `TRUE` or `FALSE` within the context
+of the input data.
 
 ```{r}
 p +
-  geom_point_trace(
-    trace_position = signal < 0
-  )
+  geom_point_trace(trace_position = signal < 0)
 ```
 
 <br>
 
-The appearance of background points can be modified by passing a named list of parameters to `background_params`.
+The appearance of background points can be modified by passing a named list of
+parameters to `background_params`.
 
 ```{r}
 p +
