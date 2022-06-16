@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom-point-trace.R
 \name{geom_point_trace}
 \alias{geom_point_trace}
-\title{Trace points to improve clarity of plots with overplotted geoms}
+\title{Trace points}
 \usage{
 geom_point_trace(
   mapping = NULL,
@@ -49,15 +49,18 @@ often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
 
-\item{trace_position}{Specifies which groups of data points should be
-outlined. Can be 'all', 'bottom', or a predicate to use for filtering
-data. If 'all', the default, every group plotted will be outlined, if
-'bottom', only the bottom most layer of points will be outlined. A
-subset of data points can be outlined by passing a predicate. This must
-evaluate to `TRUE` or `FALSE` within the context of the input data.}
+\item{trace_position}{Specifies which data points to outline, can be one of:
+\itemize{
+  \item "all" to outline every group plotted
+  \item "bottom" to only outline the bottom layer of data points
+  \item A predicate specifying which data points to outline. This must
+        evaluate to \code{TRUE} or \code{FALSE} within the context of the
+        input data. e.g. \code{value > 100}
+}}
 
 \item{background_params}{Named list specifying aesthetic parameters to use
-for background points when a predicate is passed to `trace_position`.}
+for background data points when a predicate is passed to
+\code{trace_position}, e.g. \code{list(color = "red")}}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
@@ -74,7 +77,13 @@ that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
 \description{
-Trace points to improve clarity of plots with overplotted geoms
+This geom is similar to \code{ggplot2::geom_point()}, but also includes the
+ability to outline points of interest. \code{geom_point_trace()} accepts
+normal ggplot2 graphical parameters with some modifications. \code{fill}
+controls the color of each point, \code{color} controls the outline
+color, and \code{stroke} controls outline width, similar to how filled
+shapes are modified for other ggplot2 geoms. Additional parameters including
+\code{size}, \code{linetype}, and \code{alpha} are also accepted.
 }
 \section{Aesthetics}{
 
@@ -94,3 +103,69 @@ Trace points to improve clarity of plots with overplotted geoms
 Learn more about setting these aesthetics in \code{vignette("ggplot2-specs")}.
 }
 
+\examples{
+# Modify outline color for each group
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, color = cluster)
+) +
+  geom_point_trace() +
+  ggplot2::theme_minimal()
+
+# Modify point color for each group
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace() +
+  ggplot2::theme_minimal()
+
+# Outline groups when coloring by a continuous variable
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, fill = signal, group = cluster)
+) +
+  geom_point_trace(stroke = 0.5) +
+  ggplot2::scale_fill_gradientn(colours = c("white", "red")) +
+  ggplot2::theme_minimal()
+
+# Only outline bottom points
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(trace_position = "bottom") +
+  ggplot2::theme_minimal()
+
+# Outline a subset of points
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(trace_position = signal < 0 | signal > 17) +
+  ggplot2::theme_minimal()
+
+# Modify appearance of background points
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(
+    trace_position    = signal < 0 | signal > 17,
+    background_params = list(color = NA, fill = "grey85")
+  ) +
+  ggplot2::theme_minimal()
+
+# Remove outline
+ggplot2::ggplot(
+  clusters,
+  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
+) +
+  geom_point_trace(
+    trace_position    = signal < 0 | signal > 17,
+    background_params = list(color = NA, fill = "grey85"),
+    color             = NA
+  ) +
+  ggplot2::theme_minimal()
+
+}

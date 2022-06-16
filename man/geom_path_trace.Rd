@@ -4,7 +4,7 @@
 \alias{geom_path_trace}
 \alias{geom_line_trace}
 \alias{geom_step_trace}
-\title{Trace lines to improve clarity of plots with overplotted geoms}
+\title{Trace lines}
 \usage{
 geom_path_trace(
   mapping = NULL,
@@ -83,14 +83,18 @@ often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
 
-\item{trace_position}{Specifies which groups of data points should be
-outlined. Can be 'all' or a predicate to use for filtering data. If
-all', the default, every group plotted will be outlined. A subset of
-data points can be outlined by passing a predicate. This must evaluate
-to `TRUE` or `FALSE` within the context of the input data.}
+\item{trace_position}{Specifies which data points to outline, can be one of:
+
+\itemize{
+  \item "all" to outline every group plotted
+  \item A predicate specifying which data points to outline. This must
+        evaluate to \code{TRUE} or \code{FALSE} within the context of the
+        input data. e.g. \code{value > 100}
+}}
 
 \item{background_params}{Named list specifying aesthetic parameters to use
-for background points when a predicate is passed to `trace_position`.}
+for background data points when a predicate is passed to
+\code{trace_position}, e.g. \code{list(color = "red")}}
 
 \item{lineend}{Line end style (round, butt, square).}
 
@@ -124,7 +128,16 @@ to either \code{"x"} or \code{"y"}. See the \emph{Orientation} section for more 
 adjacent x-values.}
 }
 \description{
-Trace lines to improve clarity of plots with overplotted geoms
+These geoms are similar to \code{ggplot2::geom_path()},
+\code{ggplot2::geom_line()}, and \code{ggplot2::geom_step()}, but also
+include the ability to highlight line segments of interest.
+These geoms accept normal ggplot2 graphical parameters with
+some modifications. \code{fill} controls the color of the center line,
+\code{color} controls the outline color, and \code{stroke} controls
+outline width, similar to how filled shapes are modified for other ggplot2
+geoms. Additional parameters including \code{size}, \code{alpha},
+\code{linetype}, \code{linejoin}, \code{lineend},  and \code{linemitre} are
+also accepted.
 }
 \section{Aesthetics}{
 
@@ -136,7 +149,6 @@ Trace lines to improve clarity of plots with overplotted geoms
   \item \code{colour}
   \item \code{fill}
   \item \code{group}
-  \item \code{KEEP_THIS_ROW_PLEASE}
   \item \code{linetype}
   \item \code{size}
   \item \code{stroke}
@@ -144,3 +156,70 @@ Trace lines to improve clarity of plots with overplotted geoms
 Learn more about setting these aesthetics in \code{vignette("ggplot2-specs")}.
 }
 
+\examples{
+# Modify line color for each group
+ggplot2::ggplot(
+  stocks,
+  ggplot2::aes(day, value, fill = name)
+) +
+  geom_line_trace() +
+  ggplot2::theme_minimal()
+
+# Modify outline color for each group
+ggplot2::ggplot(
+  stocks,
+  ggplot2::aes(day, value, color = name)
+) +
+  geom_line_trace() +
+  ggplot2::theme_minimal()
+
+# Specify outline color for each group
+clrs <- c(
+  CAC  = "#E69F00",
+  DAX  = "#0072B2",
+  FTSE = "#009E73",
+  SMI  = "#56B4E9"
+)
+
+ggplot2::ggplot(
+  stocks,
+  ggplot2::aes(day, value, color = name)
+) +
+  geom_line_trace() +
+  geom_line_trace(stroke = 1) +
+  ggplot2::scale_color_manual(values = clrs) +
+  ggplot2::theme_minimal()
+
+# Outline a subset of data points
+ggplot2::ggplot(
+  stocks,
+  ggplot2::aes(day, value, color = name)
+) +
+  geom_line_trace(trace_position = day > 1500, stroke = 1) +
+  ggplot2::theme_minimal()
+
+# Modify appearance of background data points
+ggplot2::ggplot(
+  stocks,
+  ggplot2::aes(day, value, color = name)
+) +
+  geom_line_trace(
+    trace_position    = day > 1500,
+    background_params = list(color = NA, fill = "grey75"),
+    stroke            = 1
+  ) +
+  ggplot2::theme_minimal()
+
+# Remove outline
+ggplot2::ggplot(
+  stocks,
+  ggplot2::aes(day, value, fill = name)
+) +
+  geom_line_trace(
+    trace_position    = day > 1500,
+    background_params = list(fill = "grey75"),
+    color             = NA
+  ) +
+  ggplot2::theme_minimal()
+
+}

@@ -276,6 +276,8 @@ rd_aesthetics <- function(type, name) {
 
   aes <- rd_aesthetics_item(obj)
 
+  aes <- aes[aes != paste0("\\code{", KEEP_CLMN, "}")]
+
   res <- c(
     "@section Aesthetics:",
     paste0(
