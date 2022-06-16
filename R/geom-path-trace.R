@@ -1,10 +1,22 @@
-#' Trace lines to improve clarity of plots with overplotted geoms
+#' Trace lines
+#'
+#' These geoms are similar to \code{ggplot2::geom_path()},
+#' \code{ggplot2::geom_line()}, and \code{ggplot2::geom_step()}, but also
+#' include the ability to highlight line segments of interest.
+#' These geoms accept normal ggplot2 graphical parameters with
+#' some modifications. \code{fill} controls the color of the center line,
+#' \code{color} controls the outline color, and \code{stroke} controls
+#' outline width, similar to how filled shapes are modified for other ggplot2
+#' geoms. Additional parameters including \code{size}, \code{alpha},
+#' \code{linetype}, \code{linejoin}, \code{lineend},  and \code{linemitre} are
+#' also accepted.
 #'
 #' @inheritParams ggplot2::geom_path
+#'
 #' @param trace_position Specifies which data points to outline, can be one of:
 #'
 #' \itemize{
-#'   \item 'all' to outline every group plotted
+#'   \item "all" to outline every group plotted
 #'   \item A predicate specifying which data points to outline. This must
 #'         evaluate to \code{TRUE} or \code{FALSE} within the context of the
 #'         input data. e.g. \code{value > 100}
@@ -18,20 +30,20 @@
 #'
 #' @examples
 #' # Modify line color for each group
-#' ggplot(
+#' ggplot2::ggplot(
 #'   stocks,
-#'   aes(day, value, fill = name)
+#'   ggplot2::aes(day, value, fill = name)
 #' ) +
 #'   geom_line_trace() +
-#'   theme_minimal()
+#'   ggplot2::theme_minimal()
 #'
 #' # Modify outline color for each group
-#' ggplot(
+#' ggplot2::ggplot(
 #'   stocks,
-#'   aes(day, value, color = name)
+#'   ggplot2::aes(day, value, color = name)
 #' ) +
 #'   geom_line_trace() +
-#'   theme_minimal()
+#'   ggplot2::theme_minimal()
 #'
 #' # Specify outline color for each group
 #' clrs <- c(
@@ -41,46 +53,46 @@
 #'   SMI  = "#56B4E9"
 #' )
 #'
-#' ggplot(
+#' ggplot2::ggplot(
 #'   stocks,
-#'   aes(day, value, color = name)
+#'   ggplot2::aes(day, value, color = name)
 #' ) +
 #'   geom_line_trace() +
 #'   geom_line_trace(stroke = 1) +
-#'   scale_color_manual(values = clrs) +
-#'   theme_minimal()
+#'   ggplot2::scale_color_manual(values = clrs) +
+#'   ggplot2::theme_minimal()
 #'
 #' # Outline a subset of data points
-#' ggplot(
+#' ggplot2::ggplot(
 #'   stocks,
-#'   aes(day, value, color = name)
+#'   ggplot2::aes(day, value, color = name)
 #' ) +
 #'   geom_line_trace(trace_position = day > 1500, stroke = 1) +
-#'   theme_minimal()
+#'   ggplot2::theme_minimal()
 #'
 #' # Modify appearance of background data points
-#' ggplot(
+#' ggplot2::ggplot(
 #'   stocks,
-#'   aes(day, value, color = name)
+#'   ggplot2::aes(day, value, color = name)
 #' ) +
 #'   geom_line_trace(
 #'     trace_position    = day > 1500,
 #'     background_params = list(color = NA, fill = "grey75"),
 #'     stroke            = 1
 #'   ) +
-#'   theme_minimal()
+#'   ggplot2::theme_minimal()
 #'
 #' # Remove outline
-#' ggplot(
+#' ggplot2::ggplot(
 #'   stocks,
-#'   aes(day, value, fill = name)
+#'   ggplot2::aes(day, value, fill = name)
 #' ) +
 #'   geom_line_trace(
 #'     trace_position    = day > 1500,
 #'     background_params = list(fill = "grey75"),
 #'     color             = NA
 #'   ) +
-#'   theme_minimal()
+#'   ggplot2::theme_minimal()
 #'
 #' @export
 geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity",
