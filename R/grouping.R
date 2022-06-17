@@ -6,15 +6,15 @@ id <- function(.variables, drop = FALSE) {
   nrows <- NULL
 
   if (is.data.frame(.variables)) {
-    nrows      <- nrow(.variables)
+    nrows <- nrow(.variables)
     .variables <- unclass(.variables)
   }
 
-  lengths    <- vapply(.variables, length, integer(1))
+  lengths <- vapply(.variables, length, integer(1))
   .variables <- .variables[lengths != 0]
 
   if (length(.variables) == 0) {
-    n  <- nrows %||% 0L
+    n <- nrows %||% 0L
     id <- seq_len(n)
 
     attr(id, "n") <- n
@@ -26,24 +26,22 @@ id <- function(.variables, drop = FALSE) {
     return(id_var(.variables[[1]], drop = drop))
   }
 
-  ids       <- rev(lapply(.variables, id_var, drop = drop))
-  p         <- length(ids)
+  ids <- rev(lapply(.variables, id_var, drop = drop))
+  p <- length(ids)
   ndistinct <- vapply(ids, attr, "n", FUN.VALUE = numeric(1), USE.NAMES = FALSE)
-  n         <- prod(ndistinct)
+  n <- prod(ndistinct)
 
   if (n > 2^31) {
     char_id <- do.call("paste", c(ids, sep = "\r"))
-    res     <- match(char_id, unique(char_id))
-
+    res <- match(char_id, unique(char_id))
   } else {
     combs <- c(1, cumprod(ndistinct[-p]))
-    mat   <- do.call("cbind", ids)
-    res   <- c((mat - 1L) %*% combs + 1L)
+    mat <- do.call("cbind", ids)
+    res <- c((mat - 1L) %*% combs + 1L)
   }
 
   if (drop) {
     id_var(res, drop = TRUE)
-
   } else {
     res <- as.integer(res)
     attr(res, "n") <- n
@@ -52,23 +50,19 @@ id <- function(.variables, drop = FALSE) {
 }
 
 id_var <- function(x, drop = FALSE) {
-
   if (length(x) == 0) {
     id <- integer()
-    n  <- 0L
-
+    n <- 0L
   } else if (!is.null(attr(x, "n")) && !drop) {
     return(x)
-
   } else if (is.factor(x) && !drop) {
-    x  <- addNA(x, ifany = TRUE)
+    x <- addNA(x, ifany = TRUE)
     id <- as.integer(x)
-    n  <- length(levels(x))
-
+    n <- length(levels(x))
   } else {
     levels <- sort(unique(x), na.last = TRUE)
-    id     <- match(x, levels)
-    n      <- max(id)
+    id <- match(x, levels)
+    n <- max(id)
   }
 
   attr(id, "n") <- n
@@ -83,7 +77,9 @@ id_var <- function(x, drop = FALSE) {
 # character) vectors, excluding `label`. The special value `NO_GROUP`
 # is used for all observations if no discrete variables exist.
 add_group <- function(data) {
-  if (empty(data)) return(data)
+  if (empty(data)) {
+    return(data)
+  }
 
   if (is.null(data[["group"]])) {
     disc <- vapply(data, is.discrete, logical(1))
@@ -92,12 +88,10 @@ add_group <- function(data) {
 
     if (any(disc)) {
       data$group <- id(data[disc], drop = TRUE)
-
     } else {
       data$group <- NO_GROUP
       attr(data$group, "n") <- 1L
     }
-
   } else {
     data$group <- id(data["group"], drop = TRUE)
   }

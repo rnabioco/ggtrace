@@ -26,22 +26,20 @@ NULL
 #' @rdname draw_key
 #' @export
 draw_key_point_trace <- function(data, params, size) {
-
   if (is.null(data$shape)) {
     data$shape <- 19
-
   } else if (is.character(data$shape)) {
     data$shape <- translate_shape_string(data$shape)
   }
 
   data$trace_shape <- translate_trace_shape(data$shape)
-  data             <- calculate_trace_size(data)
+  data <- calculate_trace_size(data)
 
   # Replace NULL values in data
-  data$colour[is.null(data$colour)]     <- "black"
-  data$fill[is.null(data$fill)]         <- "white"
+  data$colour[is.null(data$colour)] <- "black"
+  data$fill[is.null(data$fill)] <- "white"
   data$linetype[is.null(data$linetype)] <- 1
-  data$size[is.null(data$size)]         <- 1.5
+  data$size[is.null(data$size)] <- 1.5
 
   # Trace grob
   pt_stroke <- 0.5
@@ -49,7 +47,7 @@ draw_key_point_trace <- function(data, params, size) {
   trace_grob <- grid::pointsGrob(
     0.5, 0.5,
     pch = data$trace_shape,
-    gp  = grid::gpar(
+    gp = grid::gpar(
       col      = alpha(data$colour, 1),
       lty      = data$linetype,
       fontsize = data$trace_fontsize,
@@ -61,7 +59,7 @@ draw_key_point_trace <- function(data, params, size) {
   points_grob <- grid::pointsGrob(
     0.5, 0.5,
     pch = data$shape,
-    gp  = grid::gpar(
+    gp = grid::gpar(
       col      = alpha(data$fill, data$alpha),
       fontsize = data$size * .pt + pt_stroke * .stroke / 2,
       lwd      = pt_stroke * .stroke / 2
@@ -78,40 +76,35 @@ draw_key_path_trace <- function(data, params, size) {
   # Replace NULL values in data
   if (is.null(data$linetype)) {
     data$linetype <- 1
-
   } else {
     data$linetype[is.na(data$linetype)] <- 1
   }
 
   data$colour[is.null(data$colour)] <- "black"
-  data$fill[is.null(data$fill)]     <- "white"
-  data$size[is.null(data$size)]     <- 0.5
+  data$fill[is.null(data$fill)] <- "white"
+  data$size[is.null(data$size)] <- 0.5
 
   # Trace grob
   trace_grob <- grid::segmentsGrob(
     0.1, 0.5, 0.9, 0.5,
-
     gp = grid::gpar(
       col     = alpha(data$colour, 1),
       lwd     = data$size * .pt + data$stroke * .pt * 2,
       lty     = 1,
       lineend = "butt"
     ),
-
     arrow = params$arrow
   )
 
   # Segments grob
   points_grob <- grid::segmentsGrob(
     0.1, 0.5, 0.9, 0.5,
-
     gp = grid::gpar(
       col     = alpha(data$fill, 1),
       lwd     = data$size * .pt,
       lty     = data$linetype,
       lineend = "butt"
     ),
-
     arrow = params$arrow
   )
 

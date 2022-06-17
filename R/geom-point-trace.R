@@ -90,14 +90,13 @@
 #'   ) +
 #'   ggplot2::theme_minimal()
 #'
-#'@export
+#' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
                              position = "identity", ...,
                              trace_position = "all",
                              background_params = list(color = NA),
                              na.rm = FALSE, show.legend = NA,
                              inherit.aes = TRUE) {
-
   trans_fn <- function(dat, ex, inv = FALSE) {
     if (inv) {
       return(subset(dat, !eval(ex)))
@@ -138,7 +137,6 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
                                 show.legend, inherit.aes, params,
                                 trace_position, background_params, trans_fn,
                                 allow_bottom = TRUE) {
-
   if (!is.list(background_params)) {
     stop(
       "background_params must be a named list with additional parameters to ",
@@ -147,7 +145,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
   }
 
   trace_expr <- trace_position
-  lyrs       <- list()
+  lyrs <- list()
 
   # If trace_position is 'bottom', create new column and use to override
   # original group specification.
@@ -160,7 +158,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 
     mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
-  # If trace_position is not 'all', evaluate expression
+    # If trace_position is not 'all', evaluate expression
   } else if (trace_expr != "all") {
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate
@@ -177,11 +175,10 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
     if (is.function(data)) {
       d_fn <- data
 
-      data      <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
+      data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr))
       bkgd_data <- ggplot2::fortify(~ trans_fn(d_fn(...), trace_expr, inv = TRUE))
-
     } else if (is.data.frame(data) || is.null(data)) {
-      data      <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
+      data <- ggplot2::fortify(~ trans_fn(.x, trace_expr))
       bkgd_data <- ggplot2::fortify(~ trans_fn(.x, trace_expr, inv = TRUE))
     }
 
@@ -236,11 +233,8 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 #' @export
 GeomPointTrace <- ggplot2::ggproto(
   "GeomPointTrace", ggplot2::Geom,
-
   required_aes = c("x", "y"),
-
   non_missing_aes = c("size", "shape", "fill"),
-
   default_aes = ggplot2::aes(
     shape    = 19,
     colour   = "black",
@@ -254,22 +248,20 @@ GeomPointTrace <- ggplot2::ggproto(
   # WISH THESE COULD BE AUTOMATICALLY DETERMINED BASED ON self$default_aes
   # paste0("bkgd_", names(self$default_aes))
   extra_params = c(extra_bkgd_params, "bkgd_shape"),
-
   setup_data = function(data, params) {
     # Add background new data columns for background_params
     # should not override the original columns since final parameters (colour,
     # fill, etc.) have not been set for groups yet
-    bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
+    bkgd_clmns <- names(params)[grepl("^bkgd_", names(params))]
     data[bkgd_clmns] <- params[bkgd_clmns]
 
     data
   },
-
   draw_group = function(self, data, panel_params, coord, na.rm = FALSE) {
 
     # If background_params are present in data, override original columns
     bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
-    clmns      <- gsub("^bkgd_", "", bkgd_clmns)
+    clmns <- gsub("^bkgd_", "", bkgd_clmns)
 
     data[clmns] <- data[bkgd_clmns]
 
@@ -279,14 +271,13 @@ GeomPointTrace <- ggplot2::ggproto(
     }
 
     data$trace_shape <- translate_trace_shape(data$shape)
-    data             <- calculate_trace_size(data)
+    data <- calculate_trace_size(data)
 
     coords <- coord$transform(data, panel_params)
 
     trace_grob <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$trace_shape,
-
       gp = grid::gpar(
         col      = alpha(coords$colour, 1),
         lty      = coords$linetype,
@@ -300,7 +291,6 @@ GeomPointTrace <- ggplot2::ggproto(
     points_grob <- grid::pointsGrob(
       coords$x, coords$y,
       pch = coords$shape,
-
       gp = grid::gpar(
         col      = alpha(coords$fill, coords$alpha),
         fontsize = coords$size * .pt + pt_stroke * .stroke / 2,
@@ -310,7 +300,6 @@ GeomPointTrace <- ggplot2::ggproto(
 
     ggname("geom_point_trace", grid::grobTree(trace_grob, points_grob))
   },
-
   draw_key = draw_key_point_trace
 )
 
@@ -357,12 +346,12 @@ translate_shape_string <- function(shape_string) {
 
   shape_match <- charmatch(shape_string, names(pch_tbl))
 
-  invalid_strings   <- is.na(shape_match)
+  invalid_strings <- is.na(shape_match)
   nonunique_strings <- shape_match == 0
 
   if (any(invalid_strings)) {
     bad_string <- unique(shape_string[invalid_strings])
-    n_bad      <- length(bad_string)
+    n_bad <- length(bad_string)
 
     collapsed_names <- sprintf("\n* %s", bad_string)
 
@@ -377,7 +366,7 @@ translate_shape_string <- function(shape_string) {
 
   if (any(nonunique_strings)) {
     bad_string <- unique(shape_string[nonunique_strings])
-    n_bad      <- length(bad_string)
+    n_bad <- length(bad_string)
 
     n_matches <- vapply(
       bad_string[1:min(5, n_bad)],
@@ -412,12 +401,12 @@ translate_shape_string <- function(shape_string) {
 #'
 #' @noRd
 calculate_trace_size <- function(data) {
-  pch_open  <- 0:14
+  pch_open <- 0:14
   pt_stroke <- 0.5
-  pch       <- data$shape
+  pch <- data$shape
 
   # Calculate fontsize for closed shapes
-  fontsize  <- data$size * .pt + pt_stroke * .stroke / 2
+  fontsize <- data$size * .pt + pt_stroke * .stroke / 2
 
   fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$stroke * .stroke / 2
 
@@ -428,7 +417,7 @@ calculate_trace_size <- function(data) {
 
   # Add results to data
   data$trace_fontsize <- fontsize
-  data$trace_lwd      <- lwd
+  data$trace_lwd <- lwd
 
   data
 }
@@ -437,25 +426,25 @@ calculate_trace_size <- function(data) {
 #' @noRd
 translate_trace_shape <- function(pch) {
   pch_tbl <- c(
-    "0" = 0,       # "square open"
-    "1" = 1,       # "circle open"
-    "2" = 2,       # "triangle open"
-    "3" = 3,       # "plus"
-    "4" = 4,       # "cross"
-    "5" = 5,       # "diamond open"
-    "6" = 6,       # "triangle down open"
-    "7" = 7,       # "square cross"
-    "8" = 8,       # "asterisk"
-    "9" = 9,       # "diamond plus"
-    "10" = 10,     # "circle plus"
-    "11" = 11,     # "star"
-    "12" = 12,     # "square plus"
-    "13" = 13,     # "circle cross"
-    "14" = 14,     # "triangle square, square triangle"
-    "15" = 0,      # "square"
-    "16" = 1,      # "circle small"
-    "17" = 2,      # "triangle"
-    "19" = 1       # "circle"
+    "0" = 0, # "square open"
+    "1" = 1, # "circle open"
+    "2" = 2, # "triangle open"
+    "3" = 3, # "plus"
+    "4" = 4, # "cross"
+    "5" = 5, # "diamond open"
+    "6" = 6, # "triangle down open"
+    "7" = 7, # "square cross"
+    "8" = 8, # "asterisk"
+    "9" = 9, # "diamond plus"
+    "10" = 10, # "circle plus"
+    "11" = 11, # "star"
+    "12" = 12, # "square plus"
+    "13" = 13, # "circle cross"
+    "14" = 14, # "triangle square, square triangle"
+    "15" = 0, # "square"
+    "16" = 1, # "circle small"
+    "17" = 2, # "triangle"
+    "19" = 1 # "circle"
 
     # Exclude shapes that are filled
     # Exclude diamond and bullet since they do not have an open shape of the
@@ -470,10 +459,9 @@ translate_trace_shape <- function(pch) {
   )
 
   pch_match <- charmatch(pch, names(pch_tbl))
-  bad_pch   <- is.na(pch_match)
+  bad_pch <- is.na(pch_match)
 
   if (any(bad_pch)) {
-
     bad_pch <- unique(pch[bad_pch])
 
     stop("Unsupported shape ", paste0(bad_pch, collapse = ", "))

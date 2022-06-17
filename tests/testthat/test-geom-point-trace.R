@@ -1,5 +1,6 @@
 test_that("unexpected args throw warning", {
-  expect_warning(ggplot() + geom_point_trace(blah = "blerg"))
+  expect_warning(ggplot() +
+    geom_point_trace(blah = "blerg"))
 })
 
 test_that("specify aes params", {
@@ -72,7 +73,7 @@ test_that("trace_position predicate data", {
 
 test_that("trace_position pass data as data.frame", {
   dat <- subset(clusters, signal > 10)
-  p   <- geom_point_trace(data = dat, trace_position = signal > 10)
+  p <- geom_point_trace(data = dat, trace_position = signal > 10)
 
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
   expect_doppelganger("trace_position pass data as data.frame", p)
@@ -80,7 +81,7 @@ test_that("trace_position pass data as data.frame", {
 
 test_that("trace_position pass data as function", {
   dat <- function(x) subset(x, signal > 10)
-  p   <- geom_point_trace(data = dat, trace_position = signal > 10)
+  p <- geom_point_trace(data = dat, trace_position = signal > 10)
 
   expect_identical(p[[2]]$data(clusters), subset(clusters, signal > 10))
   expect_doppelganger("trace_position pass data as function", p)
@@ -155,7 +156,7 @@ test_that("calculate_trace_size", {
     stroke = 1
   )
 
-  sz  <- dat$size * .pt + 0.5 * .stroke / 2
+  sz <- dat$size * .pt + 0.5 * .stroke / 2
   lwd <- dat$stroke * .stroke / 2 * 2 + (0.5 * .stroke / 2)
   expect_identical(calculate_trace_size(dat)$trace_fontsize, sz)
   expect_identical(calculate_trace_size(dat)$trace_lwd, lwd)
@@ -166,7 +167,7 @@ test_that("calculate_trace_size", {
     stroke = 1
   )
 
-  sz  <- dat$size * .pt + 0.5 * .stroke / 2 + dat$stroke * .stroke / 2
+  sz <- dat$size * .pt + 0.5 * .stroke / 2 + dat$stroke * .stroke / 2
   lwd <- dat$stroke * .stroke / 2
   expect_identical(calculate_trace_size(dat)$trace_fontsize, sz)
   expect_identical(calculate_trace_size(dat)$trace_lwd, lwd)
@@ -178,8 +179,3 @@ test_that("bad background_params", {
       geom_point_trace(background_params = "BAD")
   )
 })
-
-
-
-
-

@@ -100,7 +100,6 @@ geom_path_trace <- function(mapping = NULL, data = NULL, stat = "identity",
                             lineend = "butt", linejoin = "round",
                             linemitre = 10, arrow = NULL, na.rm = FALSE,
                             show.legend = NA, inherit.aes = TRUE) {
-
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)
   }
@@ -153,7 +152,6 @@ add_dummy_aes <- function(mapping, nm) {
 path_trans_fn <- function(dat, ex, inv = FALSE) {
   if (inv) {
     dat <- transform(dat, KEEP_THIS_ROW_PLEASE = !eval(ex))
-
   } else {
     dat <- transform(dat, KEEP_THIS_ROW_PLEASE = eval(ex))
   }
@@ -190,16 +188,12 @@ extra_bkgd_params <- paste0("bkgd_", c(
 #' @export
 GeomPathTrace <- ggproto(
   "GeomPathTrace", ggplot2::Geom,
-
   required_aes = c("x", "y"),
-
   default_aes = default_path_aes,
-
   extra_params = c(
     extra_bkgd_params,
     paste0("bkgd_", c("lineend", "linejoin", "linemitre", "arrow"))
   ),
-
   handle_na = function(data, params) {
     # Drop missing values at the start or end of a line - can't drop in the
     # middle since you expect those to be shown by a break in the line
@@ -207,8 +201,8 @@ GeomPathTrace <- ggproto(
     # by setting colour = NA
     drop_na_values <- function(dat, warn = TRUE, clmns = c("x", "y", "size", "fill", "stroke", "linetype")) {
       complete <- stats::complete.cases(dat[clmns])
-      kept     <- stats::ave(complete, dat$group, FUN = keep_mid_true)
-      dat      <- dat[kept, ]
+      kept <- stats::ave(complete, dat$group, FUN = keep_mid_true)
+      dat <- dat[kept, ]
 
       if (warn && !all(kept) && !params$na.rm) {
         warning("Removed ", sum(!kept), " row(s) containing missing values (geom_path_trace).")
@@ -223,7 +217,6 @@ GeomPathTrace <- ggproto(
     # this is to eliminate breaks between background and highlighted lines
     # params$bkgd_layer is only set for background layer
     if (!is.null(params$bkgd_layer)) {
-
       expand_line <- function(grp) {
         dat <- subset(data, group == grp)
 
@@ -232,15 +225,15 @@ GeomPathTrace <- ggproto(
         }
 
         keep_row <- dat[[KEEP_CLMN]]
-        idx      <- seq_along(keep_row)
-        idx      <- idx[keep_row]
+        idx <- seq_along(keep_row)
+        idx <- idx[keep_row]
 
         n_rows <- length(keep_row)
 
         seg_strts <- idx[c(TRUE, diff(idx) != 1)]
-        seg_ends  <- idx[c(diff(idx) != 1, TRUE)]
+        seg_ends <- idx[c(diff(idx) != 1, TRUE)]
 
-        seg_strts[seg_strts > 1]    <- seg_strts[seg_strts > 1] - 1
+        seg_strts[seg_strts > 1] <- seg_strts[seg_strts > 1] - 1
         seg_ends[seg_ends < n_rows] <- seg_ends[seg_ends < n_rows] + 1
 
         expanded_idx <- lapply(seq_along(seg_strts), function(i) seg_strts[i]:seg_ends[i])
@@ -267,9 +260,7 @@ GeomPathTrace <- ggproto(
 
     data
   },
-
   setup_data = function(data, params) {
-
     if (!is.null(data[[KEEP_CLMN]])) {
       # If trace_position predicate does not select any data points, return
       # empty data for layer so it is not passed to draw_group()
@@ -303,10 +294,10 @@ GeomPathTrace <- ggproto(
 
       if (anyDuplicated(uniq_grps[[clmn]])) {
         grps <- data$group
-        d    <- data[, colnames(data) != "group"]
-        d    <- add_group(d)
+        d <- data[, colnames(data) != "group"]
+        d <- add_group(d)
 
-        data$group      <- d$group
+        data$group <- d$group
         data$orig_group <- grps
       }
     }
@@ -314,7 +305,7 @@ GeomPathTrace <- ggproto(
     # Add new background data columns for background_params
     # should not overwrite the original columns since final parameters (colour,
     # fill, etc.) have not been set for groups yet
-    bkgd_clmns       <- names(params)[grepl("^bkgd_", names(params))]
+    bkgd_clmns <- names(params)[grepl("^bkgd_", names(params))]
     data[bkgd_clmns] <- params[bkgd_clmns]
 
     # Must be sorted on group
@@ -322,18 +313,16 @@ GeomPathTrace <- ggproto(
 
     data
   },
-
   draw_group = function(data, panel_params, coord, arrow = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
                         na.rm = FALSE) {
-
     if (!anyDuplicated(data$group)) {
       message("geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?")
     }
 
     # If background_params are present in data, override original columns
     bkgd_clmns <- colnames(data)[grepl("^bkgd_", colnames(data))]
-    clmns      <- gsub("^bkgd_", "", bkgd_clmns)
+    clmns <- gsub("^bkgd_", "", bkgd_clmns)
 
     data[clmns] <- data[bkgd_clmns]
 
@@ -342,7 +331,7 @@ GeomPathTrace <- ggproto(
     munched <- coord_munch(coord, data, panel_params)
 
     # Silently drop lines with less than two points, preserving order
-    rows    <- stats::ave(seq_len(nrow(munched)), munched$group, FUN = length)
+    rows <- stats::ave(seq_len(nrow(munched)), munched$group, FUN = length)
     munched <- munched[rows >= 2, ]
 
     if (nrow(munched) < 2) {
@@ -351,9 +340,9 @@ GeomPathTrace <- ggproto(
 
     # Set values for params
     # if params are not present in munched, use default value
-    arrow     <- munched$arrow %||% arrow
-    lineend   <- munched$lineend %||% lineend
-    linejoin  <- munched$linejoin %||% linejoin
+    arrow <- munched$arrow %||% arrow
+    lineend <- munched$lineend %||% lineend
+    linejoin <- munched$linejoin %||% linejoin
     linemitre <- munched$linemitre %||% linemitre
 
     # Work out whether we should use lines or segments
@@ -370,31 +359,28 @@ GeomPathTrace <- ggproto(
     })
 
     solid_lines <- all(attr$solid)
-    constant    <- all(attr$constant)
+    constant <- all(attr$constant)
 
     if (!solid_lines && !constant) {
       stop("geom_path: If you are using dotted or dashed lines, color, fill, size and linetype must be constant over the line")
     }
 
     # Work out grouping variables for grobs
-    n          <- nrow(munched)
+    n <- nrow(munched)
     group_diff <- munched$group[-1] != munched$group[-n]
-    start      <- c(TRUE, group_diff)
-    end        <- c(group_diff, TRUE)
+    start <- c(TRUE, group_diff)
+    end <- c(group_diff, TRUE)
 
     if (!constant) {
-
       create_seg_grob <- function(clr, strk, lty) {
         grid::segmentsGrob(
-          munched$x[!end],   munched$y[!end],
+          munched$x[!end], munched$y[!end],
           munched$x[!start], munched$y[!start],
-
           default.units = "native",
-          arrow         = arrow,
-
+          arrow = arrow,
           gp = grid::gpar(
             col       = alpha(clr, munched$alpha)[!end],
-            fill      = alpha(clr, munched$alpha)[!end],  # modifies arrow fill
+            fill      = alpha(clr, munched$alpha)[!end], # modifies arrow fill
             lwd       = munched$size[!end] * .pt + strk * .pt * 2,
             lty       = lty,
             lineend   = lineend,
@@ -415,9 +401,7 @@ GeomPathTrace <- ggproto(
         strk = 0,
         lty  = munched$linetype[!end]
       )
-
     } else {
-
       id <- match(munched$group, unique(munched$group))
 
       if ("orig_group" %in% colnames(munched)) {
@@ -427,14 +411,12 @@ GeomPathTrace <- ggproto(
       create_line_grob <- function(clr, strk, lty) {
         grid::polylineGrob(
           munched$x, munched$y,
-
-          id            = id,
+          id = id,
           default.units = "native",
-          arrow         = arrow,
-
+          arrow = arrow,
           gp = grid::gpar(
             col       = alpha(clr, munched$alpha)[start],
-            fill      = alpha(clr, munched$alpha)[start],  # modifies arrow fill
+            fill      = alpha(clr, munched$alpha)[start], # modifies arrow fill
             lwd       = munched$size[start] * .pt + strk * .pt * 2,
             lty       = lty,
             lineend   = lineend,
@@ -459,7 +441,6 @@ GeomPathTrace <- ggproto(
 
     ggname("geom_path_trace", grid::grobTree(trace_grob, line_grob))
   },
-
   draw_key = draw_key_path_trace
 )
 
@@ -476,7 +457,7 @@ keep_mid_true <- function(x) {
 
   c(
     rep(FALSE, first),
-    rep(TRUE,  last - first),
+    rep(TRUE, last - first),
     rep(FALSE, length(x) - last)
   )
 }
@@ -489,7 +470,6 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity",
                             orientation = NA, show.legend = NA,
                             inherit.aes = TRUE, trace_position = "all",
                             background_params = list(color = NA), ...) {
-
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)
   }
@@ -522,15 +502,12 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @export
 GeomLineTrace <- ggproto(
   "GeomLineTrace", GeomPathTrace,
-
   extra_params = c(GeomPathTrace$extra_params, "na.rm", "orientation"),
-
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
 
     params
   },
-
   setup_data = function(data, params) {
     data$flipped_aes <- params$flipped_aes
 
@@ -555,7 +532,6 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
                             na.rm = FALSE, show.legend = NA,
                             inherit.aes = TRUE, trace_position = "all",
                             background_params = list(color = NA), ...) {
-
   if (substitute(trace_position) != "all") {
     mapping <- add_dummy_aes(mapping, KEEP_CLMN)
   }
@@ -588,7 +564,6 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @export
 GeomStepTrace <- ggproto(
   "GeomStepTrace", GeomPathTrace,
-
   draw_group = function(data, panel_params, coord, direction = "hv") {
     data <- dapply(data, "group", stairstep, direction = direction)
 
@@ -600,10 +575,9 @@ GeomStepTrace <- ggproto(
 #' Used by `GeomStepTrace()`
 #' @noRd
 stairstep <- function(data, direction = "hv") {
-
   direction <- match.arg(direction, c("hv", "vh", "mid"))
-  data      <- as.data.frame(data)[order(data$x), ]
-  n         <- nrow(data)
+  data <- as.data.frame(data)[order(data$x), ]
+  n <- nrow(data)
 
   if (n <= 1) {
     # Need at least one observation
@@ -613,40 +587,27 @@ stairstep <- function(data, direction = "hv") {
   if (direction == "vh") {
     xs <- rep(1:n, each = 2)[-2 * n]
     ys <- c(1, rep(2:n, each = 2))
-
   } else if (direction == "hv") {
     ys <- rep(1:n, each = 2)[-2 * n]
     xs <- c(1, rep(2:n, each = 2))
-
   } else if (direction == "mid") {
     xs <- rep(1:(n - 1), each = 2)
     ys <- rep(1:n, each = 2)
-
   } else {
     stop("Parameter `direction` is invalid.")
   }
 
   if (direction == "mid") {
-    gaps      <- data$x[-1] - data$x[-n]
-    mid_x     <- data$x[-n] + gaps / 2                 # map the mid-point between adjacent x-values
-    x         <- c(data$x[1], mid_x[xs], data$x[n])
-    y         <- c(data$y[ys])
+    gaps <- data$x[-1] - data$x[-n]
+    mid_x <- data$x[-n] + gaps / 2 # map the mid-point between adjacent x-values
+    x <- c(data$x[1], mid_x[xs], data$x[n])
+    y <- c(data$y[ys])
     data_attr <- data[c(1, xs, n), setdiff(names(data), c("x", "y"))]
-
   } else {
-    x         <- data$x[xs]
-    y         <- data$y[ys]
+    x <- data$x[xs]
+    y <- data$y[ys]
     data_attr <- data[xs, setdiff(names(data), c("x", "y"))]
   }
 
   new_data_frame(c(list(x = x, y = y), data_attr))
 }
-
-
-
-
-
-
-
-
-

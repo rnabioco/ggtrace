@@ -1,5 +1,6 @@
 test_that("unexpected args throw warning", {
-  expect_warning(ggplot() + geom_line_trace(blah = "blerg"))
+  expect_warning(ggplot() +
+    geom_line_trace(blah = "blerg"))
 })
 
 test_that("specify aes params", {
@@ -70,9 +71,9 @@ test_that("trace_position predicate data", {
     geom_line_trace(trace_position = day < 500 | day > 1500)
 
   df1 <- p$layers[[2]]$data(stocks) %>%
-      dplyr::filter(KEEP_THIS_ROW_PLEASE) %>%
-      dplyr::select(-KEEP_THIS_ROW_PLEASE) %>%
-      tibble::as_tibble()
+    dplyr::filter(KEEP_THIS_ROW_PLEASE) %>%
+    dplyr::select(-KEEP_THIS_ROW_PLEASE) %>%
+    tibble::as_tibble()
 
   df2 <- subset(stocks, day < 500 | day > 1500)
 
@@ -81,7 +82,7 @@ test_that("trace_position predicate data", {
 
 test_that("trace_position pass data as data.frame", {
   dat <- subset(stocks, day < 500 | day > 1500)
-  p   <- geom_line_trace(data = dat, trace_position = subset(stocks, day < 500 | day > 1500))
+  p <- geom_line_trace(data = dat, trace_position = subset(stocks, day < 500 | day > 1500))
 
   df1 <- p[[2]]$data(dat) %>%
     dplyr::select(day, name, value) %>%
@@ -94,7 +95,7 @@ test_that("trace_position pass data as data.frame", {
 
 test_that("trace_position pass data as function", {
   dat <- function(x) subset(x, day < 500 | day > 1500)
-  p   <- geom_line_trace(data = dat, trace_position = day < 500 | day > 1500)
+  p <- geom_line_trace(data = dat, trace_position = day < 500 | day > 1500)
 
   df1 <- p[[2]]$data(stocks) %>%
     dplyr::select(-KEEP_THIS_ROW_PLEASE) %>%

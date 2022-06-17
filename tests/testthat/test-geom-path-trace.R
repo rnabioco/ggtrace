@@ -1,5 +1,6 @@
 test_that("unexpected args throw warning", {
-  expect_warning(ggplot() + geom_path_trace(blah = "blerg"))
+  expect_warning(ggplot() +
+    geom_path_trace(blah = "blerg"))
 })
 
 test_that("specify aes params", {
@@ -63,14 +64,14 @@ test_that("trace_position predicate data", {
 
 test_that("trace_position pass data as data.frame", {
   dat <- subset(stocks, day < 500 | day > 1500)
-  p   <- geom_path_trace(data = dat, trace_position = subset(stocks, day < 500 | day > 1500))
+  p <- geom_path_trace(data = dat, trace_position = subset(stocks, day < 500 | day > 1500))
 
   expect_identical(p[[2]]$data(dat) %>% dplyr::select(day, name, value) %>% tibble::as_tibble(), subset(stocks, day < 500 | day > 1500))
 })
 
 test_that("trace_position pass data as function", {
   dat <- function(x) subset(x, day < 500 | day > 1500)
-  p   <- geom_path_trace(data = dat, trace_position = day < 500 | day > 1500)
+  p <- geom_path_trace(data = dat, trace_position = day < 500 | day > 1500)
 
   expect_identical(p[[2]]$data(stocks) %>% dplyr::select(-KEEP_THIS_ROW_PLEASE) %>% tibble::as_tibble(), subset(stocks, day < 500 | day > 1500))
 })
@@ -92,7 +93,7 @@ test_that("background_params color", {
 
 test_that("geom_path regroup order", {
   lvls <- c("SMI", "CAC", "DAX", "FTSE")
-  dat  <- stocks
+  dat <- stocks
 
   dat$name <- factor(dat$name, lvls)
 
@@ -116,7 +117,7 @@ test_that("stairstep() does not error with too few observations", {
 
 test_that("stairstep() exists with error when an invalid `direction` is given", {
   df <- data_frame(x = 1:3, y = 1:3)
-  expect_error(stairstep(df, direction="invalid"))
+  expect_error(stairstep(df, direction = "invalid"))
 })
 
 test_that("stairstep() output is correct for direction = 'vh'", {
@@ -153,8 +154,3 @@ test_that("stairstep() output is correct for direction = 'mid'", {
 #
 #   expect_doppelganger("geom_path group reorder trace_position", p)
 # })
-
-
-
-
-

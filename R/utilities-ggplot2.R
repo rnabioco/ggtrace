@@ -32,15 +32,19 @@ NULL
 #'
 #' @noRd
 dapply <- function(df, by, fun, ..., drop = TRUE) {
-  grouping_cols  <- .subset(df, by)
+  grouping_cols <- .subset(df, by)
   fallback_order <- unique(c(by, names(df)))
 
   apply_fun <- function(x) {
     res <- fun(x, ...)
 
-    if (is.null(res)) return(res)
+    if (is.null(res)) {
+      return(res)
+    }
 
-    if (length(res) == 0) return(new_data_frame())
+    if (length(res) == 0) {
+      return(new_data_frame())
+    }
 
     vars <- lapply(stats::setNames(by, by), function(col) .subset2(x, col)[1])
 
@@ -48,7 +52,9 @@ dapply <- function(df, by, fun, ..., drop = TRUE) {
 
     if (is.null(names(res))) names(res) <- paste0("V", seq_along(res))
 
-    if (all(by %in% names(res))) return(new_data_frame(unclass(res)))
+    if (all(by %in% names(res))) {
+      return(new_data_frame(unclass(res)))
+    }
 
     res <- modify_list(unclass(vars), unclass(res))
 
@@ -60,7 +66,7 @@ dapply <- function(df, by, fun, ..., drop = TRUE) {
     return(apply_fun(df))
   }
 
-  ids        <- id(grouping_cols, drop = drop)
+  ids <- id(grouping_cols, drop = drop)
   group_rows <- split_with_index(seq_len(nrow(df)), ids)
 
   rbind_dfs(lapply(seq_along(group_rows), function(i) {
@@ -108,7 +114,9 @@ data_frame <- function(...) {
 # Used by dapply
 # https://github.com/tidyverse/ggplot2/blob/master/R/utilities.r
 split_with_index <- function(x, f, n = max(f)) {
-  if (n == 1) return(list(x))
+  if (n == 1) {
+    return(list(x))
+  }
   f <- as.integer(f)
   attributes(f) <- list(levels = as.character(seq_len(n)), class = "factor")
   unname(split(x, f))
@@ -160,7 +168,9 @@ rbind_dfs <- function(dfs) {
   nrows <- vapply(dfs, .row_names_info, integer(1), type = 2L)
   total <- sum(nrows)
 
-  if (length(columns) == 0) return(new_data_frame(list(), total))
+  if (length(columns) == 0) {
+    return(new_data_frame(list(), total))
+  }
 
   allocated <- rep(FALSE, length(columns))
   names(allocated) <- columns
@@ -185,13 +195,11 @@ rbind_dfs <- function(dfs) {
 
         if (all_ordered) {
           ord_levels[[col]] <- unique(unlist(lapply(dfs, function(df) levels(.subset2(df, col)))))
-
         } else if (all_factors) {
           col_levels[[col]] <- unique(unlist(lapply(dfs, function(df) levels(.subset2(df, col)))))
         }
 
         out[[col]] <- rep(NA_character_, total)
-
       } else {
         out[[col]] <- rep(.subset2(df, col)[1][NA], total)
       }
@@ -201,8 +209,8 @@ rbind_dfs <- function(dfs) {
     if (all(allocated)) break
   }
 
-  is_date <- lapply(out, inherits, 'Date')
-  is_time <- lapply(out, inherits, 'POSIXct')
+  is_date <- lapply(out, inherits, "Date")
+  is_time <- lapply(out, inherits, "POSIXct")
   pos <- c(cumsum(nrows) - nrows + 1)
 
   for (i in seq_along(dfs)) {
@@ -210,8 +218,8 @@ rbind_dfs <- function(dfs) {
     rng <- seq(pos[i], length.out = nrows[i])
 
     for (col in names(df)) {
-      date_col <- inherits(df[[col]], 'Date')
-      time_col <- inherits(df[[col]], 'POSIXct')
+      date_col <- inherits(df[[col]], "Date")
+      time_col <- inherits(df[[col]], "POSIXct")
 
       # if (is_date[[col]] && !date_col) {
       #   out[[col]][rng] <- as.Date(
@@ -225,9 +233,8 @@ rbind_dfs <- function(dfs) {
       #     origin = ggplot_global$time_origin
       #   )
 
-      if (date_col || time_col || inherits(df[[col]], 'factor')) {
+      if (date_col || time_col || inherits(df[[col]], "factor")) {
         out[[col]][rng] <- as.character(df[[col]])
-
       } else {
         out[[col]][rng] <- df[[col]]
       }
@@ -268,8 +275,7 @@ df_rows <- function(x, i) {
 # Helpers used to add info for geom documentation
 # https://github.com/tidyverse/ggplot2/blob/master/R/utilities-help.r
 rd_aesthetics <- function(type, name) {
-  obj <- switch(
-    type,
+  obj <- switch(type,
     geom = check_subclass(name, "Geom", env = globalenv()),
     stat = check_subclass(name, "Stat", env = globalenv())
   )
@@ -294,11 +300,11 @@ rd_aesthetics <- function(type, name) {
 }
 
 rd_aesthetics_item <- function(x) {
-  req          <- x$required_aes
-  req          <- sub("|", "} \\emph{or} \\code{", req, fixed = TRUE)
-  req_aes      <- unlist(strsplit(x$required_aes, "|", fixed = TRUE))
+  req <- x$required_aes
+  req <- sub("|", "} \\emph{or} \\code{", req, fixed = TRUE)
+  req_aes <- unlist(strsplit(x$required_aes, "|", fixed = TRUE))
   optional_aes <- setdiff(x$aesthetics(), req_aes)
-  all          <- union(req, sort(optional_aes))
+  all <- union(req, sort(optional_aes))
 
   ifelse(
     all %in% req,
@@ -311,21 +317,17 @@ rd_aesthetics_item <- function(x) {
 # https://github.com/tidyverse/ggplot2/blob/master/R/layer.r
 check_subclass <- function(x, subclass, argname = to_lower_ascii(subclass),
                            env = parent.frame()) {
-
   if (inherits(x, subclass)) {
     x
-
   } else if (is.character(x) && length(x) == 1) {
     name <- paste0(subclass, camelize(x, first = TRUE))
-    obj  <- find_global(name, env = env)
+    obj <- find_global(name, env = env)
 
     if (is.null(obj) || !inherits(obj, subclass)) {
       stop("Can't find `", argname, "` called '", x, "'")
-
     } else {
       obj
     }
-
   } else {
     stop("`", argname, "` must be either a string or a ", subclass, " object.")
   }
