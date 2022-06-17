@@ -641,12 +641,3 @@ stairstep <- function(data, direction = "hv") {
 
   new_data_frame(c(list(x = x, y = y), data_attr))
 }
-
-
-
-
-
-
-
-
-

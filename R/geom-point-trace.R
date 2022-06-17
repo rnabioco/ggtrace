@@ -90,7 +90,7 @@
 #'   ) +
 #'   ggplot2::theme_minimal()
 #'
-#'@export
+#' @export
 geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
                              position = "identity", ...,
                              trace_position = "all",
@@ -160,7 +160,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 
     mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
-  # If trace_position is not 'all', evaluate expression
+    # If trace_position is not 'all', evaluate expression
   } else if (trace_expr != "all") {
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate

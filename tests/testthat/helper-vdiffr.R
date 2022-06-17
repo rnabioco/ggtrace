@@ -3,10 +3,10 @@
 # a GitHub Actions CI runner with stable version of R.
 # From ggplot2
 
-if (requireNamespace("vdiffr", quietly = TRUE) && utils::packageVersion("testthat") >= '3.0.3') {
+if (requireNamespace("vdiffr", quietly = TRUE) && utils::packageVersion("testthat") >= "3.0.3") {
   expect_doppelganger <- vdiffr::expect_doppelganger
 
-# If vdiffr is not available and visual tests are explicitly required, raise error
+  # If vdiffr is not available and visual tests are explicitly required, raise error
 } else {
   if (identical(Sys.getenv("VDIFFR_RUN_TESTS"), "true")) {
     stop("vdiffr is not installed")

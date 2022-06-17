@@ -201,8 +201,8 @@ rbind_dfs <- function(dfs) {
     if (all(allocated)) break
   }
 
-  is_date <- lapply(out, inherits, 'Date')
-  is_time <- lapply(out, inherits, 'POSIXct')
+  is_date <- lapply(out, inherits, "Date")
+  is_time <- lapply(out, inherits, "POSIXct")
   pos <- c(cumsum(nrows) - nrows + 1)
 
   for (i in seq_along(dfs)) {
@@ -210,8 +210,8 @@ rbind_dfs <- function(dfs) {
     rng <- seq(pos[i], length.out = nrows[i])
 
     for (col in names(df)) {
-      date_col <- inherits(df[[col]], 'Date')
-      time_col <- inherits(df[[col]], 'POSIXct')
+      date_col <- inherits(df[[col]], "Date")
+      time_col <- inherits(df[[col]], "POSIXct")
 
       # if (is_date[[col]] && !date_col) {
       #   out[[col]][rng] <- as.Date(
@@ -225,7 +225,7 @@ rbind_dfs <- function(dfs) {
       #     origin = ggplot_global$time_origin
       #   )
 
-      if (date_col || time_col || inherits(df[[col]], 'factor')) {
+      if (date_col || time_col || inherits(df[[col]], "factor")) {
         out[[col]][rng] <- as.character(df[[col]])
 
       } else {
