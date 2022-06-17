@@ -178,8 +178,3 @@ test_that("bad background_params", {
       geom_point_trace(background_params = "BAD")
   )
 })
-
-
-
-
-

@@ -116,7 +116,7 @@ test_that("stairstep() does not error with too few observations", {
 
 test_that("stairstep() exists with error when an invalid `direction` is given", {
   df <- data_frame(x = 1:3, y = 1:3)
-  expect_error(stairstep(df, direction="invalid"))
+  expect_error(stairstep(df, direction = "invalid"))
 })
 
 test_that("stairstep() output is correct for direction = 'vh'", {
@@ -153,8 +153,3 @@ test_that("stairstep() output is correct for direction = 'mid'", {
 #
 #   expect_doppelganger("geom_path group reorder trace_position", p)
 # })
-
-
-
-
-
