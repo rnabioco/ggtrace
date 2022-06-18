@@ -29,8 +29,13 @@ dense datasets that are prone to overplotting.
 
 ## Installation
 
-You can install the development version of ggtrace from
-[GitHub](https://github.com/rnabioco/ggtrace) with:
+You can install the released version from CRAN:
+
+``` r
+install.packages("ggtrace")
+```
+
+and the development version from [GitHub](https://github.com/rnabioco/ggtrace):
 
 ``` r
 devtools::install_github("rnabioco/ggtrace")
