@@ -1,5 +1,5 @@
 ---
-title: "geom_line_trace"
+title: "Trace Lines"
 date: '`r format(Sys.Date(), "%B %d %Y")`'
 output:
   rmarkdown::html_vignette:
@@ -64,7 +64,7 @@ p +
 
 <br>
 
-Aesthetics can be further modified using the ggplot2 `scale_*` functions.
+Aesthetics can be further modified using the ggplot2 `scale_*()` functions.
 
 ```{r}
 clrs <- c(

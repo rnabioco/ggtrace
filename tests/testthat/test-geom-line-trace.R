@@ -70,9 +70,9 @@ test_that("trace_position predicate data", {
     geom_line_trace(trace_position = day < 500 | day > 1500)
 
   df1 <- p$layers[[2]]$data(stocks) %>%
-      dplyr::filter(KEEP_THIS_ROW_PLEASE) %>%
-      dplyr::select(-KEEP_THIS_ROW_PLEASE) %>%
-      tibble::as_tibble()
+    dplyr::filter(KEEP_THIS_ROW_PLEASE) %>%
+    dplyr::select(-KEEP_THIS_ROW_PLEASE) %>%
+    tibble::as_tibble()
 
   df2 <- subset(stocks, day < 500 | day > 1500)
 

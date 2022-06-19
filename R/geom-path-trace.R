@@ -1,4 +1,4 @@
-#' Trace lines
+#' Trace Lines
 #'
 #' These geoms are similar to \code{ggplot2::geom_path()},
 #' \code{ggplot2::geom_line()}, and \code{ggplot2::geom_step()}, but also
@@ -641,12 +641,3 @@ stairstep <- function(data, direction = "hv") {
 
   new_data_frame(c(list(x = x, y = y), data_attr))
 }
-
-
-
-
-
-
-
-
-
