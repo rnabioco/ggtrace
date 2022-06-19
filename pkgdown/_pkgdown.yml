@@ -20,3 +20,7 @@ reference:
   contents:
   - clusters
   - stocks
+
+- title: internal
+  contents:
+  - starts_with("Geom")
