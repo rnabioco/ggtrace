@@ -19,7 +19,7 @@ Authors@R:
              email = "jay.hesselberth@gmail.com",
              comment = c(ORCID = "0000-0002-6299-179X")),
       person(given = "RNA Bioscience Initiative",
-             role = "fnd"))
+             role = c("fnd", "cph")))
 Description: Provides ggplot2 geoms that allow groups of data points to be
     outlined or highlighted for emphasis. This is particularly useful when
     working with dense datasets that are prone to overplotting.
