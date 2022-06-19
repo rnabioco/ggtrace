@@ -29,10 +29,10 @@ customized for individual geoms by providing a geom with the \code{key_glyph}
 argument.
 }
 \examples{
-p <- ggplot2::ggplot(economics, aes(date, psavert, color = "savings rate"))
+p <- ggplot2::ggplot(stocks, ggplot2::aes(day, value, color = name))
 
 # key glyphs can be specified by their name
-p + ggplot2::geom_line(key_glyph = "timeseries")
+p + ggplot2::geom_line(key_glyph = "point_trace")
 
 # key glyphs can be specified via their drawing function
 p + ggplot2::geom_line(key_glyph = ggplot2::draw_key_rect)

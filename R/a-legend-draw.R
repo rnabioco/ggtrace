@@ -11,10 +11,10 @@
 #' @param params A list of additional parameters supplied to the geom.
 #' @param size Width and height of key in mm.
 #' @examples
-#' p <- ggplot2::ggplot(economics, aes(date, psavert, color = "savings rate"))
+#' p <- ggplot2::ggplot(stocks, ggplot2::aes(day, value, color = name))
 #'
 #' # key glyphs can be specified by their name
-#' p + ggplot2::geom_line(key_glyph = "timeseries")
+#' p + ggplot2::geom_line(key_glyph = "point_trace")
 #'
 #' # key glyphs can be specified via their drawing function
 #' p + ggplot2::geom_line(key_glyph = ggplot2::draw_key_rect)

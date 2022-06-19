@@ -10,11 +10,11 @@ development:
 reference:
 - title: Geoms
   contents:
-  - starts_with("geom")
+  - starts_with("geom_")
 
 - title: Utilities
   contents:
-  - starts_with("draw")
+  - starts_with("draw_")
 
 - title: Data
   contents:
