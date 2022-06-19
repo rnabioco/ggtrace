@@ -115,31 +115,6 @@ ggplot2::ggplot(
   geom_point_trace() +
   ggplot2::theme_minimal()
 
-# Modify point color for each group
-ggplot2::ggplot(
-  clusters,
-  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
-) +
-  geom_point_trace() +
-  ggplot2::theme_minimal()
-
-# Outline groups when coloring by a continuous variable
-ggplot2::ggplot(
-  clusters,
-  ggplot2::aes(UMAP_1, UMAP_2, fill = signal, group = cluster)
-) +
-  geom_point_trace(stroke = 0.5) +
-  ggplot2::scale_fill_gradientn(colours = c("white", "red")) +
-  ggplot2::theme_minimal()
-
-# Only outline bottom points
-ggplot2::ggplot(
-  clusters,
-  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
-) +
-  geom_point_trace(trace_position = "bottom") +
-  ggplot2::theme_minimal()
-
 # Outline a subset of points
 ggplot2::ggplot(
   clusters,
@@ -156,18 +131,6 @@ ggplot2::ggplot(
   geom_point_trace(
     trace_position    = signal < 0 | signal > 17,
     background_params = list(color = NA, fill = "grey85")
-  ) +
-  ggplot2::theme_minimal()
-
-# Remove outline
-ggplot2::ggplot(
-  clusters,
-  ggplot2::aes(UMAP_1, UMAP_2, fill = cluster)
-) +
-  geom_point_trace(
-    trace_position    = signal < 0 | signal > 17,
-    background_params = list(color = NA, fill = "grey85"),
-    color             = NA
   ) +
   ggplot2::theme_minimal()
 
