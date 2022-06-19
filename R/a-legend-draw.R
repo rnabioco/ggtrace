@@ -33,7 +33,7 @@ draw_key_point_trace <- function(data, params, size) {
   data$shape[is.null(data$shape)]   <- 19
 
   if (is.character(data$shape)) {
-    data$shape <- translate_trace_string(data$shape)
+    data$shape <- translate_shape_string(data$shape)
   }
 
   data$trace_shape <- translate_trace_shape(data$shape)
