@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/rnabioco/ggtrace/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rnabioco/ggtrace/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/rnabioco/ggtrace/branch/master/graph/badge.svg)](https://codecov.io/gh/rnabioco/ggtrace?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/rnabioco/ggtrace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/rnabioco/ggtrace?branch=master)
 <!-- badges: end -->
 
 ggtrace provides ggplot2 geoms that allow groups of data points to be outlined
