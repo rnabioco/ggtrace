@@ -76,6 +76,9 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
+\value{
+ggplot object
+}
 \description{
 This geom is similar to \code{ggplot2::geom_point()}, but also includes the
 ability to outline points of interest. \code{geom_point_trace()} accepts
@@ -168,4 +171,7 @@ ggplot2::ggplot(
   ) +
   ggplot2::theme_minimal()
 
+}
+\seealso{
+\link[ggplot2]{geom_point}
 }

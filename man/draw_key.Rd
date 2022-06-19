@@ -19,7 +19,7 @@ display in this key}
 \item{size}{Width and height of key in mm.}
 }
 \value{
-A grid grob.
+A grid grob
 }
 \description{
 Each geom has an associated function that draws the key when the geom needs
@@ -29,12 +29,12 @@ customized for individual geoms by providing a geom with the \code{key_glyph}
 argument.
 }
 \examples{
-\dontrun{
-p <- ggplot(economics, aes(date, psavert, color = "savings rate"))
+p <- ggplot2::ggplot(economics, aes(date, psavert, color = "savings rate"))
+
 # key glyphs can be specified by their name
-p + geom_line(key_glyph = "timeseries")
+p + ggplot2::geom_line(key_glyph = "timeseries")
 
 # key glyphs can be specified via their drawing function
-p + geom_line(key_glyph = draw_key_rect)
-}
+p + ggplot2::geom_line(key_glyph = ggplot2::draw_key_rect)
+
 }
