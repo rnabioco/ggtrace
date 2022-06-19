@@ -1,4 +1,4 @@
-#' Trace Points
+#' Trace points
 #'
 #' This geom is similar to \code{ggplot2::geom_point()}, but also includes the
 #' ability to outline points of interest. \code{geom_point_trace()} accepts
@@ -24,6 +24,9 @@
 #'    \code{trace_position}, e.g. \code{list(color = "red")}
 #'
 #' @eval rd_aesthetics("geom", "point_trace")
+#'
+#' @seealso \link[ggplot2]{geom_point}
+#' @return ggplot object
 #'
 #' @examples
 #' # Modify outline color for each group
@@ -228,9 +231,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 }
 
 
-#' GeomPointTrace
-#'
-#' @rdname ggplot2-ggproto
+#' @rdname ggtrace-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export

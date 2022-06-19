@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom-point-trace.R
 \name{geom_point_trace}
 \alias{geom_point_trace}
-\title{Trace Points}
+\title{Trace points}
 \usage{
 geom_point_trace(
   mapping = NULL,
@@ -75,6 +75,9 @@ display.}
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
+}
+\value{
+ggplot object
 }
 \description{
 This geom is similar to \code{ggplot2::geom_point()}, but also includes the
@@ -168,4 +171,7 @@ ggplot2::ggplot(
   ) +
   ggplot2::theme_minimal()
 
+}
+\seealso{
+\link[ggplot2]{geom_point}
 }

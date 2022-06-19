@@ -4,7 +4,7 @@
 \alias{geom_path_trace}
 \alias{geom_line_trace}
 \alias{geom_step_trace}
-\title{Trace Lines}
+\title{Trace lines}
 \usage{
 geom_path_trace(
   mapping = NULL,
@@ -127,6 +127,9 @@ to either \code{"x"} or \code{"y"}. See the \emph{Orientation} section for more 
 'hv' for horizontal then vertical, or 'mid' for step half-way between
 adjacent x-values.}
 }
+\value{
+ggplot object
+}
 \description{
 These geoms are similar to \code{ggplot2::geom_path()},
 \code{ggplot2::geom_line()}, and \code{ggplot2::geom_step()}, but also
@@ -221,4 +224,7 @@ ggplot2::ggplot(
   ) +
   ggplot2::theme_minimal()
 
+}
+\seealso{
+\link[ggplot2]{geom_path}; \link[ggplot2]{geom_line}; \link[ggplot2]{geom_step}
 }

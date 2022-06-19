@@ -11,15 +11,15 @@
 #' @param params A list of additional parameters supplied to the geom.
 #' @param size Width and height of key in mm.
 #' @examples
-#' \dontrun{
-#' p <- ggplot(economics, aes(date, psavert, color = "savings rate"))
+#' p <- ggplot2::ggplot(stocks, ggplot2::aes(day, value, color = name))
+#'
 #' # key glyphs can be specified by their name
-#' p + geom_line(key_glyph = "timeseries")
+#' p + ggplot2::geom_line(key_glyph = "point_trace")
 #'
 #' # key glyphs can be specified via their drawing function
-#' p + geom_line(key_glyph = draw_key_rect)
-#' }
-#' @return A grid grob.
+#' p + ggplot2::geom_line(key_glyph = ggplot2::draw_key_rect)
+#'
+#' @return A grid grob
 #' @name draw_key
 NULL
 
@@ -27,10 +27,12 @@ NULL
 #' @export
 draw_key_point_trace <- function(data, params, size) {
 
-  if (is.null(data$shape)) {
-    data$shape <- 19
+  # why not use data$stroke <- data$stroke %||% "black" ????
+  # when is there more than one row for data ????
+  data$stroke[is.null(data$stroke)] <- 1
+  data$shape[is.null(data$shape)]   <- 19
 
-  } else if (is.character(data$shape)) {
+  if (is.character(data$shape)) {
     data$shape <- translate_shape_string(data$shape)
   }
 
@@ -39,7 +41,7 @@ draw_key_point_trace <- function(data, params, size) {
 
   # Replace NULL values in data
   data$colour[is.null(data$colour)]     <- "black"
-  data$fill[is.null(data$fill)]         <- "white"
+  data$fill[is.null(data$fill)]         <- "black"
   data$linetype[is.null(data$linetype)] <- 1
   data$size[is.null(data$size)]         <- 1.5
 
@@ -76,15 +78,12 @@ draw_key_point_trace <- function(data, params, size) {
 draw_key_path_trace <- function(data, params, size) {
 
   # Replace NULL values in data
-  if (is.null(data$linetype)) {
-    data$linetype <- 1
+  data$linetype[is.null(data$linetype)] <- 1
+  data$linetype[is.na(data$linetype)]   <- 1
 
-  } else {
-    data$linetype[is.na(data$linetype)] <- 1
-  }
-
+  data$stroke[is.null(data$stroke)] <- 0.5
   data$colour[is.null(data$colour)] <- "black"
-  data$fill[is.null(data$fill)]     <- "white"
+  data$fill[is.null(data$fill)]     <- "black"
   data$size[is.null(data$size)]     <- 0.5
 
   # Trace grob

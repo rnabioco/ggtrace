@@ -1,4 +1,4 @@
-#' Trace Lines
+#' Trace lines
 #'
 #' These geoms are similar to \code{ggplot2::geom_path()},
 #' \code{ggplot2::geom_line()}, and \code{ggplot2::geom_step()}, but also
@@ -27,6 +27,9 @@
 #'    \code{trace_position}, e.g. \code{list(color = "red")}
 #'
 #' @eval rd_aesthetics("geom", "path_trace")
+#'
+#' @seealso \link[ggplot2]{geom_path}; \link[ggplot2]{geom_line}; \link[ggplot2]{geom_step}
+#' @return ggplot object
 #'
 #' @examples
 #' # Modify line color for each group
@@ -184,9 +187,14 @@ extra_bkgd_params <- paste0("bkgd_", c(
 ))
 
 
-#' @rdname ggplot2-ggproto
+
+#' GeomPathTrace
+#'
+#' @rdname ggtrace-ggproto
 #' @format NULL
 #' @usage NULL
+#' @return ggproto object
+#' @seealso \link[ggplot2]{GeomPath}
 #' @export
 GeomPathTrace <- ggproto(
   "GeomPathTrace", ggplot2::Geom,
@@ -516,7 +524,7 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity",
   )
 }
 
-#' @rdname ggplot2-ggproto
+#' @rdname ggtrace-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -544,6 +552,7 @@ GeomLineTrace <- ggproto(
     data
   }
 )
+
 
 #' @rdname geom_path_trace
 #' @param direction direction of stairs: 'vh' for vertical then horizontal,
@@ -582,7 +591,7 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
   )
 }
 
-#' @rdname ggplot2-ggproto
+#' @rdname ggtrace-ggproto
 #' @format NULL
 #' @usage NULL
 #' @export
