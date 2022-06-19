@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   geom-line-trace: geom-line-trace.html
   geom-point-trace: geom-point-trace.html
-last_built: 2022-06-19T16:11Z
+last_built: 2022-06-19T17:55Z
 urls:
   reference: https://rnabioco.github.io/ggtrace/reference
   article: https://rnabioco.github.io/ggtrace/articles
