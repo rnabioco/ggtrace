@@ -38,7 +38,7 @@ Other contributors:
 \itemize{
   \item Rui Fu \email{raysinensis@gmail.com} (\href{https://orcid.org/0000-0001-8183-4549}{ORCID}) [contributor]
   \item Jay Hesselberth \email{jay.hesselberth@gmail.com} (\href{https://orcid.org/0000-0002-6299-179X}{ORCID}) [contributor]
-  \item RNA Bioscience Initiative [funder]
+  \item RNA Bioscience Initiative [funder, copyright holder]
 }
 
 }
