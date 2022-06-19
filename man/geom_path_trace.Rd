@@ -4,7 +4,7 @@
 \alias{geom_path_trace}
 \alias{geom_line_trace}
 \alias{geom_step_trace}
-\title{Trace Lines}
+\title{Trace lines}
 \usage{
 geom_path_trace(
   mapping = NULL,

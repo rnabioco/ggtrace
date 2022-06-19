@@ -1,10 +1,10 @@
 ---
-title: "Trace Points"
+title: "Trace points"
 date: '`r format(Sys.Date(), "%B %d %Y")`'
 output:
   rmarkdown::html_vignette:
     vignette: >
-      %\VignetteIndexEntry{geom_point_trace}
+      %\VignetteIndexEntry{Trace points}
       %\VignetteEncoding{UTF-8}
       %\VignetteEngine{knitr::rmarkdown}
 ---

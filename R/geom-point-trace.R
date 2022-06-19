@@ -1,4 +1,4 @@
-#' Trace Points
+#' Trace points
 #'
 #' This geom is similar to \code{ggplot2::geom_point()}, but also includes the
 #' ability to outline points of interest. \code{geom_point_trace()} accepts

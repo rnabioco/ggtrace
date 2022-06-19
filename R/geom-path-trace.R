@@ -1,4 +1,4 @@
-#' Trace Lines
+#' Trace lines
 #'
 #' These geoms are similar to \code{ggplot2::geom_path()},
 #' \code{ggplot2::geom_line()}, and \code{ggplot2::geom_step()}, but also

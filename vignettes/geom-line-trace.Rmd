@@ -1,12 +1,12 @@
 ---
-title: "Trace Lines"
+title: "Trace lines"
 date: '`r format(Sys.Date(), "%B %d %Y")`'
 output:
   rmarkdown::html_vignette:
     toc_float: true
     toc_depth: 2
     vignette: >
-      %\VignetteIndexEntry{geom_line_trace}
+      %\VignetteIndexEntry{Trace lines}
       %\VignetteEncoding{UTF-8}
       %\VignetteEngine{knitr::rmarkdown}
 ---
