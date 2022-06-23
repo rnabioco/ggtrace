@@ -1,20 +1,16 @@
 #' ggtrace
 #'
-#' This package contains extra geoms for \pkg{ggplot2}.
+#' This package provides \pkg{ggplot2} geoms that allow groups of data points to be
+#' outlined or highlighted for emphasis. This is particularly useful when
+#' working with dense datasets that are prone to overplotting.
 #'
-#' Please see the help pages listed below:
-#'
-#' \itemize{
-#'   \item \code{\link{geom_point_trace}}
-#' }
-#'
-#' Also see the vignette for more usage examples:
+#' See the vignette for usage examples:
 #'
 #' \code{browseVignettes("ggtrace")}
 #'
-#' Please report issues and suggest improvements at Github:
+#' @author Ryan Sheridan <ryan.sheridan@@cuanschutz.edu>
 #'
-#' \url{https://github.com/rnabioco/ggtrace}
+#' @seealso Report issues and suggest improvements at \url{https://github.com/rnabioco/ggtrace/issues}
 #'
 #' @name ggtrace
 #' @docType package
@@ -24,5 +20,6 @@
 #'   pointsGrob
 #'   grobName
 #'   grobTree
+#' @importFrom rlang on_load
 #' @keywords internal
 "_PACKAGE"
