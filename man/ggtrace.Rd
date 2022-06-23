@@ -6,40 +6,19 @@
 \alias{ggtrace-package}
 \title{ggtrace}
 \description{
-This package contains extra geoms for \pkg{ggplot2}.
+This package provides \pkg{ggplot2} geoms that allow groups of data points to be
+outlined or highlighted for emphasis. This is particularly useful when
+working with dense datasets that are prone to overplotting.
 }
 \details{
-Please see the help pages listed below:
-
-\itemize{
-  \item \code{\link{geom_point_trace}}
-}
-
-Also see the vignette for more usage examples:
+See the vignette for usage examples:
 
 \code{browseVignettes("ggtrace")}
-
-Please report issues and suggest improvements at Github:
-
-\url{https://github.com/rnabioco/ggtrace}
 }
 \seealso{
-Useful links:
-\itemize{
-  \item \url{https://github.com/rnabioco/ggtrace}
-  \item Report bugs at \url{https://github.com/rnabioco/ggtrace/issues}
-}
-
+Report issues and suggest improvements at \url{https://github.com/rnabioco/ggtrace/issues}
 }
 \author{
-\strong{Maintainer}: Ryan Sheridan \email{ryan.sheridan@cuanschutz.edu} (\href{https://orcid.org/0000-0003-4012-3147}{ORCID})
-
-Other contributors:
-\itemize{
-  \item Rui Fu \email{raysinensis@gmail.com} (\href{https://orcid.org/0000-0001-8183-4549}{ORCID}) [contributor]
-  \item Jay Hesselberth \email{jay.hesselberth@gmail.com} (\href{https://orcid.org/0000-0002-6299-179X}{ORCID}) [contributor]
-  \item RNA Bioscience Initiative [funder, copyright holder]
-}
-
+Ryan Sheridan \email{ryan.sheridan@cuanschutz.edu}
 }
 \keyword{internal}

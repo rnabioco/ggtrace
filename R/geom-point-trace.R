@@ -332,6 +332,7 @@ translate_shape_string <- function(shape_string) {
 
     more_problems <- if (n_bad > 5) {
       sprintf("\n* ... and %d more problem%s", n_bad - 5, ifelse(n_bad > 6, "s", ""))
+
     } else {
       ""
     }
@@ -358,6 +359,7 @@ translate_shape_string <- function(shape_string) {
 
     more_problems <- if (n_bad > 5) {
       sprintf("\n* ... and %d more problem%s", n_bad - 5, ifelse(n_bad > 6, "s", ""))
+
     } else {
       ""
     }

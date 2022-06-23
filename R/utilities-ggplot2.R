@@ -108,13 +108,17 @@ split_with_index <- function(x, f, n = max(f)) {
 single_value <- function(x, ...) {
   UseMethod("single_value")
 }
+
 #' @export
 single_value.default <- function(x, ...) {
+
   # This is set by id() used in creating the grouping var
   identical(attr(x, "n"), 1L)
 }
+
 #' @export
 single_value.factor <- function(x, ...) {
+
   # Panels are encoded as factor numbers and can never be missing (NA)
   identical(levels(x), "1")
 }
@@ -126,6 +130,19 @@ modify_list <- function(old, new) {
   for (i in names(new)) old[[i]] <- new[[i]]
   old
 }
+
+# Info needed for rbind_dfs date/time handling
+ggtrace_global <- new.env(parent = emptyenv())
+
+#' @importFrom rlang on_load
+#' @noRd
+rlang::on_load({
+  date <- Sys.Date()
+  ggtrace_global$date_origin <- date - unclass(date)
+
+  time <- Sys.time()
+  ggtrace_global$time_origin <- time - unclass(time)
+})
 
 #' Bind data frames together by common column names
 #'
@@ -185,6 +202,7 @@ rbind_dfs <- function(dfs) {
         out[[col]] <- rep(.subset2(df, col)[1][NA], total)
       }
     }
+
     allocated[new_columns] <- TRUE
 
     if (all(allocated)) break
@@ -202,19 +220,19 @@ rbind_dfs <- function(dfs) {
       date_col <- inherits(df[[col]], "Date")
       time_col <- inherits(df[[col]], "POSIXct")
 
-      # if (is_date[[col]] && !date_col) {
-      #   out[[col]][rng] <- as.Date(
-      #     unclass(df[[col]]),
-      #     origin = ggplot_global$date_origin
-      #   )
-      #
-      # } else if (is_time[[col]] && !time_col) {
-      #   out[[col]][rng] <- as.POSIXct(
-      #     unclass(df[[col]]),
-      #     origin = ggplot_global$time_origin
-      #   )
+      if (is_date[[col]] && !date_col) {
+        out[[col]][rng] <- as.Date(
+          unclass(df[[col]]),
+          origin = ggtrace_global$date_origin
+        )
 
-      if (date_col || time_col || inherits(df[[col]], "factor")) {
+      } else if (is_time[[col]] && !time_col) {
+        out[[col]][rng] <- as.POSIXct(
+          unclass(df[[col]]),
+          origin = ggtrace_global$time_origin
+        )
+
+      } else if (date_col || time_col || inherits(df[[col]], "factor")) {
         out[[col]][rng] <- as.character(df[[col]])
 
       } else {
@@ -264,7 +282,6 @@ rd_aesthetics <- function(type, name) {
   )
 
   aes <- rd_aesthetics_item(obj)
-
   aes <- aes[aes != paste0("\\code{", KEEP_CLMN, "}")]
 
   res <- c(
@@ -330,7 +347,8 @@ find_global <- function(name, env, mode = "any") {
     return(get(name, envir = env, mode = mode))
   }
 
-  nsenv <- asNamespace("ggplot2")
+  nsenv <- asNamespace("ggtrace")
+
   if (exists(name, envir = nsenv, mode = mode)) {
     return(get(name, envir = nsenv, mode = mode))
   }
@@ -344,9 +362,7 @@ find_global <- function(name, env, mode = "any") {
 camelize <- function(x, first = FALSE) {
   x <- gsub("_(.)", "\\U\\1", x, perl = TRUE)
 
-  if (first) {
-    x <- firstUpper(x)
-  }
+  if (first) x <- firstUpper(x)
 
   x
 }
