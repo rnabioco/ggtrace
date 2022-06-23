@@ -8,7 +8,7 @@
 #'
 #' \code{browseVignettes("ggtrace")}
 #'
-#' @author Ryan Sheridan <ryan.sheridan@@cuanschutz.edu>
+#' @author Ryan Sheridan \email{ryan.sheridan@@cuanschutz.edu}
 #'
 #' @seealso Report issues and suggest improvements at \url{https://github.com/rnabioco/ggtrace/issues}
 #'

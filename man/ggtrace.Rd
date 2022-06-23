@@ -19,6 +19,6 @@ See the vignette for usage examples:
 Report issues and suggest improvements at \url{https://github.com/rnabioco/ggtrace/issues}
 }
 \author{
-Ryan Sheridan <ryan.sheridan@cuanschutz.edu>
+Ryan Sheridan \email{ryan.sheridan@cuanschutz.edu}
 }
 \keyword{internal}
