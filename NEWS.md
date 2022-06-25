@@ -1,3 +1,5 @@
+# ggtrace (development version)
+
 # ggtrace 0.2.0
 * Initial CRAN submission
 * Added examples (@jayhesselberth #23)
