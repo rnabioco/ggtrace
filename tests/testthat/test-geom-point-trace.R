@@ -25,30 +25,30 @@ test_that("aesthetics to variable", {
   p <- ggplot(clusters, aes(UMAP_1, UMAP_2, color = cluster))
 
   p2 <- p + geom_point_trace()
-  expect_identical(as.character(p2$mapping$colour)[[2]], "cluster")
+  expect_identical(rlang::as_label(p2$mapping$colour), "cluster")
 })
 
 test_that("aesthetics from geom", {
   p <- geom_point_trace(aes(color = cluster))
-  expect_identical(as.character(p[[1]]$mapping$colour)[2], "cluster")
+  expect_identical(rlang::as_label(p[[1]]$mapping$colour), "cluster")
 
   p <- geom_point_trace(aes(fill = cluster))
-  expect_identical(as.character(p[[1]]$mapping$fill)[2], "cluster")
+  expect_identical(rlang::as_label(p[[1]]$mapping$fill), "cluster")
 
   p <- geom_point_trace(aes(linetype = cluster))
-  expect_identical(as.character(p[[1]]$mapping$linetype)[2], "cluster")
+  expect_identical(rlang::as_label(p[[1]]$mapping$linetype), "cluster")
 
   p <- geom_point_trace(aes(alpha = cluster))
-  expect_identical(as.character(p[[1]]$mapping$alpha)[2], "cluster")
+  expect_identical(rlang::as_label(p[[1]]$mapping$alpha), "cluster")
 
   p <- geom_point_trace(aes(stroke = cluster))
-  expect_identical(as.character(p[[1]]$mapping$stroke)[2], "cluster")
+  expect_identical(rlang::as_label(p[[1]]$mapping$stroke), "cluster")
 })
 
 test_that("trace_position bottom", {
   p <- geom_point_trace(trace_position = "bottom")
 
-  expect_identical(as.character(p[[1]]$mapping$group)[2], "BOTTOM_TRACE_GROUP")
+  expect_identical(rlang::as_label(p[[1]]$mapping$group), "BOTTOM_TRACE_GROUP")
   expect_doppelganger("trace_position bottom", p)
 })
 

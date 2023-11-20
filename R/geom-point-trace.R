@@ -163,7 +163,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
       bkgd_params[names(background_params)] <- background_params
     }
 
-    bkgd_lyr <- layer(
+    bkgd_lyr <- ggplot2::layer(
       data        = bkgd_data,
       mapping     = mapping,
       stat        = stat,
@@ -178,7 +178,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
   }
 
   # Create trace layer
-  trace_lyr <- layer(
+  trace_lyr <- ggplot2::layer(
     data        = data,
     mapping     = mapping,
     stat        = stat,
@@ -253,7 +253,7 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$trace_shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$colour, 1),
+        col      = ggplot2::alpha(coords$colour, 1),
         lty      = coords$linetype,
         fontsize = coords$trace_fontsize,
         lwd      = coords$trace_lwd
@@ -267,9 +267,9 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$fill, coords$alpha),
-        fontsize = coords$size * .pt + pt_stroke * .stroke / 2,
-        lwd      = pt_stroke * .stroke / 2
+        col      = ggplot2::alpha(coords$fill, coords$alpha),
+        fontsize = coords$size * ggplot2::.pt + pt_stroke * ggplot2::.stroke / 2,
+        lwd      = pt_stroke * ggplot2::.stroke / 2
       )
     )
 
@@ -384,14 +384,14 @@ calculate_trace_size <- function(data) {
   pch       <- data$shape
 
   # Calculate fontsize for closed shapes
-  fontsize  <- data$size * .pt + pt_stroke * .stroke / 2
+  fontsize  <- data$size * ggplot2::.pt + pt_stroke * ggplot2::.stroke / 2
 
-  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$stroke * .stroke / 2
+  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$stroke * ggplot2::.stroke / 2
 
   # Calculate lwd for open shapes
-  lwd <- data$stroke * .stroke / 2
+  lwd <- data$stroke * ggplot2::.stroke / 2
 
-  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (pt_stroke * .stroke / 2)
+  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (pt_stroke * ggplot2::.stroke / 2)
 
   # Add results to data
   data$trace_fontsize <- fontsize
