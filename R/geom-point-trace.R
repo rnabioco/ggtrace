@@ -66,10 +66,10 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 
   trans_fn <- function(dat, ex, inv = FALSE) {
     if (inv) {
-      return(subset(dat, !eval(ex)))
+      return(subset(dat, !rlang::eval_tidy(ex, dat)))
     }
 
-    subset(dat, eval(ex))
+    subset(dat, rlang::eval_tidy(ex, dat))
   }
 
   create_trace_layers(
@@ -81,7 +81,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
     show.legend       = show.legend,
     inherit.aes       = inherit.aes,
     params            = list(na.rm = na.rm, ...),
-    trace_position    = substitute(trace_position),
+    trace_position    = rlang::enquo(trace_position),
     background_params = background_params,
     trans_fn          = trans_fn,
     allow_bottom      = TRUE
@@ -117,7 +117,8 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 
   # If trace_position is 'bottom', create new column and use to override
   # original group specification.
-  if (allow_bottom && trace_expr == "bottom") {
+  if (allow_bottom && identical(rlang::as_label(trace_expr), "\"bottom\"")) {
+
     data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
 
     if (is.null(mapping)) {
@@ -126,8 +127,8 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 
     mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
-    # If trace_position is not 'all', evaluate expression
-  } else if (trace_expr != "all") {
+  # If trace_position is not 'all', evaluate expression
+  } else if (!identical(rlang::as_label(trace_expr), "\"all\"")) {
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate
     # passed through trace_position. For a formula fortify will return an
