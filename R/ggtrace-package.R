@@ -14,12 +14,5 @@
 #'
 #' @name ggtrace
 #' @docType package
-#' @import ggplot2
-#' @importFrom grid
-#'   gpar
-#'   pointsGrob
-#'   grobName
-#'   grobTree
-#' @importFrom rlang on_load
 #' @keywords internal
 "_PACKAGE"

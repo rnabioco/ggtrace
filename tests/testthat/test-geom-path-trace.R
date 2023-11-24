@@ -25,24 +25,24 @@ test_that("aesthetics to variable", {
   p <- ggplot(stocks, aes(day, value, color = name))
 
   p2 <- p + geom_path_trace()
-  expect_identical(as.character(p2$mapping$colour)[[2]], "name")
+  expect_identical(rlang::as_label(p2$mapping$colour), "name")
 })
 
 test_that("aesthetics from geom", {
   p <- ggplot(stocks, aes(day, value, color = name))
-  expect_identical(as.character(p$mapping$colour)[2], "name")
+  expect_identical(rlang::as_label(p$mapping$colour), "name")
 
   p <- geom_path_trace(aes(fill = name))
-  expect_identical(as.character(p[[1]]$mapping$fill)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$fill), "name")
 
   p <- geom_path_trace(aes(linetype = name))
-  expect_identical(as.character(p[[1]]$mapping$linetype)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$linetype), "name")
 
   p <- geom_path_trace(aes(alpha = name))
-  expect_identical(as.character(p[[1]]$mapping$alpha)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$alpha), "name")
 
   p <- geom_path_trace(aes(stroke = name))
-  expect_identical(as.character(p[[1]]$mapping$stroke)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$stroke), "name")
 })
 
 test_that("trace_position predicate return list", {

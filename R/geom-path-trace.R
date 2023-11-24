@@ -196,7 +196,7 @@ extra_bkgd_params <- paste0("bkgd_", c(
 #' @return ggproto object
 #' @seealso \link[ggplot2]{GeomPath}
 #' @export
-GeomPathTrace <- ggproto(
+GeomPathTrace <- ggplot2::ggproto(
   "GeomPathTrace", ggplot2::Geom,
 
   required_aes = c("x", "y"),
@@ -347,7 +347,7 @@ GeomPathTrace <- ggproto(
 
     # Munch data
     # this divides data into line segments to plot
-    munched <- coord_munch(coord, data, panel_params)
+    munched <- ggplot2::coord_munch(coord, data, panel_params)
 
     # Silently drop lines with less than two points, preserving order
     rows    <- stats::ave(seq_len(nrow(munched)), munched$group, FUN = length)
@@ -401,9 +401,9 @@ GeomPathTrace <- ggproto(
           arrow         = arrow,
 
           gp = grid::gpar(
-            col       = alpha(clr, munched$alpha)[!end],
-            fill      = alpha(clr, munched$alpha)[!end],  # modifies arrow fill
-            lwd       = munched$size[!end] * .pt + strk * .pt * 2,
+            col       = ggplot2::alpha(clr, munched$alpha)[!end],
+            fill      = ggplot2::alpha(clr, munched$alpha)[!end],  # modifies arrow fill
+            lwd       = munched$size[!end] * ggplot2::.pt + strk * ggplot2::.pt * 2,
             lty       = lty,
             lineend   = lineend,
             linejoin  = linejoin,
@@ -441,9 +441,9 @@ GeomPathTrace <- ggproto(
           arrow         = arrow,
 
           gp = grid::gpar(
-            col       = alpha(clr, munched$alpha)[start],
-            fill      = alpha(clr, munched$alpha)[start],  # modifies arrow fill
-            lwd       = munched$size[start] * .pt + strk * .pt * 2,
+            col       = ggplot2::alpha(clr, munched$alpha)[start],
+            fill      = ggplot2::alpha(clr, munched$alpha)[start],  # modifies arrow fill
+            lwd       = munched$size[start] * ggplot2::.pt + strk * ggplot2::.pt * 2,
             lty       = lty,
             lineend   = lineend,
             linejoin  = linejoin,
@@ -528,13 +528,13 @@ geom_line_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomLineTrace <- ggproto(
+GeomLineTrace <- ggplot2::ggproto(
   "GeomLineTrace", GeomPathTrace,
 
   extra_params = c(GeomPathTrace$extra_params, "na.rm", "orientation"),
 
   setup_params = function(data, params) {
-    params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
+    params$flipped_aes <- ggplot2::has_flipped_aes(data, params, ambiguous = TRUE)
 
     params
   },
@@ -545,9 +545,9 @@ GeomLineTrace <- ggproto(
     data <- data[order(data$PANEL, data$group, data$x), ]
     data <- GeomPathTrace$setup_data(data, params)
 
-    data <- flip_data(data, params$flipped_aes)
+    data <- ggplot2::flip_data(data, params$flipped_aes)
     data <- data[order(data$PANEL, data$group, data$x), ]
-    data <- flip_data(data, params$flipped_aes)
+    data <- ggplot2::flip_data(data, params$flipped_aes)
 
     data
   }
@@ -595,7 +595,7 @@ geom_step_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomStepTrace <- ggproto(
+GeomStepTrace <- ggplot2::ggproto(
   "GeomStepTrace", GeomPathTrace,
 
   draw_group = function(data, panel_params, coord, direction = "hv") {

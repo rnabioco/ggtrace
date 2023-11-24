@@ -52,7 +52,7 @@ draw_key_point_trace <- function(data, params, size) {
     0.5, 0.5,
     pch = data$trace_shape,
     gp  = grid::gpar(
-      col      = alpha(data$colour, 1),
+      col      = ggplot2::alpha(data$colour, 1),
       lty      = data$linetype,
       fontsize = data$trace_fontsize,
       lwd      = data$trace_lwd
@@ -64,9 +64,9 @@ draw_key_point_trace <- function(data, params, size) {
     0.5, 0.5,
     pch = data$shape,
     gp  = grid::gpar(
-      col      = alpha(data$fill, data$alpha),
-      fontsize = data$size * .pt + pt_stroke * .stroke / 2,
-      lwd      = pt_stroke * .stroke / 2
+      col      = ggplot2::alpha(data$fill, data$alpha),
+      fontsize = data$size * ggplot2::.pt + pt_stroke * ggplot2::.stroke / 2,
+      lwd      = pt_stroke * ggplot2::.stroke / 2
     )
   )
 
@@ -91,8 +91,8 @@ draw_key_path_trace <- function(data, params, size) {
     0.1, 0.5, 0.9, 0.5,
 
     gp = grid::gpar(
-      col     = alpha(data$colour, 1),
-      lwd     = data$size * .pt + data$stroke * .pt * 2,
+      col     = ggplot2::alpha(data$colour, 1),
+      lwd     = data$size * ggplot2::.pt + data$stroke * ggplot2::.pt * 2,
       lty     = 1,
       lineend = "butt"
     ),
@@ -105,8 +105,8 @@ draw_key_path_trace <- function(data, params, size) {
     0.1, 0.5, 0.9, 0.5,
 
     gp = grid::gpar(
-      col     = alpha(data$fill, 1),
-      lwd     = data$size * .pt,
+      col     = ggplot2::alpha(data$fill, 1),
+      lwd     = data$size * ggplot2::.pt,
       lty     = data$linetype,
       lineend = "butt"
     ),

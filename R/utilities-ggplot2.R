@@ -134,7 +134,6 @@ modify_list <- function(old, new) {
 # Info needed for rbind_dfs date/time handling
 ggtrace_global <- new.env(parent = emptyenv())
 
-#' @importFrom rlang on_load
 #' @noRd
 rlang::on_load({
   date <- Sys.Date()

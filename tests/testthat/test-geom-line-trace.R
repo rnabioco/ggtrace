@@ -30,29 +30,29 @@ test_that("aesthetics to variable", {
   p <- ggplot(stocks, aes(day, value, color = name))
 
   p2 <- p + geom_line_trace()
-  expect_identical(as.character(p2$mapping$colour)[[2]], "name")
+  expect_identical(rlang::as_label(p2$mapping$colour), "name")
   expect_doppelganger("aesthetics to variable", p2)
 })
 
 test_that("aesthetics from geom", {
   p <- ggplot(stocks, aes(day, value, color = name))
-  expect_identical(as.character(p$mapping$colour)[2], "name")
+  expect_identical(rlang::as_label(p$mapping$colour), "name")
   expect_doppelganger("aesthetics from geom 1", p)
 
   p <- geom_line_trace(aes(fill = name))
-  expect_identical(as.character(p[[1]]$mapping$fill)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$fill), "name")
   expect_doppelganger("aesthetics from geom 2", p)
 
   p <- geom_line_trace(aes(linetype = name))
-  expect_identical(as.character(p[[1]]$mapping$linetype)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$linetype), "name")
   expect_doppelganger("aesthetics from geom 3", p)
 
   p <- geom_line_trace(aes(alpha = name))
-  expect_identical(as.character(p[[1]]$mapping$alpha)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$alpha), "name")
   expect_doppelganger("aesthetics from geom 4", p)
 
   p <- geom_line_trace(aes(stroke = name))
-  expect_identical(as.character(p[[1]]$mapping$stroke)[2], "name")
+  expect_identical(rlang::as_label(p[[1]]$mapping$stroke), "name")
   expect_doppelganger("aesthetics from geom 5", p)
 })
 

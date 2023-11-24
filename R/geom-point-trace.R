@@ -66,10 +66,10 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
 
   trans_fn <- function(dat, ex, inv = FALSE) {
     if (inv) {
-      return(subset(dat, !eval(ex)))
+      return(subset(dat, !rlang::eval_tidy(ex, dat)))
     }
 
-    subset(dat, eval(ex))
+    subset(dat, rlang::eval_tidy(ex, dat))
   }
 
   create_trace_layers(
@@ -81,7 +81,7 @@ geom_point_trace <- function(mapping = NULL, data = NULL, stat = "identity",
     show.legend       = show.legend,
     inherit.aes       = inherit.aes,
     params            = list(na.rm = na.rm, ...),
-    trace_position    = substitute(trace_position),
+    trace_position    = rlang::enquo(trace_position),
     background_params = background_params,
     trans_fn          = trans_fn,
     allow_bottom      = TRUE
@@ -117,7 +117,8 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 
   # If trace_position is 'bottom', create new column and use to override
   # original group specification.
-  if (allow_bottom && trace_expr == "bottom") {
+  if (allow_bottom && identical(rlang::as_label(trace_expr), "\"bottom\"")) {
+
     data <- ggplot2::fortify(~ transform(.x, BOTTOM_TRACE_GROUP = "bottom"))
 
     if (is.null(mapping)) {
@@ -126,8 +127,8 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
 
     mapping$group <- as.name("BOTTOM_TRACE_GROUP")
 
-    # If trace_position is not 'all', evaluate expression
-  } else if (trace_expr != "all") {
+  # If trace_position is not 'all', evaluate expression
+  } else if (!identical(rlang::as_label(trace_expr), "\"all\"")) {
     # If data is not NULL, the user has passed a data.frame, function, or
     # formula to the geom. Need to fortify this before applying the predicate
     # passed through trace_position. For a formula fortify will return an
@@ -162,7 +163,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
       bkgd_params[names(background_params)] <- background_params
     }
 
-    bkgd_lyr <- layer(
+    bkgd_lyr <- ggplot2::layer(
       data        = bkgd_data,
       mapping     = mapping,
       stat        = stat,
@@ -177,7 +178,7 @@ create_trace_layers <- function(mapping, data, stat, geom, position,
   }
 
   # Create trace layer
-  trace_lyr <- layer(
+  trace_lyr <- ggplot2::layer(
     data        = data,
     mapping     = mapping,
     stat        = stat,
@@ -252,7 +253,7 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$trace_shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$colour, 1),
+        col      = ggplot2::alpha(coords$colour, 1),
         lty      = coords$linetype,
         fontsize = coords$trace_fontsize,
         lwd      = coords$trace_lwd
@@ -266,9 +267,9 @@ GeomPointTrace <- ggplot2::ggproto(
       pch = coords$shape,
 
       gp = grid::gpar(
-        col      = alpha(coords$fill, coords$alpha),
-        fontsize = coords$size * .pt + pt_stroke * .stroke / 2,
-        lwd      = pt_stroke * .stroke / 2
+        col      = ggplot2::alpha(coords$fill, coords$alpha),
+        fontsize = coords$size * ggplot2::.pt + pt_stroke * ggplot2::.stroke / 2,
+        lwd      = pt_stroke * ggplot2::.stroke / 2
       )
     )
 
@@ -383,14 +384,14 @@ calculate_trace_size <- function(data) {
   pch       <- data$shape
 
   # Calculate fontsize for closed shapes
-  fontsize  <- data$size * .pt + pt_stroke * .stroke / 2
+  fontsize  <- data$size * ggplot2::.pt + pt_stroke * ggplot2::.stroke / 2
 
-  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$stroke * .stroke / 2
+  fontsize[!pch %in% pch_open] <- fontsize[!pch %in% pch_open] + data$stroke * ggplot2::.stroke / 2
 
   # Calculate lwd for open shapes
-  lwd <- data$stroke * .stroke / 2
+  lwd <- data$stroke * ggplot2::.stroke / 2
 
-  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (pt_stroke * .stroke / 2)
+  lwd[pch %in% pch_open] <- lwd[pch %in% pch_open] * 2 + (pt_stroke * ggplot2::.stroke / 2)
 
   # Add results to data
   data$trace_fontsize <- fontsize
