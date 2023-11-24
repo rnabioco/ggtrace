@@ -1,4 +1,6 @@
 # ggtrace (development version)
+* Implemented tidy evaluation for expressions passed
+to the trace_position argument (@sheridar #60)
 
 # ggtrace 0.2.0
 * Initial CRAN submission
